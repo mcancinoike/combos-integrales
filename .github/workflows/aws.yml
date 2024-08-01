@@ -19,4 +19,3 @@ jobs:
         source: "ike-sitios-integrales-dev/*"
         target: "/var/www/ike-sitio-combosintegrales-dev"
         strip_components: 1
-        
