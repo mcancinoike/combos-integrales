@@ -142,7 +142,7 @@
 
         <div class="info">
 
-            <div class="tbl" id="tblStep2Total" data-total="<?php echo bcdiv($subtotal_mensual, '1', 2); ?>">
+            <div class="tbl" id="tblStep2Total" data-total="<?php echo $subtotal_mensual; ?>">
                 <div class="tbl__body">
                     <div class="tbl__row">
                         <div class="tbl__col left green subtotal">
@@ -150,7 +150,7 @@
                         </div>
                         <div class="tbl__col right green subtotal2">
                             <!-- $145.00 MXN -->
-                            <?php echo "$" . bcdiv($subtotal_mensual, '1', 2) . "MXN";?>
+                            <?php echo "$" . $subtotal_mensual . "MXN";?>
                         </div>
                     </div>
                 </div>
