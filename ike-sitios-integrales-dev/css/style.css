@@ -1274,6 +1274,19 @@ footer a {
 	
 }
 
+#loading {
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #ffffffed;
+	position: fixed;
+	z-index: 1;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	height: 100%;
+}
+
 @media screen and (min-width: 1400px) {
 	.atf__picture img {
 		width: 700px;

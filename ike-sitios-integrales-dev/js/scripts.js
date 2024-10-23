@@ -1,4 +1,7 @@
 $(document).ready( function() {
+
+	$("#loading").hide();
+
 	toastr.options = {
 		"closeButton": false,
 		"debug": false,
@@ -35,14 +38,38 @@ $(document).ready( function() {
     	$('#frmRegister3 input[name=fechaNac]').attr('max', maxDate);
     });
 
-    $('.lightbox__close').on('click', function() {
+	$(document).on("click", ".lightbox__close", function() {
     	$('.lightbox').hide();
     	$('.lightbox__bg').hide();
     });
 
+	// home
+
+	$(document).on("click", "#btnContinuar", function(e) {
+		e.preventDefault();
+		$.ajax({
+			url: "step_1.php",
+			cache: false,
+			type: 'POST',
+			data: {},
+			beforeSend: function() {
+				$("#loading").show();
+			},
+			complete: function() {
+				$("#loading").hide();
+			},
+			success: function(data) {
+				$("#main-content").html(data);
+			},
+			error: function(request, status, error) {
+				console.log('Ha ocurrido un error!');
+			}
+		});
+	});
+
 	//Step 1
 
-	$('#btnStep1').on('click', function() {
+	$(document).on("click", "#btnStep1", function() {
 		// e.preventDefault();
 		let suma_asegurada =$('input[name=suma_asegurada]').val();
 		let prima_anual =$('input[name=prima_anual]').val();
@@ -86,7 +113,7 @@ $(document).ready( function() {
 
 	});
 
-	$('input[name=seguro]').on('click', function() {
+	$(document).on('click',"input[name=seguro]", function() {
 		let sumaAsegurada = $(this).attr('data-suma-asegurada');
 		let idPrima = $(this).attr('data-id-prima');
 		let sumaAseguradaFormat = formatCurrency(sumaAsegurada);
@@ -113,13 +140,13 @@ $(document).ready( function() {
 		$('.separator__line.s1').show();
 	});
 
-	$('.chkbox').on('click', function() {
+	$(document).on('click','.chkbox', function() {
 		$('#tblStep2').show();
 	});
 
 	//Step 2
 
-	$('#btnStep2').on('click', function() {
+	$(document).on("click", "#btnStep2", function() {
 		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {    if (asistencia.checked)       return asistencia.value;}).get();			
 		let isChecked = $('input[name=clienteHsbc]').is(':checked');
 		let isChecked2 = $('input[name=avisoHsbc]').is(':checked');
@@ -190,7 +217,7 @@ $(document).ready( function() {
 		
 	});
 
-	$('.chkbox').on('click', function() {
+	$(document).on('click','.chkbox2', function() {
 		$('#tblStep2 .tbl__note').show();
 		let checked = $(this).is(':checked');
 		let id = $(this).val();
@@ -224,7 +251,7 @@ $(document).ready( function() {
 
 	//Step 3
 
-	$('#btnStep3').on('click', function() {
+	$(document).on("click", "#btnStep3", function() {
 		let idPrima =$('input[name=prima]').val();
 		let asistencias =$('input[name=asistencias]').val();
 		let nombre = $('#frmRegister3 input[name=nombre]').val().trim();
@@ -345,7 +372,7 @@ $(document).ready( function() {
 
 	//Step 4
 
-	$('#btnStep4').on('click', function() {
+	$(document).on("click", "#btnStep4", function() {
 		let codigo = $('input[name=codigoSms]').val().trim();
 		let idCliente = $('input[name=idCliente]').val();
 
@@ -383,7 +410,7 @@ $(document).ready( function() {
 
 	//Step 5
 
-	$('#btnStep5').on('click', function() {
+	$(document).on("click", "#btnStep5", function() {
 		let idCliente = $('input[name=idCliente]').val();
 		$.ajax({
 			url: "add_beneficiare.php",
@@ -411,7 +438,7 @@ $(document).ready( function() {
 
 	//Agregar Beneficiario
 
-	$('#btnStepBenef').on('click', function() {
+	$(document).on("click", "#btnStepBenef", function() {
 		let idCliente = $('input[name=idCliente]').val();
 		let parentesco = $('#frmBeneficiario select[name=parentesco]').val();
 		let nombre = $('#frmBeneficiario input[name=nombre]').val().trim();
@@ -535,7 +562,7 @@ $(document).ready( function() {
 		// $("html, body").animate({ scrollTop: 0 }, "slow");
 	});
 
-	$('#btnUpdateBenef').on('click', function() {
+	$(document).on("click", "#btnUpdateBenef", function() {
 
 		let parentesco = $('#frmEditBenef select[name=parentesco]').val();
 		let nombre = $('#frmEditBenef input[name=nombre]').val().trim();
@@ -628,7 +655,8 @@ $(document).ready( function() {
 		// $("html, body").animate({ scrollTop: 0 }, "slow");
 	});
 
-	$('#btnNewBenef').on('click', function() {
+
+	$(document).on("click", "#btnNewBenef", function() {
 		// $('.step').hide();		
 		// $('#frmBeneficiario').trigger("reset");
 		let idCliente = $('input[name=idCliente]').val();
@@ -656,7 +684,8 @@ $(document).ready( function() {
 		// $('#addBeneficiario').show();
 	});
 
-	$('#btnStep6').on('click', function() {
+
+	$(document).on("click", "#btnStep6", function() {
 
 		let porcentaje = $('#listBenef input[name=porcentaje]').val().trim();
 
@@ -704,7 +733,7 @@ $(document).ready( function() {
 		
 	});
 
-	$('#btnStep7').on('click', function() {
+	$(document).on("click", "#btnStep7", function() {
 		$.ajax({
 			url: "step_8.php",
 			cache: false,
@@ -728,7 +757,8 @@ $(document).ready( function() {
 		// $("html, body").animate({ scrollTop: 0 }, "slow");
 	});
 
-	$('#btnStep8').on('click', function() {
+
+	$(document).on("click", "#btnStep8", function() {
 		let numeroTarjeta = $('#frmCard input[name=numeroTarjeta]').val().trim();
 		let condiciones = $('#frmCard input[name=condiciones]').is(':checked');
 		// let aviso = $('#frmCard input[name=aviso]').is(':checked');
@@ -773,16 +803,22 @@ $(document).ready( function() {
 		// $("html, body").animate({ scrollTop: 0 }, "slow");
 	});
 
-	$('#frmCard input[name=numeroTarjeta]').on('keyup', function() {
+
+	$(document).on("keyup", "#frmCard input[name=numeroTarjeta]", function() {
 		validateDataCard();
 	});
-	$('#frmCard input[name=condiciones]').on('click', function() {
+
+	$(document).on("click", "#frmCard input[name=condiciones]", function() {
 		validateDataCard();
 	});
-	$('#frmCard input[name=aviso]').on('click', function() {
+
+
+	$(document).on("click", "#frmCard input[name=aviso]", function() {
 		validateDataCard();
 	});
-	$('#frmCard input[name=envio]').on('click', function() {
+
+
+	$(document).on("click", "#frmCard input[name=envio]", function() {
 		validateDataCard();
 	});
 

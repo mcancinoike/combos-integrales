@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="es">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Seguro por Accidentes Personales HSBC</title>
 	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0">
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.0">
 	<link rel="stylesheet" href="css/toastr/toastr.min.css">
 	<link rel="stylesheet" type="text/css" href="css/fonts.css">
 </head>
@@ -70,6 +69,9 @@
 			</div>
 		</section>
 	</div>
+    <div id="loading">
+        <img src="img/loading.svg" alt="cargando" style="width: 150px">
+    </div>
 	<footer>
 		<div class="footer__content">
 			<a href="docs/tyc.pdf" target="_blank">Términos y condiciones</a>
@@ -79,54 +81,8 @@
 
 	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.0"></script>
-	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-
-	<script>
-		toastr.options = {
-			"closeButton": false,
-			"debug": false,
-			"newestOnTop": false,
-			"progressBar": false,
-			"preventDuplicates": true,
-			"onclick": null,
-			"showDuration": "150",
-			"hideDuration": "500",
-			"timeOut": "10000",
-			"extendedTimeOut": "500",
-			"showEasing": "swing",
-			"hideEasing": "linear",
-			"showMethod": "fadeIn",
-			"hideMethod": "fadeOut",
-			"positionClass": "toast-bottom-right"
-		}
-
-		$(document).ready(function() {
-			$(document).on("click", "#btnContinuar", function(e) {
-				e.preventDefault();
-				$.ajax({
-					url: "step_1.php",
-					cache: false,
-					type: 'POST',
-					data: {},
-					beforeSend: function() {
-						$("#loading").show();
-					},
-					complete: function() {
-						$("#loading").hide();
-					},
-					success: function(data) {
-						$("#main-content").html(data);
-					},
-					error: function(request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
-			});
-		});
-		
-	</script>
-
+    <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
+	<script type="text/javascript" src="js/scripts.js?v=1.0.1"></script>
 </body>
 
 </html>

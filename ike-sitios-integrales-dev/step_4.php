@@ -1,18 +1,8 @@
-<?php 
-	$idCliente = $_POST['idCliente'];
+<?php
+include_once "backend/post.php";
+
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>HSBC Seguros | Iké&#174; Asistencias</title>
-	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
-	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.4">
-	<link rel="stylesheet" type="text/css" href="css/fonts.css">
-</head>
-<body>
+
 	<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 	<section class="step show" id="step4">
 		<div class="header__step">
@@ -57,15 +47,3 @@
 			</div>
 		</div>
 	</section>
-	<footer>
-		<div class="footer__content">
-			<a href="docs/tyc.pdf" target="_blank">Términos y condiciones</a>
-			<a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">Aviso de Privacidad</a>
-		</div>
-	</footer>
-
-	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.2"></script>
-
-</body>
-</html>

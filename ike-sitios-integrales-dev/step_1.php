@@ -2,18 +2,7 @@
     require_once "backend/conexion/conexion.php";
     $conexion = new conexion;
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>HSBC Seguros | Iké&#174; Asistencias</title>
-	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
-	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.4">
-	<link rel="stylesheet" type="text/css" href="css/fonts.css">
-</head>
-<body>
+
 	<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="">
 	<input type="hidden" id="prima_anual" name="prima_anual" value="">
 	<input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="">
@@ -101,17 +90,4 @@
 				<div class="box__button__line"></div>
 			</div>
 		</div>
-	</section>	
-
-	<footer>
-		<div class="footer__content">
-			<a href="docs/tyc.pdf" target="_blank">Términos y condiciones</a>
-			<a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">Aviso de Privacidad</a>
-		</div>
-	</footer>
-
-	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.2"></script>
-
-</body>
-</html>
+	</section>
