@@ -6,7 +6,7 @@
 	<title>Seguro por Accidentes Personales HSBC</title>
 	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.0">
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.1">
 	<link rel="stylesheet" href="css/toastr/toastr.min.css">
 	<link rel="stylesheet" type="text/css" href="css/fonts.css">
 </head>
@@ -82,7 +82,7 @@
 	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.0.1"></script>
+	<script type="text/javascript" src="js/scripts.js?v=1.2.0"></script>
 </body>
 
 </html>

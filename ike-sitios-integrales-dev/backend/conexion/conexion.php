@@ -11,6 +11,10 @@ class Conexion
     private $conexionLectura;
     private $config;
     private $ambiente;
+    private $urlTokenSms;
+    private $usernameTokenSms;
+    private $passwordTokenSms;
+    private $urlSendSms;
 
     function __construct()
     {
@@ -21,6 +25,10 @@ class Conexion
         $this->serverDBLectura = $data["serverDBLectura"];
         $this->database = $data["dataBaseDB"];
         $this->ambiente = $data["ambiente"];
+        $this->urlTokenSms = $data["urlTokenSms"];
+        $this->usernameTokenSms = $data["usernameTokenSms"];
+        $this->passwordTokenSms = $data["passwordTokenSms"];
+        $this->urlSendSms = $data["urlSendSms"];
 
         try {
             $this->conexion = new PDO("mysql:host=" . $this->serverDBEscritura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
@@ -107,7 +115,7 @@ class Conexion
      * Inserta en la BD
      * @param sqlstr Parametro que contiene un query
      * @param sqlArray Parametro que contiene un array de valores para insertar, puede ser null
-     * @return true retorna un booleano true si el insert fue exitoso
+     * @return bool|string
      */
     public function insertData($sqlstr, $sqlArray = null)
     {
@@ -117,7 +125,7 @@ class Conexion
             if (!$results->rowCount()) {
                 return false;
             } else {
-                return true;
+                return (int) $this->conexion->lastInsertId();
             }
         } catch (PDOException $e) {
             error_log('Algo ha salido mal: ' . $e->getMessage());
@@ -131,7 +139,7 @@ class Conexion
      * @return cleanData retorna un string con o sin html sin XSS
     NOTA: La función quedó fuera de la clase conexión debido a que el analizador de vulnerabilidades SNYK no la dectecta como metodo
      */
-    function xssClean($data)
+    public function xssClean($data)
     {
         // Fix &entity\n;
         $data = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $data);
@@ -165,5 +173,48 @@ class Conexion
 
         // we are done...
         return $data;
+    }
+
+    public function getTokenSms(){
+        try {
+            $ch = curl_init($this->urlTokenSms);
+            $data = json_encode(array(
+                'user_name' => $this->usernameTokenSms,
+                'password' => $this->passwordTokenSms
+            ));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $result = curl_exec($ch);
+            curl_close($ch);
+            return json_decode($result, true);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+    }
+
+    public function postCurl($token, $data): string
+    {
+        try {
+            $curl = curl_init($this->urlSendSms);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS,  json_encode($data));
+            $array = array(
+                "authorization: " . $token ,
+                "content-type: application/json");
+
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $array);
+            curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+            $result = json_decode(curl_exec($curl));
+            curl_close($curl);
+             return $result->message;
+
+        } catch (\Exception $e) {
+            error_log("Error post curl sms -> " . $e->getMessage());
+            return "Error al enviar código SMS";
+        }
     }
 }

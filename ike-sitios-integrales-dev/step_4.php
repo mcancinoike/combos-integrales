@@ -32,7 +32,7 @@ include_once "backend/post.php";
 					<div class="frm code">
 						<div class="frm__group">
 							<label>Ingresa el código</label>
-							<input type="text" name="codigoSms" value="123456" class="frm__control" autocomplete="off">
+							<input type="text" name="codigoSms" class="frm__control" autocomplete="off">
 						</div>
 					</div>
 				</form>

@@ -1,23 +1,17 @@
 <?php
 header('Content-type:application/json;charset=utf-8');
 require_once "conexion/conexion.php";
-$conexion = new conexion;
+$conexion = new Conexion();
 
 $action = $_POST['action'];
 
-function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $idPrima, $asistencias)
+function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $code, $idPrima, $asistencias)
 {
     $fecha_alta = date("Y-m-d H:i:s");
 
-    $queryCons = "SELECT MAX(id) + 1 as idCliente FROM clientes_hsbc";
-
-    foreach ($conexion->getData($queryCons) as $valCons) {
-        $idCliente = $valCons['idCliente'];
-    }
-
-    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'AH', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', 0, 0, '$email', '$fechaNac', '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
-    
-    if(!$conexion->insertData($query)){
+    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'AH', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $idCliente = $conexion->insertData($query);
+    if(!$idCliente){
         $result = array("mensaje" => "Ha ocurrido un error!");
     }else{
         $asist = explode("|", $asistencias);   
@@ -28,7 +22,7 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
         $result = array("mensaje" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);       
     }
     
-    echo json_encode($result);
+    return $result;
 }
 
 function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $nacionalidad, $actividad, $residencia)
@@ -46,6 +40,49 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
     echo json_encode($result);
 }
 
+function genCode()
+{
+    $code = '';
+    for ($i = 0; $i < 6; $i++) {
+        $code .= mt_rand(0, 9);
+    }
+    return $code;
+}
+
+/**
+ * @throws Exception
+ */
+function sendCodeCell($code, $cellPhone, $conexion)
+{
+    $tokenSms = $conexion->getTokenSms();
+    if(!$tokenSms)
+        throw new Exception("Error al obtener envio SMS");
+
+    $data = [
+        "identifier" => [
+            "tenants" => "adff7f6a-e97d-11eb-9a03-0242ac130003",
+            "app" => "HSBC"
+        ],
+        "petition" => [
+            "message" => "Tu código de verificación de HSBC es $code",
+            "phone" => $cellPhone
+        ]
+    ];
+
+   return $conexion->postCurl($tokenSms['access_token'], $data);
+}
+
+function verifyCode($idCliente, $code, $conexion)
+{
+    $query = "SELECT * FROM clientes_hsbc WHERE id = :idCliente AND code = :code";
+    $data = ["idCliente" => $idCliente, "code" => $code];
+    $rows = $conexion->getData($query, $data);
+    if(count($rows))
+        return array("isValid" => true);
+    else
+        return array("isValid" => false);
+}
+
 switch ($action):
     case 'saveClient':
         $asistencias = $_POST['asistencias'];
@@ -57,8 +94,15 @@ switch ($action):
         $fechaNac = $_POST['fechaNac'];
         $email = $_POST['email'];
         $telefono = $_POST['telefono'];
-        saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $idPrima, $asistencias);
+        $code = genCode();
+        $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $code, $idPrima, $asistencias);
+
+        if (isset($result["idCliente"]))
+            $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);
+
+        echo json_encode($result);
         break;
+
     case 'saveBeneficiare':
         $idCliente = $_POST['idCliente'];
         $parentesco = $_POST['parentesco'];
@@ -73,5 +117,12 @@ switch ($action):
         $actividad = $_POST['actividad'];
         $residencia = $_POST['residencia'];
         saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $nacionalidad, $actividad, $residencia);
+        break;
+
+    case 'verifyCode':
+        $idCliente = $_POST['idCliente'];
+        $code = $_POST['code'];
+
+        echo json_encode(verifyCode($idCliente, $code, $conexion));
         break;
 endswitch;

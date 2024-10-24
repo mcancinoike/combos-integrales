@@ -322,6 +322,9 @@ $(document).ready( function() {
 			url: "backend/querys.php",
 			cache: false,
 			type: 'POST',
+			beforeSend: function() {
+				$("#loading").show();
+			},
 			data: {
 				action: 'saveClient',
 				idPrima: idPrima,
@@ -334,7 +337,11 @@ $(document).ready( function() {
 				email: email,
 				telefono: telefono
 			},
+			complete: function() {
+				$("#loading").hide();
+			},
 			success: function(data) {
+				$("#loading").hide();
 				console.log(data.idCliente);
 				$.ajax({
 					url: "step_4.php",
@@ -353,12 +360,13 @@ $(document).ready( function() {
 						$("#main-content").html(data);
 					},
 					error: function(request, status, error) {
-						console.log('Ha ocurrido un error!');
+						console.error(error);
 					}
 				});			
 			},
 			error: function(request, status, error) {
-				console.log('Ha ocurrido un error!');
+				console.error(error);
+				toastr.error("Error inesperado, intente más tarde por favor");
 			}
 		});
 
@@ -378,34 +386,34 @@ $(document).ready( function() {
 
 		$('#frmErrMsg4').hide();
 
-		if (codigo != "123456") {
-			toastr.error("El código es inválido");
-			$('input[name=codigoSms]').focus();
-			return false;
-		}
-		
-		$.ajax({
-			url: "step_5.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				idCliente: idCliente
-			},
-			beforeSend: function() {
-				$("#loading").show();
-			},
-			complete: function() {
-				$("#loading").hide();
-			},
-			success: function(data) {
-				$("#main-content").html(data);
-			},
-			error: function(request, status, error) {
-				console.log('Ha ocurrido un error!');
+		verifyCode(idCliente, codigo, function (codeIsValid) {
+			if (codeIsValid) {
+				$.ajax({
+					url: "step_5.php",
+					cache: false,
+					type: 'POST',
+					data: {
+						idCliente: idCliente
+					},
+					beforeSend: function() {
+						$("#loading").show();
+					},
+					complete: function() {
+						$("#loading").hide();
+					},
+					success: function(data) {
+						$("#main-content").html(data);
+					},
+					error: function(request, status, error) {
+						console.log('Ha ocurrido un error!');
+					}
+				});
+
+			} else {
+				toastr.error("El código es inválido");
+				$('input[name=codigoSms]').focus();
 			}
 		});
-		// $('.step').hide();
-		// $('#step5').show();
 	});
 
 	//Step 5
@@ -824,6 +832,33 @@ $(document).ready( function() {
 
 });
 
+function verifyCode(idCliente, code, rollback) {
+	$.ajax({
+		url: "backend/querys.php",
+		cache: false,
+		type: 'POST',
+		dataType: 'JSON',
+		beforeSend: function() {
+			$("#loading").show();
+		},
+		data: {
+			action: 'verifyCode',
+			idCliente: idCliente,
+			code: code
+		},
+		complete: function() {
+			$("#loading").hide();
+		},
+		success: function(response) {
+				rollback(response.isValid);
+		},
+		error: function(request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al verificar código, intente nuevamente por favor");
+			rollback(false);
+		}
+	});
+}
 function showAsistencia(id) {
 	$('.lightbox__bg').show();
 	$('#' + id).show();

@@ -231,6 +231,7 @@ header {
 	margin-bottom: 20px;
 	text-align: center;
 	text-decoration: none;
+	cursor: pointer;
 }
 .box__button__line {
 	width: 120px;
