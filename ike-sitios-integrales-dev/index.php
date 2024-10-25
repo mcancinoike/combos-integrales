@@ -6,7 +6,7 @@
 	<title>Seguro por Accidentes Personales HSBC</title>
 	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.1">
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.2">
 	<link rel="stylesheet" href="css/toastr/toastr.min.css">
 	<link rel="stylesheet" type="text/css" href="css/fonts.css">
 </head>

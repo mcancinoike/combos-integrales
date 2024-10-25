@@ -358,6 +358,7 @@ $(document).ready( function() {
 					},
 					success: function(data) {
 						$("#main-content").html(data);
+						setTimer();
 					},
 					error: function(request, status, error) {
 						console.error(error);
@@ -859,6 +860,40 @@ function verifyCode(idCliente, code, rollback) {
 		}
 	});
 }
+
+function sendNewCode(idCliente) {
+	$.ajax({
+		url: "backend/querys.php",
+		cache: false,
+		type: 'POST',
+		dataType: 'JSON',
+		beforeSend: function() {
+			$("#loading").show();
+		},
+		data: {
+			action: 'sendNewCode',
+			idCliente: idCliente
+		},
+		complete: function() {
+			$("#loading").hide();
+		},
+		success: function(response) {
+			if (response.status === "ok"){
+				$('#sendNewCode').hide();
+				$('#btnStep4').show();
+				setTimer();
+			} else {
+				toastr.error(response.status);
+			}
+
+		},
+		error: function(request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al reenviar código, intente nuevamente por favor");
+		}
+	});
+}
+
 function showAsistencia(id) {
 	$('.lightbox__bg').show();
 	$('#' + id).show();
@@ -939,7 +974,7 @@ function formatCurrency(monto, decimales = 0) {
 function setTimer() {
 
 	var countDownDate = new Date();
-	countDownDate.setSeconds(countDownDate.getSeconds() + 116);
+	countDownDate.setSeconds(countDownDate.getSeconds() + 11);
 
 	countDownDate.getTime();
 
@@ -968,6 +1003,9 @@ function setTimer() {
 	  if (distance < 0) {
 	    clearInterval(x);
 	    $('#timer i').html("0:00");
+	    $('#sendNewCode').show();
+	    $('#btnStep4').hide();
+
 	  }
 	}, 1000);
 

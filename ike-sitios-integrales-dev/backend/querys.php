@@ -83,6 +83,29 @@ function verifyCode($idCliente, $code, $conexion)
         return array("isValid" => false);
 }
 
+function updateCodeClient($conexion, $idCliente, $code)
+{
+    $query = "UPDATE clientes_hsbc SET code = $code, updated_at = NOW() WHERE id = :idCliente";
+    $data = ["idCliente" => $idCliente];
+
+    return $conexion->insertData($query, $data);
+}
+
+function getCellClient($conexion, $idCliente)
+{
+    $query = "SELECT cell_phone FROM clientes_hsbc WHERE id = :idCliente";
+    $data = ["idCliente" => $idCliente];
+
+    $rows = $conexion->getData($query, $data);
+
+    if(count($rows)){
+        return $rows[0]['cell_phone'];
+    } else {
+        return null;
+    }
+}
+
+
 switch ($action):
     case 'saveClient':
         $asistencias = $_POST['asistencias'];
@@ -125,4 +148,24 @@ switch ($action):
 
         echo json_encode(verifyCode($idCliente, $code, $conexion));
         break;
+
+    case 'sendNewCode':
+        $idCliente = $_POST['idCliente'];
+        $code = genCode();
+
+        if(!updateCodeClient($conexion, $idCliente, $code)) {
+            $telefono = getCellClient($conexion, $idCliente);
+
+            try {
+                sendCodeCell($code, $telefono, $conexion);
+                echo json_encode(array("status" => "ok"));
+
+            } catch (Exception $e) {
+                echo json_encode(array("status" => "Error inesperado al enviar SMS, intente más tarde por favor"));
+            }
+        } else {
+            echo json_encode(array("status" => "Error al actualizar código"));
+        }
+        break;
+
 endswitch;

@@ -1288,6 +1288,16 @@ footer a {
 	height: 100%;
 }
 
+.frm__generate {
+	color: #767676;
+	margin-top: 10px;
+	display: none;
+}
+
+.frm__generate img {
+	width: 16px;
+}
+
 @media screen and (min-width: 1400px) {
 	.atf__picture img {
 		width: 700px;

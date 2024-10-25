@@ -26,13 +26,16 @@ include_once "backend/post.php";
 				<div class="box__title">
                     Te estaremos enviando un código por SMS al número de celular registrado. Al ingresar el código, estarás aceptando la solicitud de contratación del seguro.
 				</div>
-				<!-- <p class="box__txt2" id="timer">Vence en <i>1:55</i> minutos</p> -->
+				 <p class="box__txt2" id="timer">Vence en <i>1:55</i> minutos</p
 
 				<form id="frmRegister">
 					<div class="frm code">
 						<div class="frm__group">
 							<label>Ingresa el código</label>
 							<input type="text" name="codigoSms" class="frm__control" autocomplete="off">
+                            <a href="javascript:sendNewCode(<?php echo $idCliente?>);" id="sendNewCode" class="frm__generate">
+                                <img src="img/icons/refresh.svg">
+                                Generar un código nuevo</a>
 						</div>
 					</div>
 				</form>
