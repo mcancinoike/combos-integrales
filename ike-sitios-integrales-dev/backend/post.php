@@ -1,5 +1,5 @@
 <?php
-require_once "backend/conexion/conexion.php";
+require_once "../backend/conexion/conexion.php";
 $conexion = new conexion;
 
 $suma_asegurada = !isset($_POST['suma_asegurada']) ? "0.00" : $conexion->xssClean($_POST['suma_asegurada']);

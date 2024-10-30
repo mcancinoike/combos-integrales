@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,7 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="css/fonts.css">
 </head>
 <!-- Page Header-->
-<?php include 'header.php' ?>
+<?php include 'components/header.php' ?>
 
 <body>
 	<div id="main-content">
@@ -62,16 +63,12 @@
 					<p class="box__txt">También podrás contratar tu Seguro por Accidentes Personales o el Programa de Asistencias Iké por separado.</p>
 				</div><br>
 				<button class="box__btn" name="btnContinuar" id="btnContinuar">Continuar</button>
-				<!-- <div class="box__button">
-					<a href="registro.php" class="box__btn">Continuar</a>
-					<div class="box__button__line"></div>
-				</div> -->
 			</div>
 		</section>
 	</div>
-    <div id="loading">
-        <img src="img/loading.svg" alt="cargando" style="width: 150px">
-    </div>
+	<div id="loading">
+		<img src="img/loading.svg" alt="cargando" style="width: 150px">
+	</div>
 	<footer>
 		<div class="footer__content">
 			<a href="docs/tyc.pdf" target="_blank">Términos y condiciones</a>
@@ -81,7 +78,7 @@
 
 	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
+	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
 	<script type="text/javascript" src="js/scripts.js?v=1.2.0"></script>
 </body>
 

@@ -48,6 +48,8 @@ header {
 
 .header__step {
 	padding: 20px 0;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
 }
 .header__step.line {
 	border-bottom: 1px solid #ccc;
@@ -68,6 +70,18 @@ header {
 }
 .header__step__arrow img {
 	width: 12px;
+}
+.header__step__title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	grid-gap: 10px;
+}
+.header__ike {
+	height: 30px;
+}
+.header__hsbc {
+	height: 34px;
 }
 
 .breadcrumb {
@@ -581,6 +595,10 @@ header {
 .note img {
 	width: 20px;
 }
+.note.s2 {
+	line-height: 26px;
+	margin-bottom: 30px;
+}
 .separator__line {
 	height: 8px;
 	background-color: #EDEDED;
@@ -1006,6 +1024,9 @@ footer a {
 		margin-bottom: 20px;
 		font-size: 16px;
 	}
+	.note.s2 {
+		width: 480px;
+	}
 	.frm__group.check {
 		font-size: 18px;
 	}
@@ -1233,6 +1254,9 @@ footer a {
 	}
 	.note {
 		font-size: 18px;
+	}
+	.note.s2 {
+		width: 580px;
 	}
 	.frm.pay {
 		width: 500px;
