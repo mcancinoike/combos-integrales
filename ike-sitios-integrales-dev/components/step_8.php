@@ -18,7 +18,7 @@
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-				Para finalizar, ingresa el número de tu Tarjeta de Crédito o Débito HSBC. Todos tus datos se encuentran protegidos.
+				Para finalizar, ingresa el número de Tarjeta de Crédito HSBC donde se domiciliará el pago o Débito HSBC donde se realizarán los cargos recurrentes. Todos los datos se encuentran protegidos
 			</div>
 		</div>
 
