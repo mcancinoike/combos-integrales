@@ -76,12 +76,12 @@ include_once "../backend/post.php";
                     <div class="tbl__col left">
                         Suma asegurada:
                         <br>
-                        <?php echo "$" . $suma_asegurada . "MXN"; ?>
+                        <?php echo "$" . formatoMoneda($suma_asegurada) . " MXN"; ?>
                     </div>
                     <div class="tbl__col right">
                         Suma total anual:
                         <br>
-                        <?php echo "$" . $prima_anual . "MXN"; ?>
+                        <?php echo "$" . formatoMoneda($prima_anual) . " MXN"; ?>
                     </div>
                 </div>
                 <div class="tbl__row">
@@ -89,7 +89,7 @@ include_once "../backend/post.php";
                         Subtotal mensual a pagar
                     </div>
                     <div class="tbl__col right subtotal2">
-                        <?php echo "$" . $subtotal_mensual . "MXN"; ?>
+                        <?php echo "$" . formatoMoneda($subtotal_mensual) . " MXN"; ?>
                     </div>
                 </div>
 
@@ -132,7 +132,7 @@ include_once "../backend/post.php";
                         Total mensual a pagar del seguro:
                     </div>
                     <div class="tbl__col right green subtotal2">
-                        <?php echo "$" . $subtotal_mensual . "MXN"; ?>
+                        <?php echo "$" . formatoMoneda($subtotal_mensual) . " MXN"; ?>
                     </div>
                 </div>
             </div>
