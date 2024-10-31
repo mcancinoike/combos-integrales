@@ -1,6 +1,7 @@
 <?php
 require_once "../backend/conexion/conexion.php";
 $conexion = new conexion;
+$captchaPublic = $conexion->captchaPublic;
 
 function formatoMoneda($numero)
 {

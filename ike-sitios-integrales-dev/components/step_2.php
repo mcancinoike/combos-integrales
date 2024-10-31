@@ -1,6 +1,6 @@
 <?php
 include_once "../backend/post.php";
-
+echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 ?>
 
 <input type="hidden" id="suma_asegurada" name="suma_asegurada" value="<?php echo $suma_asegurada; ?>">
@@ -179,9 +179,11 @@ include_once "../backend/post.php";
             <p><span class="bold">Solicitud de ubicación</span> <br>
             Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
         </div>
-
+        <div class="frm__ctas" style="margin-left: 12.5%;">
+            <div id="captcha_msg" class="frm__col captcha">Favor de seleccionar la casilla: </div>
+            <div class="g-recaptcha" data-sitekey="<?php echo $captchaPublic; ?>"></div>
+        </div>
         <div class="frm__errmsg" id="frmErrMsg2"></div>
-
         <div class="box__button stp">
             <button class="box__btn" id="btnStep2">Continuar</button>
             <div class="box__button__line"></div>

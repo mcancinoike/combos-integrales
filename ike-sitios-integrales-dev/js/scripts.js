@@ -145,55 +145,84 @@ $(document).ready(function () {
 		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
 		let subtotal_mensual_asistencia = $('input[name=subtotal_mensual_asistencia]').val();
 		let idPrima = $('input[name=prima]').val();
+		let captcha_response = document.getElementById("g-recaptcha-response").value;
 
-		if (subtotal_mensual_asistencia == "" && subtotal_mensual == "0.00") {
+		if (subtotal_mensual_asistencia == "" && subtotal_mensual == "0") {
 			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
 			return false;
 		}
-
-		if (isChecked && isChecked2 && isChecked3) {
-			$.ajax({
-				url: "components/step_3.php",
-				cache: false,
-				type: 'POST',
-				data: {
-					suma_asegurada: suma_asegurada,
-					prima_anual: prima_anual,
-					subtotal_mensual: subtotal_mensual,
-					subtotal_mensual_asistencia: subtotal_mensual_asistencia,
-					idPrima: idPrima,
-					asistencias: asistencias
-				},
-				beforeSend: function () {
-					$("#loading").show();
-				},
-				complete: function () {
-					$("#loading").hide();
-				},
-				success: function (data) {
-					$("#main-content").html(data);
-				},
-				error: function (request, status, error) {
-					console.log('Ha ocurrido un error!');
-				}
-			});			
-		} else {
-			if (!isChecked) {
-				toastr.error("Debe ser cliente HSBC para poder continuar.");
-				return false;
-			}
-
-			if (!isChecked2) {
-				toastr.error("Debe aceptar el aviso de privacidad para poder continuar.");
-				return false;
-			}
-
-			if (!isChecked3) {
-				toastr.error("Debe aceptar que se encuentra en el territorio nacional para poder continuar.");
-				return false;
-			}
+		
+		if (!isChecked) {
+			toastr.error("Debe ser cliente HSBC para poder continuar.");
+			return false;
 		}
 
+		if (!isChecked2) {
+			toastr.error("Debe aceptar el aviso de privacidad para poder continuar.");
+			return false;
+		}
+
+		if (!isChecked3) {
+			toastr.error("Debe aceptar que se encuentra en el territorio nacional para poder continuar.");
+			return false;
+		}
+
+		$.ajax({
+			url: "backend/process/captcha.php",
+			cache: false,
+			type: 'POST',
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			data: {
+				captcha_response : captcha_response
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (data) {
+				$("#loading").hide();				
+				console.log(data);
+
+				let datos = JSON.parse(data);
+				let success = datos.success;
+				
+				if(success == false){
+					toastr.error("Algo salio mal, error en el captcha.");
+					return false;
+				}
+
+				$.ajax({
+					url: "components/step_3.php",
+					cache: false,
+					type: 'POST',
+					data: {
+						suma_asegurada: suma_asegurada,
+						prima_anual: prima_anual,
+						subtotal_mensual: subtotal_mensual,
+						subtotal_mensual_asistencia: subtotal_mensual_asistencia,
+						idPrima: idPrima,
+						asistencias: asistencias
+					},
+					beforeSend: function () {
+						$("#loading").show();
+					},
+					complete: function () {
+						$("#loading").hide();
+					},
+					success: function (data) {
+						$("#main-content").html(data);
+					},
+					error: function (request, status, error) {
+						console.log('Ha ocurrido un error!');
+					}
+				});	
+			},
+			error: function (request, status, error) {
+				console.error(error);
+				toastr.error("Error inesperado, intente más tarde por favor");
+			}
+		});		
 	});
 
 	$(document).on('click', '.chkbox2', function () {
@@ -426,6 +455,7 @@ $(document).ready(function () {
 		let estadoCivil = $('#frmBeneficiario select[name=estadoCivil]').val();
 		let sexo = $('#frmBeneficiario select[name=sexo]').val();
 		let fechaNac = $('#frmBeneficiario input[name=fechaNac]').val().trim();
+		let rfc = $('#frmBeneficiario input[name=rfc]').val().trim();
 		let nacionalidad = $('#frmBeneficiario select[name=nacionalidad]').val();
 		let actividad = $('#frmBeneficiario select[name=actividad]').val();
 		let residencia = $('#frmBeneficiario select[name=residencia]').val();
@@ -468,6 +498,18 @@ $(document).ready(function () {
 			return false;
 		}
 
+		if (rfc == '') {
+			toastr.error("Escribe el RFC");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
+		if (rfc != '' && (rfc.length > 12 && rfc.length <= 13)) {			
+			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
 		if (nacionalidad == '') {
 			toastr.error("Selecciona la nacionalidad");
 			$('input[name=nacionalidad]').focus();
@@ -501,6 +543,7 @@ $(document).ready(function () {
 				estadoCivil: estadoCivil,
 				sexo: sexo,
 				fechaNac: fechaNac,
+				rfc: rfc,
 				nacionalidad: nacionalidad,
 				actividad: actividad,
 				residencia: residencia
@@ -919,7 +962,7 @@ function formatCurrency(monto, decimales = 0) {
 function setTimer() {
 
 	var countDownDate = new Date();
-	countDownDate.setSeconds(countDownDate.getSeconds() + 11);
+	countDownDate.setSeconds(countDownDate.getSeconds() + 116);
 
 	countDownDate.getTime();
 

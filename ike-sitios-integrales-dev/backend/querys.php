@@ -16,8 +16,10 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     }else{
         $asist = explode("|", $asistencias);   
         foreach ($asist as $val2) {
-            $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
-            $conexion->insertData($query2);  
+            if($val2 != ""){
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+                $conexion->insertData($query2);
+            }  
         }     
         $result = array("mensaje" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);       
     }
@@ -25,11 +27,11 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     return $result;
 }
 
-function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $nacionalidad, $actividad, $residencia)
+function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia)
 {
     $fecha_alta = date("Y-m-d H:i:s");    
 
-    $query = "INSERT INTO beneficiaries_hsbc (id, id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, percentage, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$parentesco', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$estadoCivil', '$sexo', '$fechaNac', '', '$nacionalidad', '$actividad', '$residencia', 0, 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO beneficiaries_hsbc (id, id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, percentage, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$parentesco', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$estadoCivil', '$sexo', '$fechaNac', '$rfc', '$nacionalidad', '$actividad', '$residencia', 0, 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
     
     if(!$conexion->insertData($query)){
         $result = array("mensaje" => "Ha ocurrido un error!");
@@ -136,10 +138,11 @@ switch ($action):
         $estadoCivil = $_POST['estadoCivil'];
         $sexo = $_POST['sexo'];
         $fechaNac = $_POST['fechaNac'];
+        $rfc = $_POST['rfc'];
         $nacionalidad = $_POST['nacionalidad'];
         $actividad = $_POST['actividad'];
         $residencia = $_POST['residencia'];
-        saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $nacionalidad, $actividad, $residencia);
+        saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia);
         break;
 
     case 'verifyCode':

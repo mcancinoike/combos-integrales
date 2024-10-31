@@ -15,6 +15,8 @@ class Conexion
     private $usernameTokenSms;
     private $passwordTokenSms;
     private $urlSendSms;
+    public $captchaPublic;
+    public $captchaSecret;
 
     function __construct()
     {
@@ -29,6 +31,8 @@ class Conexion
         $this->usernameTokenSms = $data["usernameTokenSms"];
         $this->passwordTokenSms = $data["passwordTokenSms"];
         $this->urlSendSms = $data["urlSendSms"];
+        $this->captchaSecret = $data["captchaSecret"];
+        $this->captchaPublic = $data["captchaPublic"];
 
         try {
             $this->conexion = new PDO("mysql:host=" . $this->serverDBEscritura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));

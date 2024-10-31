@@ -83,6 +83,11 @@ include_once "../backend/post.php";
 						<input type="date" name="fechaNac" class="frm__control">
 					</div>
 					<div class="frm__group">
+						<label>RFC</label>
+						<input type="text" name="rfc" class="frm__control" maxlength="13">
+						<span class="desktop">El RFC no debe llevar guiones</span>
+					</div>
+					<div class="frm__group">
 						<label>Nacionalidad*</label>
 						<select name="nacionalidad" class="frm__control">
 							<option value="">Seleccione</option>
