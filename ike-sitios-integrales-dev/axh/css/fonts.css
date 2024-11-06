@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'UniversNext-Bold';
+    src: url('../fonts/UniversNext/UniversNext-Bold.otf')  format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UniversNext-Medium';
+    src: url('../fonts/UniversNext/UniversNext-Medium.otf')  format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UniversNext-Regular';
+    src: url('../fonts/UniversNext/UniversNext-Regular.otf')  format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'UniversNext-Light';
+    src: url('../fonts/UniversNext/UniversNext-Light.otf')  format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}

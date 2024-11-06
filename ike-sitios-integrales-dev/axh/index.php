@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Seguro para Apoyo por Hospitalización HSBC</title>
+	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
+	<link rel="shortcut icon" href="img/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0">
+	<link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+	<link rel="stylesheet" type="text/css" href="css/fonts.css">
+</head>
+<!-- Page Header-->
+<?php include 'components/header.php' ?>	
+
+<body>	
+	<div id="main-content">
+		<section class="step show" id="home">
+			<div class="header__step home line">
+				<div class="header__step__content">
+					<a href="javascript:;" class="header__step__arrow">
+						<img src="img/icons/arrow-left.svg">
+					</a>
+					<div class="header__step__title">HSBC Seguros</div>
+				</div>
+			</div>
+
+			<div class="atf">
+				<div class="atf__picture">
+					<img src="img/hsbc-seguro.png" class="mobile">
+					<img src="img/hsbc-seguro-desktop.png" class="desktop">
+				</div>
+				<div class="atf__txt">
+					<h1>¡Solicita hoy tu Seguro para Apoyo por Hospitalización HSBC + Asistencias Iké!</h1>
+				</div>
+			</div>
+
+			<div class="info home">
+				<div class="breadcrumb">
+					Productos <img src="img/icons/arrow-red.svg"> Programa Seguros + Asistencia
+				</div>
+				<div class="box">
+					<div class="box__title">
+						<img src="img/icons/realiza.svg">
+						Realiza tu solicitud y obtén:
+					</div>
+					<ul class="box__list">
+						<li>Seguro para apoyo por Hospitalización</li>
+					</ul>
+					<p class="box__txt">Te apoyamos por cada día que tú te encuentres hospitalizado.</p>
+					<ul class="box__list">
+						<li>Programa de Asistencias Iké</li>
+					</ul>
+					<p class="box__txt">Amplía la protección de tu seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span></p>
+				</div>
+				<div class="box last">
+					<div class="box__title">
+						<img src="img/icons/haz.svg">
+						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
+					</div>
+				</div><br>
+				<button class="box__btn" name="btnContinuar" id="btnContinuar">Continuar</button>
+				<!-- <div class="box__button">
+					<a href="registro.php" class="box__btn">Continuar</a>
+					<div class="box__button__line"></div>
+				</div> -->
+			</div>
+		</section>
+	</div>
+	<div id="loading">
+		<img src="img/loading.svg" alt="cargando" style="width: 150px">
+	</div>
+	<footer>
+		<div class="footer__content">
+			<a href="docs/tyc.pdf" target="_blank">Términos y condiciones</a>
+			<a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">Aviso de Privacidad</a>
+		</div>
+	</footer>
+
+	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
+	<script type="text/javascript" src="js/scripts.js?v=1.0"></script>
+
+</body>
+</html>

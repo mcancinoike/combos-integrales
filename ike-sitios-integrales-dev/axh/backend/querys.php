@@ -9,7 +9,7 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
 {
     $fecha_alta = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'ah', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'ap', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
     $idCliente = $conexion->insertData($query);
     if(!$idCliente){
         $result = array("mensaje" => "Ha ocurrido un error!");
@@ -122,8 +122,8 @@ switch ($action):
         $code = genCode();
         $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $code, $idPrima, $asistencias);
 
-        if (isset($result["idCliente"]))
-            $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);
+        // if (isset($result["idCliente"]))
+        //     $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);
 
         echo json_encode($result);
         break;
