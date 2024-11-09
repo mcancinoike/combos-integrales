@@ -5,11 +5,11 @@ $conexion = new Conexion();
 
 $action = $_POST['action'];
 
-function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $code, $idPrima, $asistencias)
+function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias)
 {
     $fecha_alta = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'ah', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, rfc, card, id_prima, active, created_at, updated_at, deleted_at) VALUES('', 'ah', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$rfc', 0, '$idPrima', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
     $idCliente = $conexion->insertData($query);
     if(!$idCliente){
         $result = array("mensaje" => "Ha ocurrido un error!");
@@ -37,6 +37,36 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
         $result = array("mensaje" => "Ha ocurrido un error!");
     }else{
         $result = array("mensaje" => "Se creó el beneficiario, con éxito!");       
+    }
+    
+    echo json_encode($result);
+}
+
+function updateBeneficiare($conexion, $idBeneficiario, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia)
+{
+    $fecha_modif = date("Y-m-d H:i:s");    
+
+    $query = "UPDATE beneficiaries_hsbc SET relationship = '$parentesco', name = '$nombre', middle_name = '$segundoNombre', pater_surname = '$apellidoPaterno', mater_surname = '$apellidoMaterno', marital_status = '$estadoCivil', sex = '$sexo', date_birth = '$fechaNac', rfc = '$rfc', nationality = '$nacionalidad', residence = '$residencia', updated_at = '$fecha_modif' WHERE id = '$idBeneficiario'";
+    
+    if(!$conexion->insertData($query)){
+        $result = array("mensaje" => "Ha ocurrido un error!");
+    }else{
+        $result = array("mensaje" => "Se actualizaron los beneficiario, con éxito!");       
+    }
+    
+    echo json_encode($result);
+}
+
+function deleteBeneficiare($conexion, $idBeneficiario)
+{
+    $fecha_delete = date("Y-m-d H:i:s");    
+
+    $query = "DELETE FROM beneficiaries_hsbc WHERE id = '$idBeneficiario'";
+    
+    if(!$conexion->insertData($query)){
+        $result = array("mensaje" => "Ha ocurrido un error!");
+    }else{
+        $result = array("mensaje" => "Se elimino el beneficiario, con éxito!");       
     }
     
     echo json_encode($result);
@@ -107,6 +137,23 @@ function getCellClient($conexion, $idCliente)
     }
 }
 
+function verifyCard($conexion, $idCliente, $numeroTarjeta)
+{
+    $bin = substr($numeroTarjeta, 0, 6);
+
+    $query = "SELECT * FROM bin_account WHERE bin = :bin";
+    $data = ["bin" => $bin];
+    $rows = $conexion->getData($query, $data);
+    if(count($rows)){
+        $query2 = "UPDATE clientes_hsbc SET card = '$numeroTarjeta' WHERE id = '$idCliente'";
+        $conexion->insertData($query2);
+        $result = array("mensaje" => "Se actualizo la tarjeta del cliente, con éxito!");      
+    }else{
+        $result = array("mensaje" => "Ingresa una tarjeta HSBC válida!");
+    }
+    echo json_encode($result);       
+}
+
 
 switch ($action):
     case 'saveClient':
@@ -117,10 +164,11 @@ switch ($action):
         $apellidoPaterno = $_POST['apellidoPaterno'];
         $apellidoMaterno = $_POST['apellidoMaterno'];
         $fechaNac = $_POST['fechaNac'];
+        $rfc = $_POST['rfc'];
         $email = $_POST['email'];
         $telefono = $_POST['telefono'];
         $code = genCode();
-        $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $telefono, $code, $idPrima, $asistencias);
+        $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias);
 
         if (isset($result["idCliente"]))
             $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);
@@ -143,6 +191,28 @@ switch ($action):
         $actividad = $_POST['actividad'];
         $residencia = $_POST['residencia'];
         saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia);
+        break;
+
+    case 'updateBeneficiare':
+        $idBeneficiario = $_POST['idBeneficiario'];
+        $parentesco = $_POST['parentesco'];
+        $nombre = $_POST['nombre'];
+        $segundoNombre = $_POST['segundoNombre'];
+        $apellidoPaterno = $_POST['apellidoPaterno'];
+        $apellidoMaterno = $_POST['apellidoMaterno'];
+        $estadoCivil = $_POST['estadoCivil'];
+        $sexo = $_POST['sexo'];
+        $fechaNac = $_POST['fechaNac'];
+        $rfc = $_POST['rfc'];
+        $nacionalidad = $_POST['nacionalidad'];
+        $actividad = $_POST['actividad'];
+        $residencia = $_POST['residencia'];
+        updateBeneficiare($conexion, $idBeneficiario, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia);
+        break;
+
+    case 'deleteBeneficiare':
+        $idBeneficiario = $_POST['idBeneficiario'];   
+        deleteBeneficiare($conexion, $idBeneficiario);
         break;
 
     case 'verifyCode':
@@ -171,4 +241,9 @@ switch ($action):
         }
         break;
 
+    case 'verifyCard':
+        $idCliente = $_POST['idCliente'];   
+        $numeroTarjeta = $_POST['numeroTarjeta'];   
+        verifyCard($conexion, $idCliente, $numeroTarjeta);
+        break;
 endswitch;

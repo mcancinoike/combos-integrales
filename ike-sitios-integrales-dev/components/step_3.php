@@ -59,6 +59,11 @@ include_once "../backend/post.php";
 						<input type="date" name="fechaNac" class="frm__control" value="">
 					</div>
 					<div class="frm__group">
+						<label>RFC</label>
+						<input type="text" name="rfc" class="frm__control" maxlength="13">
+						<span class="desktop">El RFC no debe llevar guiones</span>
+					</div>
+					<div class="frm__group">
 						<label>Correo electrónico*</label>
 						<span class="mobile">Enviaremos la póliza de tus productos a este correo electrónico</span>
 						<input type="text" name="email" class="frm__control" maxlength="160" value="">

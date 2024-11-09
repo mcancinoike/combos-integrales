@@ -1,8 +1,10 @@
 <?php
 include_once "../backend/post.php";
-
+$idCliente = $_POST['idCliente'];
+$idBeneficiario = $_POST['idBeneficiario'];
 ?>
-
+<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
+<input type="hidden" id="idBeneficiario" name="idBeneficiario" value="<?php echo $idBeneficiario; ?>">
 <section class="step show" id="editBeneficiario">
 	<div class="header__step">
 		<div class="header__step__content">
@@ -24,73 +26,102 @@ include_once "../backend/post.php";
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
 			<form id="frmEditBenef">
-				<div class="frm">
+			<div class="frm">
 					<div class="frm__group">
 						<label>Parentesco*</label>
 						<select name="parentesco" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="hijo" selected />Hijo</option>
-							<option value="hija">Hija</option>
+							<option value="Esposo(a)">Esposo(a)</option>
+							<option value="Cónyuge">Cónyuge</option>
+							<option value="Hijo(a)">Hijo(a)</option>
+							<option value="Padre">Padre</option>
+							<option value="Madre">Madre</option>
+							<option value="Empleador">Empleador</option>
+							<option value="Otros">Otros</option>
+							<option value="Irrevocable">Irrevocable</option>
+							<option value="Hermano(a)">Hermano(a)</option>
 						</select>
 					</div>
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control" value="Benjamín">
+						<input type="text" name="nombre" class="frm__control">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control" value="">
+						<input type="text" name="segundoNombre" class="frm__control">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control" value="Torres">
+						<input type="text" name="apellidoPaterno" class="frm__control">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control" value="Sánchez">
+						<input type="text" name="apellidoMaterno" class="frm__control">
 					</div>
 					<div class="frm__group">
 						<label>Estado civil*</label>
 						<select name="estadoCivil" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="casado" selected />Casado</option>
+							<option value="No Aplica">No Aplica</option>
 							<option value="soltero">Soltero</option>
+							<option value="casado">Casado</option>
+							<option value="Divorciado">Divorciado</option>
+							<option value="Viudo">Viudo</option>
+							<option value="Unión Libre">Unión Libre</option>
+							<option value="Separado">Separado</option>
 						</select>
 					</div>
 					<div class="frm__group">
-						<label>Sexo*</label>
+						<label>Sexo</label>
 						<select name="sexo" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="masculino" selected />Masculino</option>
+							<option value="masculino">Masculino</option>
 							<option value="femenino">Femenino</option>
 						</select>
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control" value="1980-09-10">
+						<input type="date" name="fechaNac" class="frm__control">
+					</div>
+					<div class="frm__group">
+						<label>RFC</label>
+						<input type="text" name="rfc" class="frm__control" maxlength="13">
+						<span class="desktop">El RFC no debe llevar guiones</span>
 					</div>
 					<div class="frm__group">
 						<label>Nacionalidad*</label>
 						<select name="nacionalidad" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="mexicana" selected />Mexicano</option>
-							<option value="extranjero">Extranjero</option>
+							<?php
+								$query = "SELECT * FROM hsbc_cat_nacionalidades WHERE active = 1 ORDER BY description ASC;";
+								foreach ($conexion->getData($query) as $val) {
+									echo '<option value="' . $val['description'] . '">' . $val['description'] . '</option>';
+								}
+							?>
 						</select>
 					</div>
 					<div class="frm__group">
 						<label>Actividad económica*</label>
 						<select name="actividad" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="estudiante" selected />Estudiante</option>
-							<option value="empresario">Empresario</option>
+							<?php
+								$query = "SELECT * FROM hsbc_cat_actividades_economicas WHERE active = 1 ORDER BY description ASC;";
+								foreach ($conexion->getData($query) as $val) {
+									echo '<option value="' . $val['description'] . '">' . $val['description'] . '</option>';
+								}
+							?>
 						</select>
 					</div>
 					<div class="frm__group">
 						<label>Residencia*</label>
 						<select name="residencia" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="estudiante">Estudiante</option>
-							<option value="empresario">Empresario</option>
+							<?php
+								$query = "SELECT * FROM hsbc_cat_residencias WHERE active = 1 ORDER BY description ASC;";
+								foreach ($conexion->getData($query) as $val) {
+									echo '<option value="' . $val['description'] . '">' . $val['description'] . '</option>';
+								}
+							?>
 						</select>
 					</div>
 				</div>

@@ -1,3 +1,8 @@
+<?php 
+include_once "../backend/post.php";
+$idCliente = $_POST['idCliente'];
+?>
+<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step7">
 	<div class="header__step">
 		<div class="header__step__content">
@@ -40,7 +45,26 @@
 			</div>
 		</div>
 
-		<div class="tbl">
+		<?php
+                $seguro = "";
+                $query = "SELECT cl.id_prima, ah.suma_asegurada, ah.prima_mensual, ah.prima_anual FROM clientes_hsbc cl INNER JOIN hsbc_prima_ah ah ON cl.id_prima = ah.id WHERE cl.id = '$idCliente';";
+                foreach ($conexion->getData($query) as $val) {
+					$seguro .= '<div class="tbl">';
+					$seguro .= '<div class="tbl__body">';
+					$seguro .= '<div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left">';
+					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($val['suma_asegurada']) .' MXN';
+					$seguro .= '</div>';
+					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($val['prima_anual']) .' MXN';
+					$seguro .= '</div></div><div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($val['prima_mensual']) .' MXN</div>';
+					$seguro .= '</div></div></div>';
+
+				}
+				echo $seguro;
+		?>
+		<!-- <div class="tbl">
 			<div class="tbl__body">
 				<div class="tbl__row">
 					<div class="tbl__col left">
@@ -64,7 +88,7 @@
 				</div>
 
 			</div>
-		</div>
+		</div> -->
 	</div>
 
 	<div class="separator__line"></div>
@@ -78,8 +102,27 @@
 				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
 			</div>
 		</div>
+		
+		<?php 
+			$asistencias = "";
+			$price = 0.00;
+			$query = "SELECT ass.assistance, ass.price FROM hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE id_cliente = '$idCliente';";
+			$asistencias .= '<div class="tbl"><div class="tbl__body">';
+			foreach ($conexion->getData($query) as $val) {
+				$price = $price + $val['price'];				
+				$asistencias .= '<div class="tbl__row">';
+				$asistencias .= '<div class="tbl__col left">'. $val['assistance'] .'</div>';
+				$asistencias .= '<div class="tbl__col right">+$'. $val['price'] .' MXN</div></div>';				
+			}
+			$asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+			$asistencias .= '<div class="tbl__col right subtotal2">$'. $price .' MXN</div></div>';
+			$asistencias .= '<div class="tbl__note"><img src="img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
 
-		<div class="tbl">
+			$asistencias .= '</div></div>';
+
+			echo $asistencias;
+		?>
+		<!-- <div class="tbl">
 			<div class="tbl__body">
 				<div class="tbl__row">
 					<div class="tbl__col left">
@@ -110,7 +153,7 @@
 					Tu primer mes de asistencias no tiene costo.
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 
 	<div class="separator__line"></div>
@@ -124,7 +167,7 @@
 						<strong>Total mensual a pagar del seguro + asistencias</strong>
 					</div>
 					<div class="tbl__col right green subtotal2">
-						$442.00 MXN
+						$0.00 MXN
 					</div>
 				</div>
 			</div>
@@ -135,7 +178,7 @@
 
 	<div class="info">
 
-		<div class="resume action">
+		<!-- <div class="resume action">
 			<h3 class="resume__title">Beneficiarios para mi seguro</h3>
 			<div class="resume__action">
 				<a href="javascript:go2StepEdit(6);"><img src="img/icons/edit.svg"></a>
@@ -156,7 +199,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="box__button stp">
 			<button class="box__btn" id="btnStep7">Continuar</button>

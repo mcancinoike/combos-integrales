@@ -1,6 +1,5 @@
 <?php
 include_once "../backend/post.php";
-
 ?>
 <input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step6">
@@ -35,12 +34,13 @@ include_once "../backend/post.php";
 				$beneficiarios = "";
 				$query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = '$idCliente' ORDER BY id ASC;";
 				foreach ($conexion->getData($query) as $val) {
+					// $id = $idCliente . "-" . $val['id'];
 					$nombre = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
 					$beneficiarios .= '<div class="box__row b1">';
 					$beneficiarios .= '<div class="box__info"><div class="box__name">' . $nombre . '</div>';
 					$beneficiarios .= '<div class="box__action">';
 					$beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="img/icons/edit.svg"></a>';
-					$beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] . ');"><img src="img/icons/delete.svg"></a>';
+					$beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="img/icons/delete.svg"></a>';
 					$beneficiarios .= '</div></div>';
 					$beneficiarios .= '<div class="box__percentage">Porcentaje';
 					$beneficiarios .= '<div class="box__percentage__input"><input type="text" name="porcentaje"> %';

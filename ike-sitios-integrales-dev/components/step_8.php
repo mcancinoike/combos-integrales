@@ -1,3 +1,8 @@
+<?php 
+include_once "../backend/post.php";
+$idCliente = $_POST['idCliente'];
+?>
+<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step8">
 	<div class="header__step">
 		<div class="header__step__content">
@@ -54,7 +59,7 @@
 		</div>
 
 		<div class="box__button stp pay">
-			<button class="box__btn disabled" id="btnStep8">Enviar solicitud</button>
+			<button class="box__btn" id="btnStep8">Enviar solicitud</button>
 			<div class="box__button__line"></div>
 		</div>
 	</div>
