@@ -154,13 +154,13 @@ function verifyCard($conexion, $idCliente, $numeroTarjeta)
     if(count($rows)){
         $query2 = "UPDATE clientes_hsbc SET card = '$numeroTarjeta' WHERE id = '$idCliente'";
         $conexion->insertData($query2);
+        apiAfiliados($conexion, $idCliente);
         sendMail($conexion, $idCliente);
         $result = array("mensaje" => "Se actualizo la tarjeta del cliente, con éxito!");      
     }else{
         $result = array("mensaje" => "Tarjeta incorrecta");
     }
-    echo json_encode($result);   
-    // apiAfiliados($conexion, $idCliente);    
+    echo json_encode($result);           
 }
 
 function apiAfiliados($conexion, $idCliente){
@@ -194,33 +194,17 @@ function apiAfiliados($conexion, $idCliente){
 
         $queryAsist = "select ass.assistance as producto, ass.cuenta_ike, ass.clProyecto from hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE ca.id_cliente = '$idCliente';";
         foreach($conexion->getData($queryAsist) as $valAs){
-            
-            // $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";   
-            // foreach($conexion->getData($queryBenf) as $valBn){
-            //     $nombreB = $valBn['nombreB'];
-            //     $paternoB = $valBn['paternoB'];
-            //     $maternoB = $valBn['maternoB'];
-            //     $fechaNacB = date("d-m-Y", strtotime($valBn['fechaNacB']));
-            //     $civilB = $valBn['civilB'];
-            //     $porcentajeB = $valBn['porcentajeB'];
-            //     $sexoB = $valBn['sexoB'];
-            //     $rfcB = $valBn['rfcB'];
-            //     $parentescoB = $valBn['parentescoB'];
-            //     $nacionalidadB = $valBn['nacionalidadB'];
-            //     $residenciaB = $valBn['residenciaB'];
-            //     $actividadB = $valBn['actividadB'];
-            // }
 
             $data_ben = [
                 "Cuenta_IKE" => $valAs['cuenta_ike'],
                 "Movimiento_IKE" => "2",
-                "Clave" => 'A000000000001',
+                "Clave" => $clave,
                 "Fecha_Inicio" => $fecha_inicio,
                 "Fecha_Fin" => $fecha_fin,
                 "card" => $card,
                 "Tipo_Cobro" => "2",
-                "Canal_Venta" => "Ecommerce",
-                "Tipo_Tarjeta" => "debito",
+                "Canal_Venta" => "B2C",
+                "Tipo_Tarjeta" => "debit",
                 "clProyecto" => $valAs['clProyecto'],
                 "Nombre_Titular" => $nombre_titular,
                 "Fecha_Nacimiento" => $fecha_nacimiento,
@@ -229,14 +213,13 @@ function apiAfiliados($conexion, $idCliente){
                 "UltimosTDC" => $ultimosTDC,
                 "Edad" => $edad,
                 "Producto" => $valAs['producto'],
-                "Suma_Asegurada" => "NA",
-                "Fecha_Venta" => $fecha_venta,
+                "Suma_Asegurada" => "0",
                 "Nombre_B" => "NA",
                 "Apellido_Paterno_B" => "NA",
                 "Apellido_Materno_B" => "NA",
                 "Fecha_Nacimiento_B" => "NA",
                 "Estado_Civil_B" => "NA",
-                "Porcentaje_B" => "NA",
+                "Porcentaje_B" => "0",
                 "Sexo_B" => "NA",
                 "Rfc_B" => "NA",
                 "Parentesco_B" => "NA",
@@ -245,11 +228,43 @@ function apiAfiliados($conexion, $idCliente){
                 "Actividad_B" => "NA"
             ];
 
+            $i = 1;
+            $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";   
+            foreach($conexion->getData($queryBenf) as $valBn){
+                $nombreB = $valBn['nombreB'];
+                $paternoB = $valBn['paternoB'];
+                $maternoB = $valBn['maternoB'];
+                $fechaNacB = date("d-m-Y", strtotime($valBn['fechaNacB']));
+                $civilB = $valBn['civilB'];
+                $porcentajeB = $valBn['porcentajeB'];
+                $sexoB = $valBn['sexoB'];
+                $rfcB = $valBn['rfcB'];
+                $parentescoB = $valBn['parentescoB'];
+                $nacionalidadB = $valBn['nacionalidadB'];
+                $residenciaB = $valBn['residenciaB'];
+                $actividadB = $valBn['actividadB'];
+                
+                $k = ($i == 1 ? "" : $i);
+                $data_ben["Nombre_B$k"] = $nombreB;
+                $data_ben["Apellido_Paterno_B$k"] = $paternoB;
+                $data_ben["Apellido_Materno_B$k"] = $maternoB;
+                $data_ben["Fecha_Nacimiento_B$k"] = $fechaNacB;
+                $data_ben["Estado_Civil_B$k"] = $civilB;
+                $data_ben["Porcentaje_B$k"] = "0";
+                $data_ben["Sexo_B$k"] = $sexoB;
+                $data_ben["Rfc_B$k"] = $rfcB;
+                $data_ben["Parentesco_B$k"] = $parentescoB;
+                $data_ben["Nacionalidad_B$k"] = $nacionalidadB;
+                $data_ben["Residencia_B$k"] = $residenciaB;
+                $data_ben["Actividad_B$k"] = $actividadB;
+
+                $i++;
+            }
             // $conexion->insertData($insertar, $data_ben);
             $urlAfiliados = $conexion->urlApiAfiliados;
-            #Enviamos mediante Curl la informacion a la API AFILIADOS
+            // #Enviamos mediante Curl la informacion a la API AFILIADOS
             $curlAfiliados = $conexion->startCurl($urlAfiliados, $tokenType, $token, $data_ben);
-            var_dump($curlAfiliados);
+            // var_dump($curlAfiliados);
         } 
         // var_dump($data_ben);
     }
@@ -257,7 +272,6 @@ function apiAfiliados($conexion, $idCliente){
 
 function sendMail($conexion, $idCliente){
     $query = "SELECT * FROM clientes_hsbc WHERE id = '$idCliente';";
-
     foreach($conexion->getData($query) as $val){    
         $nameClient = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
         $mailClient = $val['email'];
