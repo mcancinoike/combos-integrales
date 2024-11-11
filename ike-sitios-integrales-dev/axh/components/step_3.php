@@ -8,6 +8,7 @@ include_once "../backend/post.php";
 <input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="<?php echo $subtotal_mensual; ?>">
 <input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="<?php echo $subtotal_mensual_asistencia; ?>">
 <input type="hidden" id="prima" name="prima" value="<?php echo $idPrima; ?>">
+<input type="hidden" id="sexo" name="sexo" value="<?php echo $sexo; ?>">
 <input type="hidden" id="asistencias" name="asistencias" value="<?php echo $textAsistencia; ?>">
 <section class="step show" id="step3">
 	<div class="header__step">
@@ -23,11 +24,11 @@ include_once "../backend/post.php";
 	</div>
 
 	<div class="progress">
-        <div>Paso 1 de 6 | Ingresa tus datos de contacto</div>
-        <div class="progress__line">
-            <div class="progress__done"></div>
-        </div>
-    </div>
+		<div>Paso 3 de 8 | Ingresa tus datos de contacto</div>
+		<div class="progress__line">
+			<div class="progress__done s3"></div>
+		</div>
+	</div>
 
 	<div class="info">
 		<div class="box">
@@ -40,34 +41,39 @@ include_once "../backend/post.php";
 				<div class="frm">
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control" maxlength="60" value="">
+						<input type="text" name="nombre" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control" maxlength="60" value="">
+						<input type="text" name="segundoNombre" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control" maxlength="60" value="">
+						<input type="text" name="apellidoPaterno" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control" maxlength="60" value="">
+						<input type="text" name="apellidoMaterno" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control" value="">
+						<input type="date" name="fechaNac" class="frm__control">
+					</div>
+					<div class="frm__group">
+						<label>RFC</label>
+						<input type="text" name="rfc" class="frm__control" maxlength="13">
+						<span class="desktop">El RFC no debe llevar guiones</span>
 					</div>
 					<div class="frm__group">
 						<label>Correo electrónico*</label>
 						<span class="mobile">Enviaremos la póliza de tus productos a este correo electrónico</span>
-						<input type="text" name="email" class="frm__control" maxlength="160" value="">
+						<input type="text" name="email" class="frm__control" maxlength="160">
 						<span class="desktop">Enviaremos la poliza de tus productos a este correo electrónico</span>
 					</div>
 					<div class="frm__group">
 						<label>Número celular*</label>
 						<span class="mobile">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
-						<input type="text" name="telefono" class="frm__control" maxlength="10" value="">
+						<input type="text" name="telefono" class="frm__control" maxlength="10">
 						<span class="desktop">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
 					</div>
 				</div>

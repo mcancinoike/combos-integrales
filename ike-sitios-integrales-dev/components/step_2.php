@@ -65,7 +65,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
 
     <div class="separator__line"></div>
 
-    <div class="info">
+    <div id="resumen_seguro" class="info">
         <div class="resume">
             <h3 class="resume__title">Resumen de solicitud del seguro</h3>
         </div>
@@ -97,7 +97,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
         </div>
     </div>
 
-    <div class="separator__line"></div>
+    <div id="line_seguro" class="separator__line"></div>
 
     <div class="info">
 

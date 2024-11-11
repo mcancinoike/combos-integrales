@@ -93,11 +93,15 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$("#main-content").html(data);
+				if(idPrima == 0){
+					$('#resumen_seguro').hide();
+					$('#line_seguro').hide();
+				}
 			},
 			error: function (request, status, error) {
 				console.log('Ha ocurrido un error!');
 			}
-		});
+		});		
 	});
 
 	$(document).on('click', "input[name=seguro]", function () {
@@ -244,7 +248,7 @@ $(document).ready(function () {
 		$('#tblStep2Total').attr('data-total', total);
 		let totalFormat = total;
 
-		$('#tblStep2Total .subtotal2').html(totalFormat.toFixed(2) + ' MXN');
+		$('#tblStep2Total .subtotal2').html('$' + totalFormat.toFixed(2) + ' MXN');
 		$('input[name=subtotal_mensual_asistencia]').val(totalFormat.toFixed(2));
 		if (totalChecked) {
 			$('#tblStep2 .tbl__note').show();
@@ -302,7 +306,13 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (rfc != '' && (rfc.length > 12 && rfc.length <= 13)) {			
+		if (rfc == '') {			
+			toastr.error("Escribe el RFC");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
+		if (rfc.length <= 11) {			
 			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
@@ -423,6 +433,27 @@ $(document).ready(function () {
 				$('input[name=codigoSms]').focus();
 			}
 		});
+
+		// $.ajax({
+		// 	url: "components/step_5.php",
+		// 	cache: false,
+		// 	type: 'POST',
+		// 	data: {
+		// 		idCliente: idCliente
+		// 	},
+		// 	beforeSend: function () {
+		// 		$("#loading").show();
+		// 	},
+		// 	complete: function () {
+		// 		$("#loading").hide();
+		// 	},
+		// 	success: function (data) {
+		// 		$("#main-content").html(data);
+		// 	},
+		// 	error: function (request, status, error) {
+		// 		console.log('Ha ocurrido un error!');
+		// 	}
+		// });
 	});
 
 	//Step 5
@@ -512,7 +543,7 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (rfc != '' && (rfc.length > 12 && rfc.length <= 13)) {			
+		if (rfc.length <= 11) {			
 			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
@@ -644,7 +675,7 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (rfc != '' && (rfc.length > 12 && rfc.length < 13)) {			
+		if (rfc.length <= 11) {			
 			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
@@ -823,6 +854,12 @@ $(document).ready(function () {
 			return false;
 		}
 
+		if (numeroTarjeta.length < 16) {
+			toastr.error("El número de la tarjeta debe de tener 16 dígitos.");
+			$('input[name=numeroTarjeta]').focus();
+			return false;
+		}
+
 		if (condiciones == '') {
 			toastr.error("Debe aceptar las condiciones generales.");
 			return false;
@@ -844,24 +881,30 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				console.log(data.mensaje);
-				$.ajax({
-					url: "components/step_final.php",
-					cache: false,
-					type: 'POST',
-					data: {},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-					},
-					success: function (data) {
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
+				if(data.mensaje != 'Tarjeta incorrecta'){
+					$.ajax({
+						url: "components/step_final.php",
+						cache: false,
+						type: 'POST',
+						data: {},
+						beforeSend: function () {
+							$("#loading").show();
+						},
+						complete: function () {
+							$("#loading").hide();
+						},
+						success: function (data) {
+							$("#main-content").html(data);
+						},
+						error: function (request, status, error) {
+							console.log('Ha ocurrido un error!');
+						}
+					});
+				}else{
+					toastr.error("Ingresa una tarjeta HSBC válida.");
+					$('input[name=numeroTarjeta]').focus();
+					return false;
+				}				
 			},
 			error: function (request, status, error) {
 				console.log('Ha ocurrido un error!');

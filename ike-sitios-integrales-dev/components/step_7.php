@@ -47,8 +47,12 @@ $idCliente = $_POST['idCliente'];
 
 		<?php
                 $seguro = "";
+				$count = 0;
+				$prima = 0;
                 $query = "SELECT cl.id_prima, ah.suma_asegurada, ah.prima_mensual, ah.prima_anual FROM clientes_hsbc cl INNER JOIN hsbc_prima_ah ah ON cl.id_prima = ah.id WHERE cl.id = '$idCliente';";
                 foreach ($conexion->getData($query) as $val) {
+					$count++;
+					$prima = $val['prima_mensual'];
 					$seguro .= '<div class="tbl">';
 					$seguro .= '<div class="tbl__body">';
 					$seguro .= '<div class="tbl__row">';
@@ -58,37 +62,26 @@ $idCliente = $_POST['idCliente'];
 					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($val['prima_anual']) .' MXN';
 					$seguro .= '</div></div><div class="tbl__row">';
 					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
-					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($val['prima_mensual']) .' MXN</div>';
+					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($prima) .' MXN</div>';
 					$seguro .= '</div></div></div>';
 
 				}
+				if($count == 0){
+					$cero = 0;
+					$seguro .= '<div class="tbl">';
+					$seguro .= '<div class="tbl__body">';
+					$seguro .= '<div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left">';
+					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($cero) .' MXN';
+					$seguro .= '</div>';
+					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($cero) .' MXN';
+					$seguro .= '</div></div><div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($cero) .' MXN</div>';
+					$seguro .= '</div></div></div>';
+				}
 				echo $seguro;
 		?>
-		<!-- <div class="tbl">
-			<div class="tbl__body">
-				<div class="tbl__row">
-					<div class="tbl__col left">
-						Suma asegurada:
-						<br>
-						$750,000 MXN
-					</div>
-					<div class="tbl__col right">
-						Prima anual:
-						<br>
-						$1,740.00 MXN
-					</div>
-				</div>
-				<div class="tbl__row">
-					<div class="tbl__col left subtotal">
-						Subtotal mensual a pagar
-					</div>
-					<div class="tbl__col right subtotal2">
-						$145.00 MXN
-					</div>
-				</div>
-
-			</div>
-		</div> -->
 	</div>
 
 	<div class="separator__line"></div>
@@ -105,55 +98,23 @@ $idCliente = $_POST['idCliente'];
 		
 		<?php 
 			$asistencias = "";
-			$price = 0.00;
+			$price = 0;
 			$query = "SELECT ass.assistance, ass.price FROM hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE id_cliente = '$idCliente';";
 			$asistencias .= '<div class="tbl"><div class="tbl__body">';
 			foreach ($conexion->getData($query) as $val) {
 				$price = $price + $val['price'];				
 				$asistencias .= '<div class="tbl__row">';
 				$asistencias .= '<div class="tbl__col left">'. $val['assistance'] .'</div>';
-				$asistencias .= '<div class="tbl__col right">+$'. $val['price'] .' MXN</div></div>';				
+				$asistencias .= '<div class="tbl__col right">+$'. formatoMoneda($val['price']) .' MXN</div></div>';				
 			}
 			$asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
-			$asistencias .= '<div class="tbl__col right subtotal2">$'. $price .' MXN</div></div>';
+			$asistencias .= '<div class="tbl__col right subtotal2">$'. formatoMoneda($price) .' MXN</div></div>';
 			$asistencias .= '<div class="tbl__note"><img src="img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
 
 			$asistencias .= '</div></div>';
 
 			echo $asistencias;
-		?>
-		<!-- <div class="tbl">
-			<div class="tbl__body">
-				<div class="tbl__row">
-					<div class="tbl__col left">
-						Asistencia médica
-					</div>
-					<div class="tbl__col right">
-						+$99.00 MXN
-					</div>
-				</div>
-				<div class="tbl__row">
-					<div class="tbl__col left">
-						Asistencia para padres
-					</div>
-					<div class="tbl__col right">
-						+$99.00 MXN
-					</div>
-				</div>
-				<div class="tbl__row">
-					<div class="tbl__col left subtotal">
-						Subtotal mensual a pagar
-					</div>
-					<div class="tbl__col right subtotal2">
-						$297.00 MXN
-					</div>
-				</div>
-				<div class="tbl__note">
-					<img src="img/icons/info.svg" class="info__icon">
-					Tu primer mes de asistencias no tiene costo.
-				</div>
-			</div>
-		</div> -->
+		?>		
 	</div>
 
 	<div class="separator__line"></div>
@@ -167,7 +128,7 @@ $idCliente = $_POST['idCliente'];
 						<strong>Total mensual a pagar del seguro + asistencias</strong>
 					</div>
 					<div class="tbl__col right green subtotal2">
-						$0.00 MXN
+						$<?php echo formatoMoneda(($prima + $price))?> MXN
 					</div>
 				</div>
 			</div>
@@ -178,29 +139,27 @@ $idCliente = $_POST['idCliente'];
 
 	<div class="info">
 
-		<!-- <div class="resume action">
+		<div class="resume action">
 			<h3 class="resume__title">Beneficiarios para mi seguro</h3>
 			<div class="resume__action">
 				<a href="javascript:go2StepEdit(6);"><img src="img/icons/edit.svg"></a>
-				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+				<a href="javascript:go2StepEdit(6);"><img src="img/icons/delete.svg"></a>
 			</div>
 		</div>
 
-		<div class="tbl">
-			<div class="tbl__body">
-				<div class="tbl__row">
-					<div class="tbl__col left full">
-						<img src="img/icons/person2.svg">
-						<p>
-							Benjamín Torres Sánchez
-							<br>
-							<span class="percentage">100%</span>
-						</p>
-					</div>
-				</div>
-			</div>
-		</div> -->
-
+		<?php
+                $beneficiarios = "";
+                $query = "SELECT * FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
+                foreach ($conexion->getData($query) as $val) {
+					$name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
+					$beneficiarios .= '<div class="tbl"><div class="tbl__body">';
+					$beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
+					$beneficiarios .= '<img src="img/icons/person2.svg">';
+					$beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">100%</span></p>';
+					$beneficiarios .= '</div></div></div></div>';
+				}
+				echo $beneficiarios;
+		?>
 		<div class="box__button stp">
 			<button class="box__btn" id="btnStep7">Continuar</button>
 			<div class="box__button__line"></div>

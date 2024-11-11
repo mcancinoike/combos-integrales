@@ -8,6 +8,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
 <input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="<?php echo $subtotal_mensual; ?>">
 <input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="">
 <input type="hidden" id="prima" name="prima" value="<?php echo $idPrima; ?>">
+<input type="hidden" id="sexo" name="sexo" value="<?php echo $sexo; ?>">
 <section class="step show" id="step2">
     <div class="header__step">
 		<div class="header__step__content">
@@ -57,7 +58,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
 
     <div class="separator__line"></div>
 
-    <div class="info">
+    <div id="resumen_seguro" class="info">
         <div class="resume">
             <h3 class="resume__title">Resumen de solicitud del seguro</h3>
         </div>
@@ -69,12 +70,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
                         Suma asegurada:
                         <br>
                         <?php echo "$" . formatoMoneda($suma_asegurada) . " MXN"; ?>
-                    </div>
-                    <div class="tbl__col right">
-                        Suma total anual:
-                        <br>
-                        <?php echo "$" . formatoMoneda($prima_anual) . " MXN"; ?>
-                    </div>
+                    </div>                  
                 </div>
                 <div class="tbl__row">
                     <div class="tbl__col left subtotal">
@@ -89,7 +85,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
         </div>
     </div>
 
-    <div class="separator__line"></div>
+    <div id="line_seguro" class="separator__line"></div>
 
     <div class="info">
 

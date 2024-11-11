@@ -7,6 +7,7 @@ $conexion = new conexion;
 <input type="hidden" id="prima_anual" name="prima_anual" value="">
 <input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="">
 <input type="hidden" id="prima" name="prima" value="">
+<input type="hidden" id="sexo" name="sexo" value="">
 <section class="step show" id="step1">
     <div class="header__step">
         <div class="header__step__content">
@@ -37,20 +38,18 @@ $conexion = new conexion;
                 </div>
                 <div class="frm__group">
                     <label>Sexo</label>
-                    <select name="sexo" class="frm__control">
+                    <select id="sexo" name="sexo" class="frm__control">
                         <option value="">Seleccione</option>
                         <option value="mujer">Mujer</option>
                         <option value="hombre">Hombre</option>
                     </select>
                 </div>
-                <div class="frm__group">
-                    <label>Elige una suma asegurada</label>
-                    <select name="sumaAsegurada" class="frm__control" id="sumaAseguradaS1">
-                        <option value="">Seleccione</option>  
-                        <option value="1000">$1,000 MXN</option>
-                        <option value="2000">$2,000 MXN</option>
-                        <option value="3000">$3,000 MXN</option>                      
-                    </select>
+                <div class="frm__group">                    
+                    <div id="ajaxSumaAsegurada">
+                        <!-- <select name="sumaAsegurada" class="frm__control" id="sumaAseguradaS1">
+                            <option value="">Seleccione</option>                                               
+                        </select> -->
+                    </div>
                 </div>
             </div>
         </form>

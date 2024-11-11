@@ -1,162 +1,167 @@
+<?php 
+include_once "../backend/post.php";
+$idCliente = $_POST['idCliente'];
+?>
+<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step7">
-    <div class="header__step">
-        <div class="header__step__content">
-            <a href="javascript:go2Step(6);" class="header__step__arrow">
-                <img src="img/icons/arrow-left.svg">
-            </a>
-            <div class="header__step__title">
-                <img src="img/ike-logo.svg" class="header__ike"> |
-                <img src="img/hsbc-logo2.svg" class="header__hsbc">
-            </div>
-        </div>
-    </div>
+	<div class="header__step">
+		<div class="header__step__content">
+			<a href="./" class="header__step__arrow">
+				<img src="img/icons/arrow-left.svg">
+			</a>
+			<div class="header__step__title">
+				<img src="img/ike-logo.svg" class="header__ike"> | 
+				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+			</div>
+		</div>
+	</div>
 
-    <div class="progress">
-        <div>Paso 5 de 6 | Verifica tu solicitud</div>
-        <div class="progress__line">
-            <div class="progress__done s5"></div>
-        </div>
-    </div>
+	<div class="progress">
+		<div>Paso 7 de 8 | Verifica tu solicitud</div>
+		<div class="progress__line">
+			<div class="progress__done s7"></div>
+		</div>
+	</div>
 
-    <div class="info">
-        <div class="box">
-            <div class="box__title">
-                Verifica los detalles de tu solicitud. Puedes editarlos en caso de que lo necesites.
-            </div>
-        </div>
-    </div>
+	<div class="info">
+		<div class="box">
+			<div class="box__title">
+				Verifica los detalles de tu solicitud. Puedes editarlos en caso de que lo necesites.
+			</div>
+		</div>
+	</div>
 
-    <div class="separator__line"></div>
+	<div class="separator__line"></div>
 
-    <div class="info">
+	<div class="info">
 
-        <input type="hidden" id="isBack2Edit" value="0">
+		<input type="hidden" id="isBack2Edit" value="0">
 
-        <div class="resume action">
-            <h3 class="resume__title">Seguro por Hospitalización</h3>
-            <div class="resume__action">
-                <a href="javascript:go2StepEdit(1);"><img src="img/icons/edit.svg"></a>
-                <a href="javascript:;"><img src="img/icons/delete.svg"></a>
-            </div>
-        </div>
+		<div class="resume action">
+			<h3 class="resume__title">Seguro por Hospitalización</h3>
+			<div class="resume__action">
+				<a href="javascript:go2StepEdit(1);"><img src="img/icons/edit.svg"></a>
+				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+			</div>
+		</div>
 
-        <div class="tbl">
-            <div class="tbl__body">
-                <div class="tbl__row">
-                    <div class="tbl__col left">
-                        Suma asegurada:
-                    </div>
-                    <div class="tbl__col right">
-                        $1,000 MXN
-                    </div>
-                </div>
-                <div class="tbl__row">
-                    <div class="tbl__col left subtotal">
-                        Subtotal mensual a pagar
-                    </div>
-                    <div class="tbl__col right subtotal2">
-                        $193.33 MXN
-                    </div>
-                </div>
+		<?php
+                $seguro = "";
+				$count = 0;
+				$prima = 0;
+                $query = "SELECT cl.id_prima, ap.suma_asegurada, ap.hombre, ap.mujer, cl.sexo FROM clientes_hsbc cl INNER JOIN hsbc_prima_ap ap ON cl.id_prima = ap.id WHERE cl.id = '$idCliente';";
+                foreach ($conexion->getData($query) as $val) {
+					$count++;
+					$prima = ($val['sexo'] == 'hombre' ? $val['hombre'] : $val['mujer']);
+					$seguro .= '<div class="tbl">';
+					$seguro .= '<div class="tbl__body">';
+					$seguro .= '<div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left">';
+					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($val['suma_asegurada']) .' MXN';
+					$seguro .= '</div>';
+					$seguro .= '</div><div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($prima) .' MXN</div>';
+					$seguro .= '</div></div></div>';
 
-            </div>
-        </div>
-    </div>
+				}
+				if($count == 0){
+					$cero = 0;
+					$seguro .= '<div class="tbl">';
+					$seguro .= '<div class="tbl__body">';
+					$seguro .= '<div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left">';
+					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($cero) .' MXN';
+					$seguro .= '</div>';
+					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($cero) .' MXN';
+					$seguro .= '</div></div><div class="tbl__row">';
+					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($cero) .' MXN</div>';
+					$seguro .= '</div></div></div>';
+				}
+				echo $seguro;
+		?>
+	</div>
 
-    <div class="separator__line"></div>
+	<div class="separator__line"></div>
 
-    <div class="info">
+	<div class="info">
 
-        <div class="resume action">
-            <h3 class="resume__title">Programa de Asistencias Iké</h3>
-            <div class="resume__action">
-                <a href="javascript:go2StepEdit(2);"><img src="img/icons/edit.svg"></a>
-                <a href="javascript:;"><img src="img/icons/delete.svg"></a>
-            </div>
-        </div>
+		<div class="resume action">
+			<h3 class="resume__title">Programa de Asistencias Iké</h3>
+			<div class="resume__action">
+				<a href="javascript:go2StepEdit(2);"><img src="img/icons/edit.svg"></a>
+				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+			</div>
+		</div>
+		
+		<?php 
+			$asistencias = "";
+			$price = 0;
+			$query = "SELECT ass.assistance, ass.price FROM hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE id_cliente = '$idCliente';";
+			$asistencias .= '<div class="tbl"><div class="tbl__body">';
+			foreach ($conexion->getData($query) as $val) {
+				$price = $price + $val['price'];				
+				$asistencias .= '<div class="tbl__row">';
+				$asistencias .= '<div class="tbl__col left">'. $val['assistance'] .'</div>';
+				$asistencias .= '<div class="tbl__col right">+$'. formatoMoneda($val['price']) .' MXN</div></div>';				
+			}
+			$asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+			$asistencias .= '<div class="tbl__col right subtotal2">$'. formatoMoneda($price) .' MXN</div></div>';
+			$asistencias .= '<div class="tbl__note"><img src="img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
 
-        <div class="tbl">
-            <div class="tbl__body">
-                <div class="tbl__row">
-                    <div class="tbl__col left">
-                        Asistencia médica
-                    </div>
-                    <div class="tbl__col right">
-                        +$99.00 MXN
-                    </div>
-                </div>
-                <div class="tbl__row">
-                    <div class="tbl__col left">
-                        Asistencia para padres
-                    </div>
-                    <div class="tbl__col right">
-                        +$99.00 MXN
-                    </div>
-                </div>
-                <div class="tbl__row">
-                    <div class="tbl__col left subtotal">
-                        Subtotal mensual a pagar
-                    </div>
-                    <div class="tbl__col right subtotal2">
-                        $297.00 MXN
-                    </div>
-                </div>
-                <div class="tbl__note">
-                    <img src="img/icons/info.svg" class="info__icon">
-                    Tu primer mes de asistencias no tiene costo.
-                </div>
-            </div>
-        </div>
-    </div>
+			$asistencias .= '</div></div>';
 
-    <div class="separator__line"></div>
+			echo $asistencias;
+		?>		
+	</div>
 
-    <div class="info">
+	<div class="separator__line"></div>
 
-        <div class="tbl">
-            <div class="tbl__body">
-                <div class="tbl__row">
-                    <div class="tbl__col left green subtotal">
-                        <strong>Total mensual a pagar del seguro + asistencias</strong>
-                    </div>
-                    <div class="tbl__col right green subtotal2">
-                        $490.33 MXN
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="info">
 
-    <div class="separator__line"></div>
+		<div class="tbl">
+			<div class="tbl__body">
+				<div class="tbl__row">
+					<div class="tbl__col left green subtotal">
+						<strong>Total mensual a pagar del seguro + asistencias</strong>
+					</div>
+					<div class="tbl__col right green subtotal2">
+					$<?php echo formatoMoneda(($prima + $price))?> MXN
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="info">
+	<div class="separator__line"></div>
 
-        <div class="resume action">
-            <h3 class="resume__title">Beneficiarios para mi seguro</h3>
-            <div class="resume__action">
-                <a href="javascript:go2StepEdit(6);"><img src="img/icons/edit.svg"></a>
-                <a href="javascript:;"><img src="img/icons/delete.svg"></a>
-            </div>
-        </div>
+	<div class="info">
 
-        <div class="tbl">
-            <div class="tbl__body">
-                <div class="tbl__row">
-                    <div class="tbl__col left full">
-                        <img src="img/icons/person2.svg">
-                        <p>
-                            Benjamín Torres Sánchez
-                            <br>
-                            <span class="percentage">100%</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<div class="resume action">
+			<h3 class="resume__title">Beneficiarios para mi seguro</h3>
+			<div class="resume__action">
+				<a href="javascript:go2StepEdit(6);"><img src="img/icons/edit.svg"></a>
+				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+			</div>
+		</div>
 
-        <div class="box__button stp">
-            <button class="box__btn" id="btnStep7">Continuar</button>
-            <div class="box__button__line"></div>
-        </div>
-    </div>
+		<?php
+                $beneficiarios = "";
+                $query = "SELECT * FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
+                foreach ($conexion->getData($query) as $val) {
+					$name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
+					$beneficiarios .= '<div class="tbl"><div class="tbl__body">';
+					$beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
+					$beneficiarios .= '<img src="img/icons/person2.svg">';
+					$beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">100%</span></p>';
+					$beneficiarios .= '</div></div></div></div>';
+				}
+				echo $beneficiarios;
+		?>
+		<div class="box__button stp">
+			<button class="box__btn" id="btnStep7">Continuar</button>
+			<div class="box__button__line"></div>
+		</div>
+	</div>
 </section>

@@ -36,27 +36,27 @@ include_once "../backend/post.php";
 			</div>
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
-			<form id="frmRegister3">
+			<form id="frmRegister3" autocomplete="on">
 				<div class="frm">
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control" maxlength="60" value="">
+						<input type="text" name="nombre" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control" maxlength="60" value="">
+						<input type="text" name="segundoNombre" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control" maxlength="60" value="">
+						<input type="text" name="apellidoPaterno" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control" maxlength="60" value="">
+						<input type="text" name="apellidoMaterno" class="frm__control" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control" value="">
+						<input type="date" name="fechaNac" class="frm__control">
 					</div>
 					<div class="frm__group">
 						<label>RFC</label>
@@ -66,13 +66,13 @@ include_once "../backend/post.php";
 					<div class="frm__group">
 						<label>Correo electrónico*</label>
 						<span class="mobile">Enviaremos la póliza de tus productos a este correo electrónico</span>
-						<input type="text" name="email" class="frm__control" maxlength="160" value="">
+						<input type="text" name="email" class="frm__control" maxlength="160">
 						<span class="desktop">Enviaremos la poliza de tus productos a este correo electrónico</span>
 					</div>
 					<div class="frm__group">
 						<label>Número celular*</label>
 						<span class="mobile">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
-						<input type="text" name="telefono" class="frm__control" maxlength="10" value="">
+						<input type="text" name="telefono" class="frm__control" maxlength="10">
 						<span class="desktop">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
 					</div>
 				</div>

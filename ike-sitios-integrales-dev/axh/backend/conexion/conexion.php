@@ -17,6 +17,9 @@ class Conexion
     private $urlSendSms;
     public $captchaPublic;
     public $captchaSecret;
+    public $urlOauth;
+    public $urlApiAfiliados;
+    public $authorizationOauth;
 
     function __construct()
     {
@@ -33,6 +36,9 @@ class Conexion
         $this->urlSendSms = $data["urlSendSms"];
         $this->captchaSecret = $data["captchaSecret"];
         $this->captchaPublic = $data["captchaPublic"];
+        $this->urlOauth = $data["urlOauth"];
+        $this->authorizationOauth = $data["authorizationOauth"];
+        $this->urlApiAfiliados = $data["urlApiAfiliados"];
 
         try {
             $this->conexion = new PDO("mysql:host=" . $this->serverDBEscritura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
@@ -219,6 +225,77 @@ class Conexion
         } catch (\Exception $e) {
             error_log("Error post curl sms -> " . $e->getMessage());
             return "Error al enviar código SMS";
+        }
+    }
+
+    /**
+     * Conexión mediante CURL para API´S
+     * Obtiene un token de autenticación para la API de afiliados
+     * Inserta los valores que le enviamos a la API de afiliados
+     * @param url Parametro con la url con la que necesitamos inciar el CURL
+     * @param tokenType Tipo de token de autorización para el envio de datos a la API
+     * @param token Token de autorización para el envio de datos a la API
+     * @param data_array Array con los valores a insertar en la API.
+     * @return data Retorna la informacion obtenida en casa de exito, en caso de error, retorna un booleano false
+     */
+    public function startCurl($url, $tokenType = "", $token = "", $data_array = ""){
+        try {
+                # Iniciamos una instancia de curl
+            $curl = curl_init($url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
+            # Verificamos si estan enviando datos para la API de afiliados o si estan obteniendo un token
+            if($token != "" && $tokenType != ""){
+                curl_setopt($curl, CURLOPT_POSTFIELDS,  json_encode($data_array));
+                $array = array(
+                    "authorization: ".$tokenType." ".$token ,
+                    "content-type: application/json");
+                $errorType = "/Load/Single";
+            }
+            #respuesta para solo envio de datos y token
+            else if($token != "" && $data_array != ""){
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data_array));
+                $array = array(
+                    "X-Auth-token: ". $token,
+                    "content-type: application/json");
+                $errorType = "tokenizacion";
+            }
+            #respuesta para solo envio de datos
+            else if($data_array != ""){
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data_array));
+                $array = array(
+                    "content-type: application/json");
+                $errorType = "oauth/tokenizacion";
+            }
+            # Respuesta en caso de busqueda de token
+            else{
+                $array = array(
+                    "authorization: ".$this->authorizationOauth,
+                    "content-type: application/json");
+                $errorType = "oauth/token";
+            }
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $array);
+            # Guardamos la captura de informacion en data
+            $data = curl_exec($curl);
+            $error = curl_error($curl);
+            #Si existe un error lo guardamos en logs_api
+            if($error){
+                $query = "INSERT INTO logs_api (api_response,error)
+                VALUES('Error: ".$errorType." ','".$error."')";
+                $this->insertData($query);
+                # Cerramos el Curl y liberamos recursos del sistema
+                curl_close($curl);
+                return false;
+            }
+            # Si no hay errores retornamos la respuesta en formato JSON
+            else{
+                # Cerramos el Curl y liberamos recursos del sistema
+                curl_close($curl);
+                return json_decode($data, true);
+            }
+        } catch (\Exception $e) {
+            $this->error = $e->getMessage();
+            return false;
         }
     }
 }

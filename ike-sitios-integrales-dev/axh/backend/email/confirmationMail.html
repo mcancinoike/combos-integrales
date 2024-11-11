@@ -7,10 +7,7 @@
   <meta content='width=device-width, initial-scale=1.0' name='viewport' />
   <title>Confirmación de compra</title>
   <style type='text/css'>
-      @font-face {
-      font-family: Avenir;
-      src: url(fuentes/AvenirMedium.otf);
-      }
+      table, td, div, h1, p {font-family: Arial, sans-serif;}
       .ExternalClass {width: 100%;}
       .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div, .ExternalClass b, .ExternalClass br, .ExternalClass img {line-height: 100% !important;}
       /* iOS BLUE LINKS */
@@ -120,54 +117,34 @@
 											      </td> 
 												  </tr>
 													<tr>
-														<td align='center' class='hund ripplelink' width='600'>
-															<img align='center' width='100%' style='border-radius: 3px 3px 0px 0px; width: 100%;' class='hund' src='cid:headerBody' />
-														</td>
-													</tr>
-													<!-- <tr>
-														<td class='td-padding' align='center' style='font-family: "Avenir"; color: #212121!important; font-size: 20px; line-height: 80px; padding-top: 18px; padding-left: 18px!important; padding-right: 18px!important; padding-bottom: 0px!important;background: #f2f2f2;'>
-															¡Felicidades, usted ya es miembro de Tu Aliado Falabella! <b id='clienteVar'>clienteVar</b>
-														</td>
-													</tr> -->
-													<tr>
-														<td class='td-padding' align='left' style='font-family: "Avenir"; color: #212121!important; font-size: 24px; line-height: 30px; padding-top: 18px; padding-left: 18px!important; padding-right: 18px!important; padding-bottom: 0px!important;'>
-														</td>
-													</tr>
-												</table><br>
-												<table class='detalleOrden'>
-													<tr style='font-family: "Avenir"; color: #000!important; font-size: 20px; line-height: 50px; padding-top: 18px; padding-left: 18px!important; padding-right: 18px!important; padding-bottom: 0px!important;'>
-														<th class='columnaDetalleOrden'>Fecha de Compra</th>
-														<td class='columnaDetalleOrden'><b id='fechaCompra' style='color: black;'>fechaVar</b></td>
-													</tr>
-													<tr style='font-family: "Avenir"; color: #000!important; font-size: 20px; line-height: 50px; padding-top: 18px; padding-left: 18px!important; padding-right: 18px!important; padding-bottom: 0px!important;'>
-														<td class='columnaDetalleOrden'>Número de Folio</td>
-														<td class='columnaDetalleOrden'><b id='numeroOrden' style='color: black;'>folioVar</b></td>
-													</tr>
-												</table>
+                              <table width="600" style="background-color: #ffa133;">
+                                  <tr>
+                                      <th style="height: 50px;">Fecha de Compra:</th>
+                                      <td style="font-weight:900; font-size: 18px; color: #014c82; height: 50px;"><b id='fechaVar'>fechaVar</b></td>                                      
+                                  </tr>
+                                  <tr>
+                                      
+                                  </tr>
+                              </table>
+                          </tr>													
 												<br><br>
-												<table id='tablaProductos' class='detalleOrden'>
+												<table id='tablaProductos' class='detalleOrden' width="900" style="margin-left: 50px;">
 													<tr style='font-family: "Avenir"; color: #000!important; font-size: 20px; line-height: 24px; padding-top: 18px; padding-left: 18px!important; padding-right: 18px!important; padding-bottom: 0px!important;' >
 														<th class='columnaDetalleCompra'>Titular</th>
 														<th class='columnaDetalleCompra'>Nombre del producto</th>
-														<th class='columnaDetalleCompra'>Cobertura</th>
-                            <th class='columnaDetalleCompra'>Precio</th>
+                            <th class='columnaDetalleCompra'>Pago Mensual</th>
                             <tableProductos></tableProductos>
 													</tr>
 												</table>
-												<br><br>
+												<br><br><br>
+                        <p style="text-align: left; margin: 20px; font-size: 12px;">Adjunto encontrarás el Welcome Kit de tu programa de asistencia. El cargo se verá reflejado
+                          en tu próximo estado de cuenta HSBC.</p><br><br>
 											</td>
 										</tr>
-										<!-- <tr>
-                      <td class='td-padding' align='justify' style='color: 000; font-family: "Avenir"; font-size: 12px; line-height: 20px; padding-top: 18px; padding-left: 45px!important; padding-right: 45px!important; padding-bottom: 18px!important;'>                        
-                        Adjunto encontrará el Welcome kit de su servicio de asistencia.
-Para comenzar a utilizar los beneficios de este programa o resolver cualquier duda se puede comunicar con nosotros al 55 5480 0900 las 24 horas del día los 365 días del año. El cargo lo verá reflejado en su próximo estado de cuenta de su Tarjeta de Crédito o Débito Citibanamex con leyenda con la que podrá identificar este cargo será: “mes” Libra Plus, podrá cancelar el servicio sin ningún costo en cualquier momento.
-Podrá realizar cualquier aclaración o queja de la asistencia Libra Plus Citibanamex llamando a Tarjetas Banamex al 55 1226 - 2639 (1-BANAMEX) de lunes a viernes de 8:00 de la mañana a 8:00 de la noche y sábados y domingos de 9:00 de la mañana a 5:00 de la tarde.
-											</td>
-										</tr> -->
 										<tr>
-											<td align='center' class='hund ripplelink' width='600' style='height: 20px;'>
+											<td align='center' class='hund ripplelink' width='600'>
 												<br>
-												<img class='hund' src='cid:footerMail' style='margin-bottom: 0px; width:100%;' />												
+												<img class='hund' src='cid:footerMail' style='margin-bottom: 0px;' width="600" />												
 											</td>
 										</tr>
 									</table>

@@ -24,13 +24,13 @@ include_once "../backend/post.php";
 			</div>
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
-			<form id="frmBeneficiario">
+			<form id="frmBeneficiario" autocomplete="on">
 				<div class="frm">
 					<div class="frm__group">
 						<label>Parentesco*</label>
 						<select name="parentesco" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="Esposo(a)">Esposo(a)</option>
+							<option value="Esposo(a) selected">Esposo(a)</option>
 							<option value="Cónyuge">Cónyuge</option>
 							<option value="Hijo(a)">Hijo(a)</option>
 							<option value="Padre">Padre</option>
@@ -74,7 +74,7 @@ include_once "../backend/post.php";
 						<label>Sexo</label>
 						<select name="sexo" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="masculino">Masculino</option>
+							<option value="masculino" selected>Masculino</option>
 							<option value="femenino">Femenino</option>
 						</select>
 					</div>

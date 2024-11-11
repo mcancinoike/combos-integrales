@@ -22,6 +22,8 @@ $subtotal_mensual_asistencia = empty($subtotal_mensual_asistencia) ? 0 : $subtot
 
 $idPrima = !isset($_POST['idPrima']) ? 0 : $conexion->xssClean($_POST['idPrima']);
 
+$sexo = !isset($_POST['sexo']) ? 0 : $conexion->xssClean($_POST['sexo']);
+
 $asistencias = !isset($_POST['asistencias']) ? [] : $_POST['asistencias'];
 
 $idCliente = !isset($_POST['idCliente']) ? 0 : $conexion->xssClean($_POST['idCliente']);
