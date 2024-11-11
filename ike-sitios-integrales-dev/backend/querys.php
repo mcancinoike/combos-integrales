@@ -254,6 +254,12 @@ function apiAfiliados($conexion, $idCliente){
             // #Enviamos mediante Curl la informacion a la API AFILIADOS
             $curlAfiliados = $conexion->startCurl($urlAfiliados, $tokenType, $token, $data_ben);
             // var_dump($curlAfiliados);
+            if($curlAfiliados != false){
+                $errorApi =  $curlAfiliados['code']  =='200' ? 'OK':json_encode($curlAfiliados['error']); 
+                $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id,error) ";
+                $log_alta .= "VALUES('2','NO','".$valAs['cuenta_ike']."','".$nombre_titular."','".$curlAfiliados['code']."','NO','NO','".$conexion->formatDay()."','NO','".$errorApi."')";
+                $alta  = $conexion->insertData($log_alta);
+            }
         } 
         // var_dump($data_ben);
     }
