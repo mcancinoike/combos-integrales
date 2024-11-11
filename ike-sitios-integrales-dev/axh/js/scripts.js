@@ -979,6 +979,34 @@ $(document).ready( function() {
 
 });
 
+function verifyCode(idCliente, code, rollback) {
+	$.ajax({
+		url: "backend/querys.php",
+		cache: false,
+		type: 'POST',
+		dataType: 'JSON',
+		beforeSend: function () {
+			$("#loading").show();
+		},
+		data: {
+			action: 'verifyCode',
+			idCliente: idCliente,
+			code: code
+		},
+		complete: function () {
+			$("#loading").hide();
+		},
+		success: function (response) {
+			rollback(response.isValid);
+		},
+		error: function (request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al verificar código, intente nuevamente por favor");
+			rollback(false);
+		}
+	});
+}
+
 function sendNewCode(idCliente) {
 	$.ajax({
 		url: "backend/querys.php",
