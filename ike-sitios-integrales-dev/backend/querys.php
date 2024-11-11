@@ -160,7 +160,7 @@ function verifyCard($conexion, $idCliente, $numeroTarjeta)
     }else{
         $result = array("mensaje" => "Tarjeta incorrecta");
     }
-    echo json_encode($result);           
+    echo json_encode($result);          
 }
 
 function apiAfiliados($conexion, $idCliente){
@@ -214,18 +214,7 @@ function apiAfiliados($conexion, $idCliente){
                 "Edad" => $edad,
                 "Producto" => $valAs['producto'],
                 "Suma_Asegurada" => "0",
-                "Nombre_B" => "NA",
-                "Apellido_Paterno_B" => "NA",
-                "Apellido_Materno_B" => "NA",
-                "Fecha_Nacimiento_B" => "NA",
-                "Estado_Civil_B" => "NA",
-                "Porcentaje_B" => "0",
-                "Sexo_B" => "NA",
-                "Rfc_B" => "NA",
-                "Parentesco_B" => "NA",
-                "Nacionalidad_B" => "NA",
-                "Residencia_B" => "NA",
-                "Actividad_B" => "NA"
+                "Fecha_Venta" => $fecha_venta
             ];
 
             $i = 1;
