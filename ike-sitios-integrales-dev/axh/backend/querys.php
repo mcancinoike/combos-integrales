@@ -211,8 +211,8 @@ function apiAfiliados($conexion, $idCliente){
             $card = $valTit['card'];
             $ultimosTDC = "************" . substr($card, 12, 16);
             $nombre_titular = $valTit['nombre_titular'];
-            $fecha_nacimiento = date("d-m-Y", strtotime($valTit['fecha_nacimiento']));
-            $fecha_venta = date("d-m-Y", strtotime($valTit['fecha_inicio']));
+            $fecha_nacimiento = date("Y-m-d", strtotime($valTit['fecha_nacimiento']));
+            $fecha_venta = date("Y-m-d", strtotime($valTit['fecha_inicio']));
             $celular = $valTit['celular'];
             $correo = $valTit['correo'];
         }
@@ -242,7 +242,8 @@ function apiAfiliados($conexion, $idCliente){
                 "Correo" => $correo,
                 "UltimosTDC" => $ultimosTDC,
                 "Edad" => $edad,
-                "Producto" => $valAs['producto'],
+                "Producto" => "Apoyo por hospitalización",
+                "Programa" => $valAs['producto'],
                 "Suma_Asegurada" => "0",
                 "Fecha_Venta" => $fecha_venta
             ];
@@ -253,7 +254,7 @@ function apiAfiliados($conexion, $idCliente){
                 $nombreB = $valBn['nombreB'];
                 $paternoB = $valBn['paternoB'];
                 $maternoB = $valBn['maternoB'];
-                $fechaNacB = date("d-m-Y", strtotime($valBn['fechaNacB']));
+                $fechaNacB = date("Y-m-d", strtotime($valBn['fechaNacB']));
                 $civilB = $valBn['civilB'];
                 $porcentajeB = $valBn['porcentajeB'];
                 $sexoB = $valBn['sexoB'];
@@ -286,8 +287,8 @@ function apiAfiliados($conexion, $idCliente){
             // var_dump($curlAfiliados);
             if($curlAfiliados != false){
                 $errorApi =  $curlAfiliados['code']  =='200' ? 'OK':json_encode($curlAfiliados['error']); 
-                $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id,error) ";
-                $log_alta .= "VALUES('2','NO','".$valAs['cuenta_ike']."','".$nombre_titular."','".$curlAfiliados['code']."','NO','NO','".$conexion->formatDay()."','NO','".$errorApi."')";
+                $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id, error) ";
+                $log_alta .= "VALUES('2','NO','". $valAs['producto'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
                 $alta  = $conexion->insertData($log_alta);
             }
         } 
