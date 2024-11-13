@@ -153,15 +153,13 @@ function verifyCard($conexion, $idCliente, $numeroTarjeta)
     $rows = $conexion->getData($query, $data);
     if(count($rows)){
         $query2 = "UPDATE clientes_hsbc SET card = '$numeroTarjeta' WHERE id = '$idCliente'";
-        $conexion->insertData($query2);
-        if(!$conexion->insertData($query)){
+        if(!$conexion->insertData($query2)){
             apiAfiliados($conexion, $idCliente);
             sendMail($conexion, $idCliente);
             $result = array("mensaje" => "Se actualizo la tarjeta del cliente, con éxito!");  
         }else{
             $result = array("mensaje" => "Ha ocurrido un error!");
-        }
-            
+        } 
     }else{
         $result = array("mensaje" => "Tarjeta incorrecta");
     }
