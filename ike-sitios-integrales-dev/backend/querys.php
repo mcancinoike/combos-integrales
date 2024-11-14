@@ -222,7 +222,7 @@ function apiAfiliados($conexion, $idCliente){
             ];
 
             $i = 1;
-            $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";   
+            $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
             foreach($conexion->getData($queryBenf) as $valBn){
                 $nombreB = $valBn['nombreB'];
                 $paternoB = $valBn['paternoB'];
