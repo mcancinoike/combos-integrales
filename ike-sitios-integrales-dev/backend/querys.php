@@ -278,13 +278,13 @@ function sendMail($conexion, $idCliente){
     }
 
     $prima = 0;
-    $query = "SELECT prima_mensual FROM hsbc.hsbc_prima_ah WHERE id = '$idPrima';";
+    $query = "SELECT prima_mensual FROM hsbc_prima_ah WHERE id = '$idPrima';";
     foreach($conexion->getData($query) as $val){
         $prima = formatoMoneda($prima + $val['prima_mensual']);
     }
 
     $asistencia = 0;
-    $query = "SELECT price FROM hsbc.hsbc_cliente_assistance cl INNER JOIN hsbc_assistance ass ON cl.id_assistance = ass.id WHERE cl.id_cliente = '$idCliente';";
+    $query = "SELECT price FROM hsbc_cliente_assistance cl INNER JOIN hsbc_assistance ass ON cl.id_assistance = ass.id WHERE cl.id_cliente = '$idCliente';";
     foreach($conexion->getData($query) as $val){
         $asistencia = formatoMoneda($asistencia + $val['price']);
     }

@@ -251,7 +251,7 @@ function apiAfiliados($conexion, $idCliente){
             ];
 
             $i = 1;
-            $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";   
+            $queryBenf = "SELECT concat(name, ' ', middle_name) as nombreB, pater_surname as paternoB, mater_surname as maternoB, date_birth as fechaNacB, relationship as civilB, percentage as porcentajeB, sex as sexoB, rfc as rfcB, relationship as parentescoB, nationality as nacionalidadB, residence as residenciaB, economic_activity as actividadB  FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
             foreach($conexion->getData($queryBenf) as $valBn){
                 $nombreB = $valBn['nombreB'];
                 $paternoB = $valBn['paternoB'];
@@ -311,13 +311,13 @@ function sendMail($conexion, $idCliente){
 
     $prima = 0;
     $campos = ($sexo == 'hombre' ? 'hombre as prima_mensual' : 'mujer as prima_mensual');
-    $query = "SELECT $campos FROM hsbc.hsbc_prima_ap WHERE id = '$idPrima';";
+    $query = "SELECT $campos FROM hsbc_prima_ap WHERE id = '$idPrima';";
     foreach($conexion->getData($query) as $val){
         $prima = formatoMoneda($prima + $val['prima_mensual']);
     }
 
     $asistencia = 0;
-    $query = "SELECT price FROM hsbc.hsbc_cliente_assistance cl INNER JOIN hsbc_assistance ass ON cl.id_assistance = ass.id WHERE cl.id_cliente = '$idCliente';";
+    $query = "SELECT price FROM hsbc_cliente_assistance cl INNER JOIN hsbc_assistance ass ON cl.id_assistance = ass.id WHERE cl.id_cliente = '$idCliente';";
     foreach($conexion->getData($query) as $val){
         $asistencia = formatoMoneda($asistencia + $val['price']);
     }

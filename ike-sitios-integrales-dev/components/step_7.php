@@ -149,7 +149,7 @@ $idCliente = $_POST['idCliente'];
 
 		<?php
                 $beneficiarios = "";
-                $query = "SELECT * FROM hsbc.beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
+                $query = "SELECT * FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
                 foreach ($conexion->getData($query) as $val) {
 					$name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
 					$beneficiarios .= '<div class="tbl"><div class="tbl__body">';
