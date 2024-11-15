@@ -155,7 +155,7 @@ $idCliente = $_POST['idCliente'];
 					$beneficiarios .= '<div class="tbl"><div class="tbl__body">';
 					$beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
 					$beneficiarios .= '<img src="img/icons/person2.svg">';
-					$beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">100%</span></p>';
+					$beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">' . $val['percentage'] . '%</span></p>';
 					$beneficiarios .= '</div></div></div></div>';
 				}
 				echo $beneficiarios;

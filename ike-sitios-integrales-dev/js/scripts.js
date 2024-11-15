@@ -776,38 +776,49 @@ $(document).ready(function () {
 
 
 	$(document).on("click", "#btnStep6", function () {
-		let idCliente = $('input[name=idCliente]').val();
-		let porcentaje = $('#listBenef input[name=porcentaje]').val().trim();
+		const idCliente = $('input[name=idCliente]').val();
+		let porcentajes = 0,
+			pBeneficiarios = [];
 
-		if (porcentaje == '') {
-			toastr.error("Ingrese el porcentaje");
-			$('#listBenef input[name=porcentaje]').focus();
-			return false;
-		}
-		if (porcentaje >= 0 && porcentaje <= 100) {
+		$("input[name='porcentaje[]']").each((i, porcentaje) => {
+			 porcentajes += parseInt(porcentaje.value);
+			pBeneficiarios.push({idBeneficiario: porcentaje.getAttribute("data-idb"), porcentaje: porcentaje.value});
+		});
 
-			$.ajax({
-				url: "components/step_7.php",
-				cache: false,
-				type: 'POST',
-				data: {
-					idCliente: idCliente
-				},
-				beforeSend: function () {
-					$("#loading").show();
-				},
-				complete: function () {
-					$("#loading").hide();
-				},
-				success: function (data) {
-					$("#main-content").html(data);
-				},
-				error: function (request, status, error) {
-					console.log('Ha ocurrido un error!');
+		if (porcentajes === 100) {
+			updatePercentage(pBeneficiarios, function (response) {
+				if (response.status){
+					$.ajax({
+						url: "components/step_7.php",
+						cache: false,
+						type: 'POST',
+						data: {
+							idCliente: idCliente
+						},
+						beforeSend: function () {
+							$("#loading").show();
+						},
+						complete: function () {
+							$("#loading").hide();
+						},
+						success: function (data) {
+							$("#main-content").html(data);
+						},
+						error: function (request, status, error) {
+							console.error(error);
+							toastr.error("Error al cargar paso 7");
+
+						}
+					});
+
+				} else {
+					toastr.error(response.msg);
+					return false;
 				}
 			});
+
 		} else {
-			toastr.error("Ingrese un porcentaje entre 0 y 100");
+			toastr.error("La suma de los porcentajes debe ser 100");
 			$('input[name=porcentaje]').focus();
 			return false;
 		}
@@ -911,6 +922,10 @@ $(document).ready(function () {
 			}
 		});
 	});
+
+	$(document).on("keypress", ".onlyNumbers", function(e) {
+		return onlyNumbers(e);
+	} );
 });
 
 function verifyCode(idCliente, code, rollback) {
@@ -936,6 +951,33 @@ function verifyCode(idCliente, code, rollback) {
 		error: function (request, status, error) {
 			console.error(error);
 			toastr.error("Error inesperado al verificar código, intente nuevamente por favor");
+			rollback(false);
+		}
+	});
+}
+
+function updatePercentage(pBeneficiarios, rollback) {
+	$.ajax({
+		url: "backend/querys.php",
+		cache: false,
+		type: 'POST',
+		dataType: 'JSON',
+		beforeSend: function () {
+			$("#loading").show();
+		},
+		data: {
+			action: 'updatePercentage',
+			pBeneficiarios: pBeneficiarios
+		},
+		complete: function () {
+			$("#loading").hide();
+		},
+		success: function (response) {
+			rollback(response);
+		},
+		error: function (request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al guardar porcentajes, intente nuevamente por favor");
 			rollback(false);
 		}
 	});
@@ -1131,4 +1173,12 @@ function setTimer() {
 		}
 	}, 1000);
 
+}
+
+
+/* funcion para ingresar solo números en input text */
+
+function onlyNumbers(e){
+	const key = e.charCode;
+	return key >= 48 && key <= 57;
 }

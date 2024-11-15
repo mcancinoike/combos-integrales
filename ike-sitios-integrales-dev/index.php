@@ -79,7 +79,7 @@
 	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.2.0"></script>
+	<script type="text/javascript" src="js/scripts.js?v=1.2.1"></script>
 </body>
 
 </html>

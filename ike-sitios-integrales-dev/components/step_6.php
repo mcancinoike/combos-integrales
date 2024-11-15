@@ -32,7 +32,7 @@ include_once "../backend/post.php";
 		<div class="box__lista" id="listBenef">
 			<?php
 				$beneficiarios = "";
-				$query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = '$idCliente' ORDER BY id ASC;";
+				$query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = '20' ORDER BY id ASC;";
 				foreach ($conexion->getData($query) as $val) {
 					// $id = $idCliente . "-" . $val['id'];
 					$nombre = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
@@ -43,7 +43,7 @@ include_once "../backend/post.php";
 					$beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="img/icons/delete.svg"></a>';
 					$beneficiarios .= '</div></div>';
 					$beneficiarios .= '<div class="box__percentage">Porcentaje';
-					$beneficiarios .= '<div class="box__percentage__input"><input type="text" name="porcentaje"> %';
+					$beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
 					$beneficiarios .= '</div></div></div><br>';
 				}
 				echo $beneficiarios;

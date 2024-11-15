@@ -342,6 +342,33 @@ function formatoMoneda($numero)
    return number_format(floor(($numero*100))/100, 2);
 }
 
+function updatePercentage($pBeneficiarios, $conexion)
+{
+
+    if (is_array($pBeneficiarios)) {
+        $conexion->beginTransaction();
+        $result = array("status" => true, "mensaje" => "Porcentajes actualizados correctamente");
+
+        foreach ($pBeneficiarios as $pBeneficiario) {
+
+            $data = ["id" => $pBeneficiario["idBeneficiario"], "percentage" => $pBeneficiario["porcentaje"]];
+            $query = "UPDATE beneficiaries_hsbc SET percentage = :percentage WHERE id = :id";
+            if($conexion->insertData($query, $data) === false){
+                $conexion->rollBack();
+                $result = array("status" => false, "msg" => "Ha ocurrido un error al intentar actualizar los porcentajes");
+                break;
+            }
+        }
+        if ($result["status"])
+            $conexion->commit();
+
+    } else {
+        $result = array("status" => false, "msg" => "Los datos enviados no tienen el formato correcto");
+    }
+
+    return json_encode($result);
+}
+
 
 switch ($action):
     case 'saveClient':
@@ -433,5 +460,9 @@ switch ($action):
         $idCliente = $_POST['idCliente'];   
         $numeroTarjeta = $_POST['numeroTarjeta'];   
         verifyCard($conexion, $idCliente, $numeroTarjeta);
+        break;
+
+    case 'updatePercentage':
+        echo updatePercentage($_POST["pBeneficiarios"], $conexion);
         break;
 endswitch;
