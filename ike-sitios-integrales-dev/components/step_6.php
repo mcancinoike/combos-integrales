@@ -32,7 +32,7 @@ include_once "../backend/post.php";
 		<div class="box__lista" id="listBenef">
 			<?php
 				$beneficiarios = "";
-				$query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = '20' ORDER BY id ASC;";
+				$query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = $idCliente ORDER BY id ASC;";
 				foreach ($conexion->getData($query) as $val) {
 					// $id = $idCliente . "-" . $val['id'];
 					$nombre = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
