@@ -30,7 +30,7 @@ include_once "../backend/post.php";
 						<label>Parentesco*</label>
 						<select name="parentesco" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="Esposo(a) selected">Esposo(a)</option>
+							<option value="Esposo(a)">Esposo(a)</option>
 							<option value="Cónyuge">Cónyuge</option>
 							<option value="Hijo(a)">Hijo(a)</option>
 							<option value="Padre">Padre</option>
@@ -74,8 +74,8 @@ include_once "../backend/post.php";
 						<label>Sexo</label>
 						<select name="sexo" class="frm__control">
 							<option value="">Seleccione</option>
-							<option value="masculino" selected>Masculino</option>
-							<option value="femenino">Femenino</option>
+                            <option value="femenino">Femenino</option>
+							<option value="masculino">Masculino</option>
 						</select>
 					</div>
 					<div class="frm__group">

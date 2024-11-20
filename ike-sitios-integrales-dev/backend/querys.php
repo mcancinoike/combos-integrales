@@ -12,11 +12,11 @@ $conexion = new Conexion();
 
 $action = $_POST['action'];
 
-function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias)
+function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType)
 {
     $fecha_alta = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, rfc, card, id_prima, sexo, active, created_at, updated_at, deleted_at) VALUES('', 'ah', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$rfc', 0, '$idPrima', 0, 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, rfc, card, id_prima, sexo, active, created_at, updated_at) VALUES('', $clientType, '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$rfc', 0, '$idPrima', $sexo, 1, '$fecha_alta', '0000-00-00 00:00:00');";
     $idCliente = $conexion->insertData($query);
     if(!$idCliente){
         $result = array("mensaje" => "Ha ocurrido un error!");
@@ -24,7 +24,7 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
         $asist = explode("|", $asistencias);   
         foreach ($asist as $val2) {
             if($val2 != ""){
-                $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
                 $conexion->insertData($query2);
             }  
         }     
@@ -38,7 +38,7 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
 {
     $fecha_alta = date("Y-m-d H:i:s");    
 
-    $query = "INSERT INTO beneficiaries_hsbc (id, id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, percentage, active, created_at, updated_at, deleted_at) VALUES('', '$idCliente', '$parentesco', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$estadoCivil', '$sexo', '$fechaNac', '$rfc', '$nacionalidad', '$actividad', '$residencia', 0, 1, '$fecha_alta', '0000-00-00 00:00:00', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO beneficiaries_hsbc (id, id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, percentage, active, created_at, updated_at) VALUES('', '$idCliente', '$parentesco', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$estadoCivil', '$sexo', '$fechaNac', '$rfc', '$nacionalidad', '$actividad', '$residencia', 0, 1, '$fecha_alta', '0000-00-00 00:00:00');";
     
     if(!$conexion->insertData($query)){
         $result = array("mensaje" => "Ha ocurrido un error!");
@@ -176,7 +176,7 @@ function apiAfiliados($conexion, $idCliente){
         $token = $curlOauth['access_token'];
         $tokenType = $curlOauth['token_type'];
 
-        $queryTit = "SELECT rfc as clave, created_at as fecha_inicio, card, concat(name, ' ', middle_name, ' ', pater_surname, ' ', mater_surname) as nombre_titular, date_birth as fecha_nacimiento, cell_phone as celular, email as correo FROM clientes_hsbc WHERE id = '$idCliente';";
+        $queryTit = "SELECT rfc as clave, client_type, created_at as fecha_inicio, card, concat(name, ' ', middle_name, ' ', pater_surname, ' ', mater_surname) as nombre_titular, date_birth as fecha_nacimiento, cell_phone as celular, email as correo FROM clientes_hsbc WHERE id = '$idCliente';";
         foreach($conexion->getData($queryTit) as $valTit){ 
             $clave = $valTit['clave'];
             $fecha_inicio = date("Y-m-d", strtotime($valTit['fecha_inicio']));
@@ -188,6 +188,7 @@ function apiAfiliados($conexion, $idCliente){
             $fecha_venta = date("Y-m-d", strtotime($valTit['fecha_inicio']));
             $celular = $valTit['celular'];
             $correo = $valTit['correo'];
+            $clientType = $valTit['client_type'];
         }
 
         $cumpleanos = new DateTime($fecha_nacimiento);
@@ -215,7 +216,7 @@ function apiAfiliados($conexion, $idCliente){
                 "Correo" => $correo,
                 "UltimosTDC" => $ultimosTDC,
                 "Edad" => $edad,
-                "Producto" => "Accidentes Personales",
+                "Producto" => $clientType === "ap" ? "Accidentes Personales" : "Apoyo por hospitalización",
                 "Programa" => $valAs['producto'],
                 "Suma_Asegurada" => "0",
                 "Fecha_Venta" => $fecha_venta
@@ -229,7 +230,6 @@ function apiAfiliados($conexion, $idCliente){
                 $maternoB = $valBn['maternoB'];
                 $fechaNacB = date("Y-m-d", strtotime($valBn['fechaNacB']));
                 $civilB = $valBn['civilB'];
-                $porcentajeB = $valBn['porcentajeB'];
                 $sexoB = $valBn['sexoB'];
                 $rfcB = $valBn['rfcB'];
                 $parentescoB = $valBn['parentescoB'];
@@ -262,7 +262,7 @@ function apiAfiliados($conexion, $idCliente){
                 $errorApi =  $curlAfiliados['code']  =='200' ? 'OK':json_encode($curlAfiliados['error']); 
                 $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id, error) ";
                 $log_alta .= "VALUES('2','NO','". $valAs['producto'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
-                $alta  = $conexion->insertData($log_alta);
+                $conexion->insertData($log_alta);
             }
         } 
         // var_dump($data_ben);
@@ -271,14 +271,22 @@ function apiAfiliados($conexion, $idCliente){
 
 function sendMail($conexion, $idCliente){
     $query = "SELECT * FROM clientes_hsbc WHERE id = '$idCliente';";
+
     foreach($conexion->getData($query) as $val){    
         $nameClient = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
         $mailClient = $val['email'];
         $idPrima = $val['id_prima'];
+        $clientType = $val['client_type'];
+        $sexo = $val['sexo'];
     }
 
     $prima = 0;
-    $query = "SELECT prima_mensual FROM hsbc_prima_ah WHERE id = '$idPrima';";
+    if($clientType === "ap")
+        $campos = "prima_mensual";
+    else
+        $campos = ($sexo == 'hombre' ? 'hombre as prima_mensual' : 'mujer as prima_mensual');
+
+    $query = "SELECT $campos FROM hsbc_prima_$clientType WHERE id = '$idPrima';";
     foreach($conexion->getData($query) as $val){
         $prima = formatoMoneda($prima + $val['prima_mensual']);
     }
@@ -288,7 +296,8 @@ function sendMail($conexion, $idCliente){
     foreach($conexion->getData($query) as $val){
         $asistencia = formatoMoneda($asistencia + $val['price']);
     }
-    $plan = "HSBC Accidentes Personales";    
+    $textAsis = $clientType === "ap" ? "Accidentes Personales" : "Apoyo Por Hospitalización";
+    $plan = "HSBC $textAsis";
     $total = ($prima + $asistencia);
 
     $mail = new PHPMailer(true);
@@ -315,8 +324,8 @@ function sendMail($conexion, $idCliente){
     $mail->MsgHTML($body);
     $mail->IsHTML(true);
 
-    $mail->SetFrom('Notificaciones@ikeasistencia.com', 'HSBC Accidentes Personales');
-    $mail->Subject = 'Kit de Bienvenida y Términos & Condiciones HSBC Accidentes Personales';
+    $mail->SetFrom('Notificaciones@ikeasistencia.com', 'HSBC ' . $textAsis);
+    $mail->Subject = 'Kit de Bienvenida y Términos & Condiciones HSBC ' . $textAsis;
     $mail->addAddress($mailClient, $nameClient);
 
     $query = "SELECT * FROM hsbc_cliente_assistance WHERE id_cliente = '$idCliente';";
@@ -369,8 +378,45 @@ function updatePercentage($pBeneficiarios, $conexion)
     return json_encode($result);
 }
 
+function getSumaAsegurada($conexion, $fechaNac, $sexo)
+{
+    $cumpleanos = new DateTime($fechaNac);
+    $hoy = new DateTime();
+    $anios = $hoy->diff($cumpleanos);
+    $edad = $anios->y;
+
+    if ($edad < 18)
+       return json_encode(["code" => 400, "msg" => "Tu edad debe estar en un rango de 18 y 69 años"]);
+
+    $campos = "";
+    if($sexo == 'hombre'){
+        $campos .= "id, edad, hombre as pago_mensual, suma_asegurada";
+    }else{
+        $campos .= "id, edad, mujer as pago_mensual, suma_asegurada";
+    }
+
+    $where = " AND edad = $edad";
+
+    $select = "<label>Elige una suma asegurada</label>";
+    $select .= "<select name='sumaAsegurada' class='frm__control' id='sumaAseguradaS1' style='width:100%'>";
+    $select .= "<option value=''>Seleccione</option>";
+    $query = "SELECT $campos FROM hsbc_prima_ap WHERE active = 1 $where";
+    foreach($conexion->getData($query) as $val){
+        $select .= '<option value="'. $val['id'] . '" data-pago-mensual="'. $val['pago_mensual'] . '" data-id-prima="'. $val['id'] . '" data-suma-asegurada="'. $val['suma_asegurada'] . '">$'. formatoMoneda($val['suma_asegurada']) .'</option>';
+    }
+    $select .= '</select>';
+
+    return json_encode(["code" => 200, "msg" => "ok", "data" => $select]);
+}
 
 switch ($action):
+    // ah
+    case 'getSumaAsegurada':
+        $fechaNac = $_POST['fechaNac'];
+        $sexo = $_POST['sexo'];
+        echo getSumaAsegurada($conexion, $fechaNac, $sexo);
+        break;
+
     case 'saveClient':
         $asistencias = $_POST['asistencias'];
         $idPrima = $_POST['idPrima'];
@@ -382,8 +428,10 @@ switch ($action):
         $rfc = $_POST['rfc'];
         $email = $_POST['email'];
         $telefono = $_POST['telefono'];
+        $sexo = $_POST['sexo'];
+        $clientType = $_POST['clientType'];
         $code = genCode();
-        $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias);
+        $result = saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType);
 
         if (isset($result["idCliente"]))
             $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);

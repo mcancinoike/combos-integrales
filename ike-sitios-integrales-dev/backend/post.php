@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "../backend/conexion/conexion.php";
 $conexion = new conexion;
 $captchaPublic = $conexion->captchaPublic;
@@ -22,6 +23,8 @@ $subtotal_mensual_asistencia = empty($subtotal_mensual_asistencia) ? 0 : $subtot
 
 $idPrima = !isset($_POST['idPrima']) ? 0 : $conexion->xssClean($_POST['idPrima']);
 
+$sexo = !isset($_POST['sexo']) ? '' : $conexion->xssClean($_POST['sexo']);
+
 $asistencias = !isset($_POST['asistencias']) ? [] : $_POST['asistencias'];
 
 $idCliente = !isset($_POST['idCliente']) ? 0 : $conexion->xssClean($_POST['idCliente']);
@@ -31,4 +34,11 @@ foreach ($asistencias as $val) {
     $textAsistencia .= $conexion->xssClean($val) . "|";
 }
 
+echo '<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="' . $suma_asegurada . '">
+        <input type="hidden" id="prima_anual" name="prima_anual" value="' . $prima_anual . '">
+        <input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="' . $subtotal_mensual . '">
+        <input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="' . $subtotal_mensual_asistencia . '">
+        <input type="hidden" id="prima" name="prima" value="' . $idPrima . '">
+        <input type="hidden" id="sexo" name="sexo" value="' . $sexo . '">
+        <input type="hidden" id="asistencias" name="asistencias" value="' . $textAsistencia . '">';
 ?>

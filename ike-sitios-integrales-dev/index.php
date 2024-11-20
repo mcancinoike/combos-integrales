@@ -1,5 +1,10 @@
+<?php
+    session_start();
+    $relativePath = "";
+    $_SESSION["app"] = "ap";
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-Mx">
 
 <head>
 	<meta charset="utf-8">
@@ -7,9 +12,7 @@
 	<title>Seguro por Accidentes Personales HSBC</title>
 	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0.2">
-	<link rel="stylesheet" href="css/toastr/toastr.min.css">
-	<link rel="stylesheet" type="text/css" href="css/fonts.css">
+    <?php include_once 'components/css.php'; ?>
 </head>
 <!-- Page Header-->
 <?php include 'components/header.php' ?>
@@ -75,11 +78,9 @@
 			<a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">Aviso de Privacidad</a>
 		</div>
 	</footer>
-
-	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.2.1"></script>
+    <?php
+        include_once 'components/js.php';
+    ?>
 </body>
 
 </html>

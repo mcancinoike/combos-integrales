@@ -1,17 +1,22 @@
+<?php
+    session_start();
+    $relativePath = "../";
+    $_SESSION["app"] = "ah";
+?>
 <!DOCTYPE html>
-<html>
+<html lang="es-Mx">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Seguro para Apoyo por Hospitalización HSBC</title>
 	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="css/style.css?v=1.0">
-	<link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
-	<link rel="stylesheet" type="text/css" href="css/fonts.css">
+    <?php
+        include_once '../components/css.php';
+    ?>
 </head>
 <!-- Page Header-->
-<?php include 'components/header.php' ?>	
+<?php include '../components/header.php' ?>
 
 <body>	
 	<div id="main-content">
@@ -77,10 +82,9 @@
 		</div>
 	</footer>
 
-	<script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-	<script type="text/javascript" src="js/scripts.js?v=1.0"></script>
+    <?php
+        include_once '../components/js.php';
+    ?>
 
 </body>
 </html>

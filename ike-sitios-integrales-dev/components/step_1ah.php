@@ -1,13 +1,6 @@
 <?php
-require_once "../backend/conexion/conexion.php";
-$conexion = new conexion;
+    include_once "../backend/post.php";
 ?>
-
-<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="">
-<input type="hidden" id="prima_anual" name="prima_anual" value="">
-<input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="">
-<input type="hidden" id="prima" name="prima" value="">
-<input type="hidden" id="sexo" name="sexo" value="">
 <section class="step show" id="step1">
     <div class="header__step">
         <div class="header__step__content">
@@ -40,16 +33,12 @@ $conexion = new conexion;
                     <label>Sexo</label>
                     <select id="sexo" name="sexo" class="frm__control">
                         <option value="">Seleccione</option>
-                        <option value="mujer">Mujer</option>
-                        <option value="hombre">Hombre</option>
+                        <option value="m">Mujer</option>
+                        <option value="h">Hombre</option>
                     </select>
                 </div>
-                <div class="frm__group">                    
-                    <div id="ajaxSumaAsegurada">
-                        <!-- <select name="sumaAsegurada" class="frm__control" id="sumaAseguradaS1">
-                            <option value="">Seleccione</option>                                               
-                        </select> -->
-                    </div>
+                <div class="frm__group">
+                    <div id="ajaxSumaAsegurada"></div>
                 </div>
             </div>
         </form>

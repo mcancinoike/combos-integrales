@@ -1,8 +1,6 @@
 <?php 
-include_once "../backend/post.php";
-$idCliente = $_POST['idCliente'];
+    include_once "../backend/post.php";
 ?>
-<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step7">
 	<div class="header__step">
 		<div class="header__step__content">
@@ -38,7 +36,7 @@ $idCliente = $_POST['idCliente'];
 		<input type="hidden" id="isBack2Edit" value="0">
 
 		<div class="resume action">
-			<h3 class="resume__title">Seguro por Accidentes Personales</h3>
+			<h3 class="resume__title">Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?> </h3>
 			<div class="resume__action">
 				<a href="javascript:go2StepEdit(1);"><img src="img/icons/edit.svg"></a>
 				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
@@ -49,17 +47,20 @@ $idCliente = $_POST['idCliente'];
                 $seguro = "";
 				$count = 0;
 				$prima = 0;
-                $query = "SELECT cl.id_prima, ah.suma_asegurada, ah.prima_mensual, ah.prima_anual FROM clientes_hsbc cl INNER JOIN hsbc_prima_ah ah ON cl.id_prima = ah.id WHERE cl.id = '$idCliente';";
+                $select = $_SESSION["app"] === "ap" ? ", suma_asegurada, prima_mensual, prima_anual" : ", suma_asegurada, hombre, mujer, sexo";
+                $query = "SELECT cl.id_prima $select FROM clientes_hsbc cl INNER JOIN hsbc_prima_{$_SESSION["app"]} hp ON cl.id_prima = hp.id WHERE cl.id = '$idCliente';";
                 foreach ($conexion->getData($query) as $val) {
 					$count++;
-					$prima = $val['prima_mensual'];
+					$prima = $_SESSION["app"] === "ap" ? $val['prima_mensual'] : ($val['sexo'] == 'hombre' ? $val['hombre'] : $val['mujer']);
 					$seguro .= '<div class="tbl">';
 					$seguro .= '<div class="tbl__body">';
 					$seguro .= '<div class="tbl__row">';
 					$seguro .= '<div class="tbl__col left">';
 					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($val['suma_asegurada']) .' MXN';
 					$seguro .= '</div>';
-					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($val['prima_anual']) .' MXN';
+                    if ($_SESSION["app"] === "ap")
+					    $seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($val['prima_anual']) .' MXN';
+
 					$seguro .= '</div></div><div class="tbl__row">';
 					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
 					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($prima) .' MXN</div>';

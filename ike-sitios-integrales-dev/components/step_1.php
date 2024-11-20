@@ -1,12 +1,6 @@
 <?php
-require_once "../backend/conexion/conexion.php";
-$conexion = new conexion;
+    include_once "../backend/post.php";
 ?>
-
-<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="">
-<input type="hidden" id="prima_anual" name="prima_anual" value="">
-<input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="">
-<input type="hidden" id="prima" name="prima" value="">
 <section class="step show" id="step1">	
 	<div class="header__step">
 		<div class="header__step__content">
@@ -30,15 +24,16 @@ $conexion = new conexion;
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-				Primero, solicita tu Seguro por Accidentes Personales
+				Primero, solicita tu Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?>
 			</div>
 			<p class="box__txt2">Si no quieres este seguro puedes dar clic en "Continuar". Al hacerlo, pasarás directo a las asistencias.</p>
 		</div>
 
+        <?php if ($_SESSION["app"] === "ap"): ?>
 		<div class="tbl" id="tblSuma1">
 			<div class="tbl__header">
 				<div class="tbl__header__col">Suma asegurada</div>
-				<div class="tbl__header__col">Pago mensual</div>
+				<div class="tbl__header__col">Pago mensual con IVA incluido</div>
 			</div>
 			<div class="tbl__body">
 				<?php
@@ -55,6 +50,27 @@ $conexion = new conexion;
 				?>
 			</div>
 		</div>
+        <?php else: ?>
+            <form id="frmRegister1">
+                <div class="frm">
+                    <div class="frm__group">
+                        <label>Fecha de nacimiento*</label>
+                        <input type="date" name="fechaNac" class="frm__control">
+                    </div>
+                    <div class="frm__group">
+                        <label>Sexo</label>
+                        <select id="sexo" name="sexo" class="frm__control">
+                            <option value="">Seleccione</option>
+                            <option value="m">Mujer</option>
+                            <option value="h">Hombre</option>
+                        </select>
+                    </div>
+                    <div class="frm__group">
+                        <div id="ajaxSumaAsegurada"></div>
+                    </div>
+                </div>
+            </form>
+        <?php endif; ?>
 	</div>
 
 	<div class="separator__line s1"></div>

@@ -1,8 +1,6 @@
 <?php 
-include_once "../backend/post.php";
-$idCliente = $_POST['idCliente'];
+    include_once "../backend/post.php";
 ?>
-<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <section class="step show" id="step8">
 	<div class="header__step">
 		<div class="header__step__content">

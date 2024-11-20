@@ -1,14 +1,6 @@
 <?php
-include_once "../backend/post.php";
-
+    include_once "../backend/post.php";
 ?>
-
-<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="<?php echo $suma_asegurada; ?>">
-<input type="hidden" id="prima_anual" name="prima_anual" value="<?php echo $prima_anual; ?>">
-<input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="<?php echo $subtotal_mensual; ?>">
-<input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="<?php echo $subtotal_mensual_asistencia; ?>">
-<input type="hidden" id="prima" name="prima" value="<?php echo $idPrima; ?>">
-<input type="hidden" id="asistencias" name="asistencias" value="<?php echo $textAsistencia; ?>">
 <section class="step show" id="step3">
 	<div class="header__step">
 		<div class="header__step__content">

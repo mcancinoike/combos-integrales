@@ -48,7 +48,7 @@ $(document).ready(function () {
 	$(document).on("click", "#btnContinuar", function (e) {
 		e.preventDefault();
 		$.ajax({
-			url: "components/step_1.php",
+			url: relativePath + "components/step_1.php",
 			cache: false,
 			type: 'POST',
 			data: {},
@@ -67,6 +67,74 @@ $(document).ready(function () {
 		});
 	});
 
+	// evento exclusivo ah
+
+	$(document).on('change', "input[name=fechaNac]", function () {
+		const year = new Date($(this).val()).getFullYear(),
+		      yearNow = new Date().getFullYear();
+
+		if ( year > 1900 && year < yearNow && $('select[name=sexo]').val() !== '')
+			$("#sexo").change();
+	});
+
+	$(document).on('change', "#sexo", function () {
+		let fechaNac = $('input[name=fechaNac]').val().trim();
+		let sexo = $('select[name=sexo]').val();
+
+		if (fechaNac == "") {
+			toastr.error("Selecciona la fecha de nacimiento.");
+			$('input[name=fechaNac]').focus();
+			$('select[name=sexo]').val("");
+			return false;
+		}
+
+		if (sexo == "") {
+			toastr.error("Seleeciona el sexo.");
+			$('select[name=sexo]').focus();
+			return false;
+		}
+
+		$.ajax({
+			url: relativePath + "backend/querys.php",
+			cache: false,
+			type: 'POST',
+			dataType: "JSON",
+			beforeSend: function () {
+				$("#loading").show();
+				$("#btnStep1").hide();
+			},
+			data: {
+				action: 'getSumaAsegurada',
+				fechaNac: fechaNac,
+				sexo: sexo
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (response) {
+				$("#loading").hide();
+
+				if (response.code == 200) {
+					$("#ajaxSumaAsegurada").html(response.data);
+				} else {
+					toastr.error(response.msg);
+				}
+			},
+			error: function (request, status, error) {
+				console.error(error);
+				toastr.error("Error inesperado, intente más tarde por favor");
+			}
+		});
+	});
+
+	$(document).on("change", "#sumaAseguradaS1", function () {
+		if ($(this).val() !== '') {
+			$("#btnStep1").show();
+			addSeguro($("option:selected", this));
+		} else
+			$("#btnStep1").hide();
+	});
+
 	//Step 1
 
 	$(document).on("click", "#btnStep1", function () {
@@ -74,16 +142,18 @@ $(document).ready(function () {
 		let prima_anual = $('input[name=prima_anual]').val();
 		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
 		let idPrima = $('input[name=prima]').val();
+		let sexo = $('input[name=sexo]').val();
 
 		$.ajax({
-			url: "components/step_2.php",
+			url: relativePath + "components/step_2.php",
 			cache: false,
 			type: 'POST',
 			data: {
 				suma_asegurada: suma_asegurada,
 				prima_anual: prima_anual,
 				subtotal_mensual: subtotal_mensual,
-				idPrima: idPrima
+				idPrima: idPrima,
+				sexo: sexo
 			},
 			beforeSend: function () {
 				$("#loading").show();
@@ -105,30 +175,7 @@ $(document).ready(function () {
 	});
 
 	$(document).on('click', "input[name=seguro]", function () {
-		let sumaAsegurada = $(this).attr('data-suma-asegurada');
-		let idPrima = $(this).attr('data-id-prima');
-		let sumaAseguradaFormat = formatCurrency(sumaAsegurada);
-
-		$('#sumaAsegurada').html(sumaAseguradaFormat + ' MXN');
-
-		let pagoMensual = $(this).attr('data-pago-mensual');
-		let pagoMensualFormat = pagoMensual;
-
-		$('#pagoMensual').html('$' + pagoMensualFormat + ' MXN');
-
-		let totalAnual = pagoMensual * 12;
-		let totalAnualFormat = totalAnual;
-
-		$('#totalAnual').html('$' + totalAnualFormat + ' MXN');
-
-		$('input[name=suma_asegurada]').val(sumaAsegurada);
-		$('input[name=prima_anual]').val(totalAnual);
-		$('input[name=subtotal_mensual]').val(pagoMensual);
-		$('input[name=prima]').val(idPrima);
-
-		$('#resumenStep1').show();
-		$('#tblStep1').show();
-		$('.separator__line.s1').show();
+		addSeguro($(this));
 	});
 
 	$(document).on('click', '.chkbox', function () {
@@ -149,6 +196,7 @@ $(document).ready(function () {
 		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
 		let subtotal_mensual_asistencia = $('input[name=subtotal_mensual_asistencia]').val();
 		let idPrima = $('input[name=prima]').val();
+		let sexo = $('input[name=sexo]').val();
 		let captcha_response = document.getElementById("g-recaptcha-response").value;
 
 		if (subtotal_mensual_asistencia == "" && subtotal_mensual == "0") {
@@ -172,7 +220,7 @@ $(document).ready(function () {
 		}
 
 		$.ajax({
-			url: "backend/process/captcha.php",
+			url: relativePath + "backend/process/captcha.php",
 			cache: false,
 			type: 'POST',
 			beforeSend: function () {
@@ -197,7 +245,7 @@ $(document).ready(function () {
 				}
 
 				$.ajax({
-					url: "components/step_3.php",
+					url: relativePath + "components/step_3.php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -206,7 +254,8 @@ $(document).ready(function () {
 						subtotal_mensual: subtotal_mensual,
 						subtotal_mensual_asistencia: subtotal_mensual_asistencia,
 						idPrima: idPrima,
-						asistencias: asistencias
+						asistencias: asistencias,
+						sexo: sexo
 					},
 					beforeSend: function () {
 						$("#loading").show();
@@ -260,10 +309,35 @@ $(document).ready(function () {
 
 	});
 
+	$('#clienteHsbc').on('click', function() {
+		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
+			$('#btnStep2').removeClass('disabled');
+		} else {
+			$('#btnStep2').addClass('disabled');
+		}
+	});
+
+	$('#avisoPrivacidadA').on('click', function() {
+		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
+			$('#btnStep2').removeClass('disabled');
+		} else {
+			$('#btnStep2').addClass('disabled');
+		}
+	});
+
+	$('#territorioNacional').on('click', function() {
+		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
+			$('#btnStep2').removeClass('disabled');
+		} else {
+			$('#btnStep2').addClass('disabled');
+		}
+	});
+
 	//Step 3
 
 	$(document).on("click", "#btnStep3", function () {
 		let idPrima = $('input[name=prima]').val();
+		let sexo = $('input[name=sexo]').val();
 		let asistencias = $('input[name=asistencias]').val();
 		let nombre = $('#frmRegister3 input[name=nombre]').val().trim();
 		let segundoNombre = $('#frmRegister3 input[name=segundoNombre]').val().trim();
@@ -343,7 +417,7 @@ $(document).ready(function () {
 		}
 
 		$.ajax({
-			url: "backend/querys.php",
+			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			beforeSend: function () {
@@ -360,7 +434,9 @@ $(document).ready(function () {
 				rfc: rfc,
 				fechaNac: fechaNac,
 				email: email,
-				telefono: telefono
+				telefono: telefono,
+				sexo: sexo,
+				clientType: app,
 			},
 			complete: function () {
 				$("#loading").hide();
@@ -369,7 +445,7 @@ $(document).ready(function () {
 				$("#loading").hide();
 				console.log(data.idCliente);
 				$.ajax({
-					url: "components/step_4.php",
+					url: relativePath + "components/step_4.php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -408,7 +484,7 @@ $(document).ready(function () {
 		verifyCode(idCliente, codigo, function (codeIsValid) {
 			if (codeIsValid) {
 				$.ajax({
-					url: "components/step_5.php",
+					url: relativePath + "components/step_5.php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -435,7 +511,7 @@ $(document).ready(function () {
 		});
 
 		// $.ajax({
-		// 	url: "components/step_5.php",
+		// 	url: relativePath + "components/step_5.php",
 		// 	cache: false,
 		// 	type: 'POST',
 		// 	data: {
@@ -461,7 +537,7 @@ $(document).ready(function () {
 	$(document).on("click", "#btnStep5", function () {
 		let idCliente = $('input[name=idCliente]').val();
 		$.ajax({
-			url: "components/add_beneficiare.php",
+			url: relativePath + "components/add_beneficiare.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -568,7 +644,7 @@ $(document).ready(function () {
 		}
 
 		$.ajax({
-			url: "backend/querys.php",
+			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -589,7 +665,7 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$.ajax({
-					url: "components/step_6.php",
+					url: relativePath + "components/step_6.php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -700,7 +776,7 @@ $(document).ready(function () {
 		}
 
 		$.ajax({
-			url: "backend/querys.php",
+			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -721,7 +797,7 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$.ajax({
-					url: "components/step_6.php",
+					url: relativePath + "components/step_6.php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -753,7 +829,7 @@ $(document).ready(function () {
 		let idCliente = $('input[name=idCliente]').val();
 
 		$.ajax({
-			url: "components/add_beneficiare.php",
+			url: relativePath + "components/add_beneficiare.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -789,7 +865,7 @@ $(document).ready(function () {
 			updatePercentage(pBeneficiarios, function (response) {
 				if (response.status){
 					$.ajax({
-						url: "components/step_7.php",
+						url: relativePath + "components/step_7.php",
 						cache: false,
 						type: 'POST',
 						data: {
@@ -829,7 +905,7 @@ $(document).ready(function () {
 	$(document).on("click", "#btnStep7", function () {
 		let idCliente = $('input[name=idCliente]').val();
 		$.ajax({
-			url: "components/step_8.php",
+			url: relativePath + "components/step_8.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -882,7 +958,7 @@ $(document).ready(function () {
 		}
 
 		$.ajax({
-			url: "backend/querys.php",
+			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -894,7 +970,7 @@ $(document).ready(function () {
 				console.log(data.mensaje);
 				if(data.mensaje != 'Tarjeta incorrecta'){
 					$.ajax({
-						url: "components/step_final.php",
+						url: relativePath + "components/step_final.php",
 						cache: false,
 						type: 'POST',
 						data: {},
@@ -928,9 +1004,37 @@ $(document).ready(function () {
 	} );
 });
 
+function addSeguro(nodo) {
+
+	let sumaAsegurada = nodo.attr('data-suma-asegurada');
+	let idPrima = nodo.attr('data-id-prima');
+	let sumaAseguradaFormat = formatCurrency(sumaAsegurada);
+
+	$('#sumaAsegurada').html(sumaAseguradaFormat + ' MXN');
+
+	let pagoMensual = nodo.attr('data-pago-mensual');
+	let pagoMensualFormat = pagoMensual;
+
+	$('#pagoMensual').html('$' + pagoMensualFormat + ' MXN');
+
+	let totalAnual = pagoMensual * 12;
+	let totalAnualFormat = totalAnual;
+
+	$('#totalAnual').html('$' + totalAnualFormat + ' MXN');
+
+	$('input[name=suma_asegurada]').val(sumaAsegurada);
+	$('input[name=prima_anual]').val(totalAnual);
+	$('input[name=subtotal_mensual]').val(pagoMensual);
+	$('input[name=prima]').val(idPrima);
+
+	$('#resumenStep1').show();
+	$('#tblStep1').show();
+	$('.separator__line.s1').show();
+}
+
 function verifyCode(idCliente, code, rollback) {
 	$.ajax({
-		url: "backend/querys.php",
+		url: relativePath + "backend/querys.php",
 		cache: false,
 		type: 'POST',
 		dataType: 'JSON',
@@ -958,7 +1062,7 @@ function verifyCode(idCliente, code, rollback) {
 
 function updatePercentage(pBeneficiarios, rollback) {
 	$.ajax({
-		url: "backend/querys.php",
+		url: relativePath + "backend/querys.php",
 		cache: false,
 		type: 'POST',
 		dataType: 'JSON',
@@ -985,7 +1089,7 @@ function updatePercentage(pBeneficiarios, rollback) {
 
 function sendNewCode(idCliente) {
 	$.ajax({
-		url: "backend/querys.php",
+		url: relativePath + "backend/querys.php",
 		cache: false,
 		type: 'POST',
 		dataType: 'JSON',
@@ -1025,7 +1129,7 @@ function editBenef(id) {
 	let idBeneficiario = id;
 	let idCliente = $('input[name=idCliente]').val();
 	$.ajax({
-		url: "components/edit_beneficiare.php",
+		url: relativePath + "components/edit_beneficiare.php",
 		cache: false,
 		type: 'POST',
 		data: {
@@ -1054,7 +1158,7 @@ function deleteBenef(id) {
 
 	if (resp) {
 		$.ajax({
-			url: "backend/querys.php",
+			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			data: {
@@ -1063,7 +1167,7 @@ function deleteBenef(id) {
 			},
 			success: function (data) {
 				$.ajax({
-					url: "components/step_6.php",
+					url: relativePath + "components/step_6.php",
 					cache: false,
 					type: 'POST',
 					data: {

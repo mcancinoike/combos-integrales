@@ -1,13 +1,7 @@
 <?php
-include_once "../backend/post.php";
-echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+    include_once "../backend/post.php";
+    echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 ?>
-
-<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="<?php echo $suma_asegurada; ?>">
-<input type="hidden" id="prima_anual" name="prima_anual" value="<?php echo $prima_anual; ?>">
-<input type="hidden" id="subtotal_mensual" name="subtotal_mensual" value="<?php echo $subtotal_mensual; ?>">
-<input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="">
-<input type="hidden" id="prima" name="prima" value="<?php echo $idPrima; ?>">
 <section class="step show" id="step2">
     <div class="header__step">
 		<div class="header__step__content">
@@ -39,7 +33,7 @@ echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script
         <div class="tbl" id="tblAsistencias">
             <div class="tbl__header2">
                 <div class="tbl__header__col2"></div>
-                <div class="tbl__header__col2">Pago mensual</div>
+                <div class="tbl__header__col2">Pago mensual con IVA incluido</div>
             </div>
             <div class="tbl__body">
                 <?php
