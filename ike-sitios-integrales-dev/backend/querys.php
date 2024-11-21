@@ -400,7 +400,7 @@ function getSumaAsegurada($conexion, $fechaNac, $sexo)
     $select = "<label>Elige una suma asegurada</label>";
     $select .= "<select name='sumaAsegurada' class='frm__control' id='sumaAseguradaS1' style='width:100%'>";
     $select .= "<option value=''>Seleccione</option>";
-    $query = "SELECT $campos FROM hsbc_prima_ap WHERE active = 1 $where";
+    $query = "SELECT $campos FROM hsbc_prima_ah WHERE active = 1 $where";
     foreach($conexion->getData($query) as $val){
         $select .= '<option value="'. $val['id'] . '" data-pago-mensual="'. $val['pago_mensual'] . '" data-id-prima="'. $val['id'] . '" data-suma-asegurada="'. $val['suma_asegurada'] . '">$'. formatoMoneda($val['suma_asegurada']) .'</option>';
     }

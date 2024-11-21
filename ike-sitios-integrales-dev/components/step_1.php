@@ -38,7 +38,7 @@
 			<div class="tbl__body">
 				<?php
 				$primas = "";
-				$query = "SELECT * FROM hsbc_prima_ah WHERE active = 1 ORDER BY suma_asegurada ASC;";
+				$query = "SELECT * FROM hsbc_prima_ap WHERE active = 1 ORDER BY suma_asegurada ASC;";
 				foreach ($conexion->getData($query) as $val) {
 					$primas .= '<div class="tbl__row">';
 					$primas .= '<div class="tbl__col">';
