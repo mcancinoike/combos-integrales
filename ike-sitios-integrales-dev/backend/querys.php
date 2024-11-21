@@ -326,8 +326,7 @@ function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
 
                 $i++;
             }
-            var_dump($data_ben);
-            exit();
+
             $urlAfiliados = $conexion->urlApiAfiliados;
             // #Enviamos mediante Curl la informacion a la API AFILIADOS
             $curlAfiliados = $conexion->startCurl($urlAfiliados, $tokenType, $token, $data_ben);
