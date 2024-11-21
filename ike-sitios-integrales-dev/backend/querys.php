@@ -55,9 +55,27 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
 {
     $fecha_alta = date("Y-m-d H:i:s");    
 
-    $query = "INSERT INTO beneficiaries_hsbc (id, id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, percentage, active, created_at, updated_at) VALUES('', '$idCliente', '$parentesco', '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$estadoCivil', '$sexo', '$fechaNac', '$rfc', '$nacionalidad', '$actividad', '$residencia', 0, 1, '$fecha_alta', '0000-00-00 00:00:00');";
+    $query = "INSERT INTO beneficiaries_hsbc (id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, updated_at) 
+                         VALUES(:id_cliente, :relationship, :name, :middle_name, :pater_surname, :mater_surname, :marital_status, :sex, :date_birth, :rfc, :nationality, :economic_activity, :residence, :updated_at);";
+
+    $data = [
+        "id_cliente" => $idCliente,
+        "relationship" => $parentesco,
+        "name" => $nombre,
+        "middle_name" => $segundoNombre,
+        "pater_surname" => $apellidoPaterno,
+        "mater_surname" => $apellidoMaterno,
+        "marital_status" => $estadoCivil,
+        "sex" => $sexo,
+        "date_birth" => $fechaNac,
+        "rfc" => $rfc,
+        "nationality" => $nacionalidad,
+        "economic_activity" => $actividad,
+        "residence" => $residencia,
+        "updated_at" => "0000-00-00 00:00:00"
+    ];
     
-    if(!$conexion->insertData($query)){
+    if(!$conexion->insertData($query, $data)){
         $result = array("mensaje" => "Ha ocurrido un error!");
     }else{
         $result = array("mensaje" => "Se creó el beneficiario, con éxito!");       
@@ -70,9 +88,28 @@ function updateBeneficiare($conexion, $idBeneficiario, $parentesco, $nombre, $se
 {
     $fecha_modif = date("Y-m-d H:i:s");    
 
-    $query = "UPDATE beneficiaries_hsbc SET relationship = '$parentesco', name = '$nombre', middle_name = '$segundoNombre', pater_surname = '$apellidoPaterno', mater_surname = '$apellidoMaterno', marital_status = '$estadoCivil', sex = '$sexo', date_birth = '$fechaNac', rfc = '$rfc', nationality = '$nacionalidad', residence = '$residencia', updated_at = '$fecha_modif' WHERE id = '$idBeneficiario'";
-    
-    if(!$conexion->insertData($query)){
+    $query = "UPDATE beneficiaries_hsbc 
+                     SET relationship = :relationship, name = :name, middle_name = :middle_name, pater_surname = :pater_surname, mater_surname = :mater_surname, marital_status = :marital_status, 
+                         sex = :sex, date_birth = :date_birth , rfc = :rfc, nationality = :nationality, economic_activity = :economic_activity, residence = :residence, updated_at = :updated_at WHERE id = :id";
+
+    $data = [
+        "id" => $idBeneficiario,
+        "relationship" => $parentesco,
+        "name" => $nombre,
+        "middle_name" => $segundoNombre,
+        "pater_surname" => $apellidoPaterno,
+        "mater_surname" => $apellidoMaterno,
+        "marital_status" => $estadoCivil,
+        "sex" => $sexo,
+        "date_birth" => $fechaNac,
+        "rfc" => $rfc,
+        "nationality" => $nacionalidad,
+        "economic_activity" => $actividad,
+        "residence" => $residencia,
+        "updated_at" => $fecha_modif
+    ];
+
+    if($conexion->insertData($query, $data) === 0){
         $result = array("mensaje" => "Ha ocurrido un error!");
     }else{
         $result = array("mensaje" => "Se actualizaron los beneficiario, con éxito!");       
