@@ -6,11 +6,11 @@
     <div class="header__step">
 		<div class="header__step__content">
 			<a href="./" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
-				<img src="img/ike-logo.svg" class="header__ike"> | 
-				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/ike-logo.svg" class="header__ike"> |
+				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo2.svg" class="header__hsbc">
 			</div>
 		</div>
 	</div>
@@ -47,7 +47,7 @@
                     $asistencias .= ' <div class="tbl__asistencia">';
                     $asistencias .= '<h3>' . $val['assistance'] . '</h3>';
                     $asistencias .= '<p>' . $val['description'] . '</p>';
-                    $asistencias .= '<a href="javascript:showAsistencia(\'' . $mAsistencia . '\');" class="more"> Conoce más <img src="img/icons/arrow-more.svg"></a>';
+                    $asistencias .= '<a href="javascript:showAsistencia(\'' . $mAsistencia . '\');" class="more"> Conoce más <img src="' . $_SESSION["relativePath"] . 'img/icons/arrow-more.svg"></a>';
                     $asistencias .= '</div></div>';
                     $asistencias .= '<div class="tbl__col2 price">+ $' . $val['price'] . '</div></div>';
                 }
@@ -163,13 +163,13 @@
                 <div class="unirse__box__title">Abre tu cuenta digital hoy mismo.</div>
                 <p>Igual de seguro, pero desde tu celular.</p>
                 <a href="https://dco-ao.hsbc.com.mx/advance?cid=AFF_HBMX_N4_IK0_00001" target="_blank">Saber más
-                    <img src="img/icons/arrow-red.svg">
+                    <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg">
                 </a>
             </div>
         </div>
 
         <div class="note s2">
-            <img src="img/icons/info.svg">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/icons/info.svg">
             <p><span class="bold">Solicitud de ubicación</span> <br>
             Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
         </div>
@@ -189,13 +189,13 @@
 
 <section class="lightbox" id="aMedica">
     <div class="lightbox__close">
-        <img src="img/icons/close.svg">
+        <img src="<?php echo $_SESSION["relativePath"]?>img/icons/close.svg">
     </div>
     <div class="lightbox__content">
         <h2 class="asis__title">Asistencia Médica</h2>
 
         <div class="asis__picture">
-            <img src="img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
         </div>
 
         <div class="asis__box">
@@ -291,13 +291,13 @@
 
 <section class="lightbox" id="aPadres">
     <div class="lightbox__close">
-        <img src="img/icons/close.svg">
+        <img src="<?php echo $_SESSION["relativePath"]?>img/icons/close.svg">
     </div>
     <div class="lightbox__content">
         <h2 class="asis__title">Asistencia para Padres</h2>
 
         <div class="asis__picture">
-            <img src="img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
         </div>
 
         <div class="asis__box">
@@ -406,13 +406,13 @@
 
 <section class="lightbox" id="aSenior">
     <div class="lightbox__close">
-        <img src="img/icons/close.svg">
+        <img src="<?php echo $_SESSION["relativePath"]?>img/icons/close.svg">
     </div>
     <div class="lightbox__content">
         <h2 class="asis__title">Asistencia Senior</h2>
 
         <div class="asis__picture">
-            <img src="img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
         </div>
 
         <div class="asis__box">
@@ -501,13 +501,13 @@
 
 <section class="lightbox" id="aJovenes">
     <div class="lightbox__close">
-        <img src="img/icons/close.svg">
+        <img src="<?php echo $_SESSION["relativePath"]?>img/icons/close.svg">
     </div>
     <div class="lightbox__content">
         <h2 class="asis__title">Asistencia para Jóvenes</h2>
 
         <div class="asis__picture">
-            <img src="img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
         </div>
 
         <div class="asis__box">
@@ -594,13 +594,13 @@
 
 <section class="lightbox" id="aMascotas">
     <div class="lightbox__close">
-        <img src="img/icons/close.svg">
+        <img src="<?php echo $_SESSION["relativePath"]?>img/icons/close.svg">
     </div>
     <div class="lightbox__content">
         <h2 class="asis__title">Asistencia para Mascotas</h2>
 
         <div class="asis__picture">
-            <img src="img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
         </div>
 
         <div class="asis__box">

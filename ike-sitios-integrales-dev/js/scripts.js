@@ -1,3 +1,22 @@
+let session = {
+	cliente: {
+		clientType: app,
+		name: '',
+		middle_name: '',
+		pater_surname: '',
+		mater_surname: '',
+		cell_phone: 0,
+		email: '',
+		date_birth: '',
+		rfc: '',
+		id_prima: 0,
+		sexo: '',
+		card: ''
+	},
+	asistencias: [],
+	step: 0
+}
+
 $(document).ready(function () {
 
 	$("#loading").hide();
@@ -59,6 +78,7 @@ $(document).ready(function () {
 				$("#loading").hide();
 			},
 			success: function (data) {
+				session.step = 1;
 				$("#main-content").html(data);
 			},
 			error: function (request, status, error) {
@@ -73,7 +93,7 @@ $(document).ready(function () {
 		const year = new Date($(this).val()).getFullYear(),
 		      yearNow = new Date().getFullYear();
 
-		if ( year > 1900 && year < yearNow && $('select[name=sexo]').val() !== '')
+		if ( year > 1900 && year < yearNow && $('select[name=sexo]').val() !== '' && session.step === 1)
 			$("#sexo").change();
 	});
 
@@ -116,6 +136,8 @@ $(document).ready(function () {
 
 				if (response.code == 200) {
 					$("#ajaxSumaAsegurada").html(response.data);
+					$("input[name=sexo]").val(sexo);
+
 				} else {
 					toastr.error(response.msg);
 				}
@@ -163,6 +185,7 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$("#main-content").html(data);
+				session.step = 2;
 				if(idPrima == 0){
 					$('#resumen_seguro').hide();
 					$('#line_seguro').hide();
@@ -195,11 +218,11 @@ $(document).ready(function () {
 		let prima_anual = $('input[name=prima_anual]').val();
 		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
 		let subtotal_mensual_asistencia = $('input[name=subtotal_mensual_asistencia]').val();
-		let idPrima = $('input[name=prima]').val();
+		let idPrima = session.cliente.id_prima = $('input[name=prima]').val();
 		let sexo = $('input[name=sexo]').val();
 		let captcha_response = document.getElementById("g-recaptcha-response").value;
 
-		if (subtotal_mensual_asistencia == "" && subtotal_mensual == "0") {
+		if (subtotal_mensual_asistencia == 0) {
 			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
 			return false;
 		}
@@ -218,6 +241,7 @@ $(document).ready(function () {
 			toastr.error("Debe aceptar que se encuentra en el territorio nacional para poder continuar.");
 			return false;
 		}
+
 
 		$.ajax({
 			url: relativePath + "backend/process/captcha.php",
@@ -264,6 +288,7 @@ $(document).ready(function () {
 						$("#loading").hide();
 					},
 					success: function (data) {
+						 session.step = 3;
 						$("#main-content").html(data);
 					},
 					error: function (request, status, error) {
@@ -275,7 +300,7 @@ $(document).ready(function () {
 				console.error(error);
 				toastr.error("Error inesperado, intente más tarde por favor");
 			}
-		});		
+		});
 	});
 
 	$(document).on('click', '.chkbox2', function () {
@@ -420,6 +445,7 @@ $(document).ready(function () {
 			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
+			dataType: "JSON",
 			beforeSend: function () {
 				$("#loading").show();
 			},
@@ -443,28 +469,33 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				$("#loading").hide();
-				console.log(data.idCliente);
-				$.ajax({
-					url: relativePath + "components/step_4.php",
-					cache: false,
-					type: 'POST',
-					data: {
-						idCliente: data.idCliente
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-					},
-					success: function (data) {
-						$("#main-content").html(data);
-						setTimer();
-					},
-					error: function (request, status, error) {
-						console.error(error);
-					}
-				});
+
+				if (data.idCliente !== undefined) {
+					$.ajax({
+						url: relativePath + "components/step_4.php",
+						cache: false,
+						type: 'POST',
+						data: {
+							idCliente: data.idCliente
+						},
+						beforeSend: function () {
+							$("#loading").show();
+						},
+						complete: function () {
+							$("#loading").hide();
+						},
+						success: function (data) {
+							$("#main-content").html(data);
+							session.step = 4;
+							setTimer();
+						},
+						error: function (request, status, error) {
+							console.error(error);
+						}
+					});
+				} else
+					toastr.error(data.msg);
+
 			},
 			error: function (request, status, error) {
 				console.error(error);
@@ -483,8 +514,9 @@ $(document).ready(function () {
 
 		verifyCode(idCliente, codigo, function (codeIsValid) {
 			if (codeIsValid) {
+				const step = session.cliente.id_prima == 0 ? '7' : '5';
 				$.ajax({
-					url: relativePath + "components/step_5.php",
+					url: relativePath + "components/step_" + step + ".php",
 					cache: false,
 					type: 'POST',
 					data: {
@@ -497,6 +529,7 @@ $(document).ready(function () {
 						$("#loading").hide();
 					},
 					success: function (data) {
+						session.step =parseInt(step);
 						$("#main-content").html(data);
 					},
 					error: function (request, status, error) {
@@ -676,6 +709,7 @@ $(document).ready(function () {
 					},
 					complete: function () {
 						$("#loading").hide();
+						session.step = 6;
 					},
 					success: function (data) {
 						$("#main-content").html(data);
@@ -811,6 +845,7 @@ $(document).ready(function () {
 						$("#loading").hide();
 					},
 					success: function (data) {
+						session.step = 6;
 						$("#main-content").html(data);
 					},
 					error: function (request, status, error) {
@@ -878,6 +913,7 @@ $(document).ready(function () {
 							$("#loading").hide();
 						},
 						success: function (data) {
+							session.step = 7;
 							$("#main-content").html(data);
 						},
 						error: function (request, status, error) {
@@ -918,6 +954,7 @@ $(document).ready(function () {
 				$("#loading").hide();
 			},
 			success: function (data) {
+				session.step = 8;
 				$("#main-content").html(data);
 			},
 			error: function (request, status, error) {
@@ -961,14 +998,20 @@ $(document).ready(function () {
 			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
+			dataType: "JSON",
 			data: {
 				action: 'verifyCard',
 				idCliente: idCliente,
-				numeroTarjeta: numeroTarjeta
+				numeroTarjeta: numeroTarjeta,
+				clientType: app
+			},
+			beforeSend: function () {
+				$("#loading").show();
 			},
 			success: function (data) {
 				console.log(data.mensaje);
-				if(data.mensaje != 'Tarjeta incorrecta'){
+				$("#loading").hide();
+				if(data.code === 200){
 					$.ajax({
 						url: relativePath + "components/step_final.php",
 						cache: false,
@@ -981,6 +1024,7 @@ $(document).ready(function () {
 							$("#loading").hide();
 						},
 						success: function (data) {
+							session.step = 9;
 							$("#main-content").html(data);
 						},
 						error: function (request, status, error) {
@@ -988,7 +1032,7 @@ $(document).ready(function () {
 						}
 					});
 				}else{
-					toastr.error("Ingresa una tarjeta HSBC válida.");
+					toastr.error(data.msg);
 					$('input[name=numeroTarjeta]').focus();
 					return false;
 				}				
@@ -1018,9 +1062,9 @@ function addSeguro(nodo) {
 	$('#pagoMensual').html('$' + pagoMensualFormat + ' MXN');
 
 	let totalAnual = pagoMensual * 12;
-	let totalAnualFormat = totalAnual;
+	let totalAnualFormat = formatCurrency(totalAnual, 2);
 
-	$('#totalAnual').html('$' + totalAnualFormat + ' MXN');
+	$('#totalAnual').html(totalAnualFormat + ' MXN');
 
 	$('input[name=suma_asegurada]').val(sumaAsegurada);
 	$('input[name=prima_anual]').val(totalAnual);
@@ -1177,6 +1221,7 @@ function deleteBenef(id) {
 						$("#loading").show();
 					},
 					complete: function () {
+						session.step = 6;
 						$("#loading").hide();
 					},
 					success: function (data) {

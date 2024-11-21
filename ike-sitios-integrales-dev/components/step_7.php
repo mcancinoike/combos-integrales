@@ -5,11 +5,11 @@
 	<div class="header__step">
 		<div class="header__step__content">
 			<a href="./" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
-				<img src="img/ike-logo.svg" class="header__ike"> | 
-				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/ike-logo.svg" class="header__ike"> | 
+				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo2.svg" class="header__hsbc">
 			</div>
 		</div>
 	</div>
@@ -38,8 +38,8 @@
 		<div class="resume action">
 			<h3 class="resume__title">Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?> </h3>
 			<div class="resume__action">
-				<a href="javascript:go2StepEdit(1);"><img src="img/icons/edit.svg"></a>
-				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+				<a href="javascript:go2StepEdit(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
 			</div>
 		</div>
 
@@ -92,8 +92,8 @@
 		<div class="resume action">
 			<h3 class="resume__title">Programa de Asistencias Iké</h3>
 			<div class="resume__action">
-				<a href="javascript:go2StepEdit(2);"><img src="img/icons/edit.svg"></a>
-				<a href="javascript:;"><img src="img/icons/delete.svg"></a>
+				<a href="javascript:go2StepEdit(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
 			</div>
 		</div>
 		
@@ -110,7 +110,7 @@
 			}
 			$asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
 			$asistencias .= '<div class="tbl__col right subtotal2">$'. formatoMoneda($price) .' MXN</div></div>';
-			$asistencias .= '<div class="tbl__note"><img src="img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
+			$asistencias .= '<div class="tbl__note"><img src="' . $_SESSION["relativePath"] . 'img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
 
 			$asistencias .= '</div></div>';
 
@@ -135,32 +135,32 @@
 			</div>
 		</div>
 	</div>
+    <?php if ($count > 0): ?>
+        <div class="separator__line"></div>
+        <div class="info">
+            <div class="resume action">
+                <h3 class="resume__title">Beneficiarios para mi seguro</h3>
+                <div class="resume__action">
+                    <a href="javascript:go2StepEdit(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+                    <a href="javascript:go2StepEdit(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+                </div>
+            </div>
 
-	<div class="separator__line"></div>
+            <?php
+                    $beneficiarios = "";
+                    $query = "SELECT * FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
+                    foreach ($conexion->getData($query) as $val) {
+                        $name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
+                        $beneficiarios .= '<div class="tbl"><div class="tbl__body">';
+                        $beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
+                        $beneficiarios .= '<img src="' . $_SESSION["relativePath"] . 'img/icons/person2.svg">';
+                        $beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">' . $val['percentage'] . '%</span></p>';
+                        $beneficiarios .= '</div></div></div></div>';
+                    }
+                    echo $beneficiarios;
 
-	<div class="info">
-
-		<div class="resume action">
-			<h3 class="resume__title">Beneficiarios para mi seguro</h3>
-			<div class="resume__action">
-				<a href="javascript:go2StepEdit(6);"><img src="img/icons/edit.svg"></a>
-				<a href="javascript:go2StepEdit(6);"><img src="img/icons/delete.svg"></a>
-			</div>
-		</div>
-
-		<?php
-                $beneficiarios = "";
-                $query = "SELECT * FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
-                foreach ($conexion->getData($query) as $val) {
-					$name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
-					$beneficiarios .= '<div class="tbl"><div class="tbl__body">';
-					$beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
-					$beneficiarios .= '<img src="img/icons/person2.svg">';
-					$beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">' . $val['percentage'] . '%</span></p>';
-					$beneficiarios .= '</div></div></div></div>';
-				}
-				echo $beneficiarios;
-		?>
+               endif;
+            ?>
 		<div class="box__button stp">
 			<button class="box__btn" id="btnStep7">Continuar</button>
 			<div class="box__button__line"></div>

@@ -2,7 +2,7 @@
     <div class="ty">
         <div class="ty__box">
             <div class="ty__header">
-                <img src="img/icons/ty.svg">
+                <img src="<?php echo $_SESSION["relativePath"]?>img/icons/ty.svg">
                 <h2>¡Tu solicitud fue enviada con éxito!</h2>
             </div>
             <ul>

@@ -5,11 +5,11 @@
 	<div class="header__step">
 		<div class="header__step__content">
 			<a href="./" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
-				<img src="img/ike-logo.svg" class="header__ike"> | 
-				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/ike-logo.svg" class="header__ike"> | 
+				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo2.svg" class="header__hsbc">
 			</div>
 		</div>
 	</div>
@@ -38,8 +38,8 @@
 					$beneficiarios .= '<div class="box__row b1">';
 					$beneficiarios .= '<div class="box__info"><div class="box__name">' . $nombre . '</div>';
 					$beneficiarios .= '<div class="box__action">';
-					$beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="img/icons/edit.svg"></a>';
-					$beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="img/icons/delete.svg"></a>';
+					$beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="' . $_SESSION["relativePath"] .'img/icons/edit.svg"></a>';
+					$beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $_SESSION["relativePath"] .'img/icons/delete.svg"></a>';
 					$beneficiarios .= '</div></div>';
 					$beneficiarios .= '<div class="box__percentage">Porcentaje';
 					$beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
@@ -51,7 +51,7 @@
 
 		<div class="box__button2">
 			<a href="javascript:;" class="box__btn2" id="btnNewBenef">
-				<img src="img/icons/add.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg">
 				Agregar otro beneficiario
 			</a>
 		</div>

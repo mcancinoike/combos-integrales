@@ -5,11 +5,11 @@
 	<div class="header__step">
 		<div class="header__step__content">
 			<a href="./" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
-				<img src="img/ike-logo.svg" class="header__ike"> | 
-				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/ike-logo.svg" class="header__ike"> | 
+				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo2.svg" class="header__hsbc">
 			</div>
 		</div>
 	</div>
@@ -27,7 +27,7 @@
 				¡Perfecto! Ya puedes definir quienes serán los beneficiarios de tu seguro
 			</div>
 			<div class="box__beneficiarios">
-				<img src="img/icons/person.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/person.svg">
 				<p>Puedes elegir hasta 5 beneficiarios</p>
 			</div>
 
@@ -35,7 +35,7 @@
 
 		<div class="box__button2">
 			<a href="javascript:;" class="box__btn2" id="btnStep5">
-				<img src="img/icons/add.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg">
 				Agregar beneficiario
 			</a>
 		</div>

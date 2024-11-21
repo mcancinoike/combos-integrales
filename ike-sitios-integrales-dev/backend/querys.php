@@ -16,10 +16,27 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
 {
     $fecha_alta = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO clientes_hsbc (id, client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code, confirm_code, email, date_birth, rfc, card, id_prima, sexo, active, created_at, updated_at) VALUES('', $clientType, '$nombre', '$segundoNombre', '$apellidoPaterno', '$apellidoMaterno', '$telefono', $code, 0, '$email', '$fechaNac', '$rfc', 0, '$idPrima', $sexo, 1, '$fecha_alta', '0000-00-00 00:00:00');";
-    $idCliente = $conexion->insertData($query);
+    $query = "INSERT INTO clientes_hsbc (client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code_cell, email, date_birth, rfc, id_prima, sexo, updated_at) 
+                     VALUES(:client_type, :name, :middle_name, :pater_surname, :mater_surname, :cell_phone, :code_cell, :email, :date_birth, :rfc, :id_prima, :sexo, :updated_at);";
+    $data = [
+      "client_type" => $clientType,
+      "name" => $nombre,
+      "middle_name" => $segundoNombre,
+      "pater_surname" => $apellidoPaterno,
+      "mater_surname" => $apellidoMaterno,
+      "cell_phone" => $telefono,
+      "code_cell" => $code,
+      "email" => $email,
+      "date_birth" => $fechaNac,
+      "rfc" => $rfc,
+      "id_prima" => $idPrima,
+      "sexo" => $sexo,
+      "updated_at" => "0000-00-00 00:00:00"
+    ];
+
+    $idCliente = $conexion->insertData($query, $data);
     if(!$idCliente){
-        $result = array("mensaje" => "Ha ocurrido un error!");
+        $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
     }else{
         $asist = explode("|", $asistencias);   
         foreach ($asist as $val2) {
@@ -28,7 +45,7 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
                 $conexion->insertData($query2);
             }  
         }     
-        $result = array("mensaje" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);       
+        $result = array("msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
     }
     
     return $result;
@@ -113,19 +130,32 @@ function sendCodeCell($code, $cellPhone, $conexion)
 
 function verifyCode($idCliente, $code, $conexion)
 {
-    $query = "SELECT * FROM clientes_hsbc WHERE id = :idCliente AND code = :code";
+    $query = "SELECT * FROM clientes_hsbc WHERE id = :idCliente AND code_cell = :code";
     $data = ["idCliente" => $idCliente, "code" => $code];
     $rows = $conexion->getData($query, $data);
-    if(count($rows))
-        return array("isValid" => true);
-    else
+    if(count($rows)){
+        if (confirm("cell", $conexion, $idCliente) === 0)
+                return array("isValid" => true);
+        else
+            return array("isValid" => false);
+
+    } else
         return array("isValid" => false);
 }
 
+function confirm($campo, $conexion, $idCliente)
+{
+    $query = "UPDATE clientes_hsbc SET confirm_$campo = 1 WHERE id = :idCliente";
+    $data = ["idCliente" => $idCliente];
+
+    return $conexion->insertData($query, $data);
+}
+
+
 function updateCodeClient($conexion, $idCliente, $code)
 {
-    $query = "UPDATE clientes_hsbc SET code = $code, updated_at = NOW() WHERE id = :idCliente";
-    $data = ["idCliente" => $idCliente];
+    $query = "UPDATE clientes_hsbc SET code_cell = :code WHERE id = :idCliente";
+    $data = ["idCliente" => $idCliente, "code" => $code];
 
     return $conexion->insertData($query, $data);
 }
@@ -144,29 +174,33 @@ function getCellClient($conexion, $idCliente)
     }
 }
 
-function verifyCard($conexion, $idCliente, $numeroTarjeta)
+function verifyCard($conexion, $idCliente, $numeroTarjeta, $clientType)
 {     
     $bin = substr($numeroTarjeta, 0, 6);
 
-    $query = "SELECT * FROM bin_account WHERE bin = :bin";
+    $query = "SELECT description FROM bin_account WHERE bin = :bin AND account_id = 999999";
     $data = ["bin" => $bin];
     $rows = $conexion->getData($query, $data);
     if(count($rows)){
-        $query2 = "UPDATE clientes_hsbc SET card = '$numeroTarjeta' WHERE id = '$idCliente'";
-        if(!$conexion->insertData($query2)){
-            apiAfiliados($conexion, $idCliente);
-            sendMail($conexion, $idCliente);
-            $result = array("mensaje" => "Se actualizo la tarjeta del cliente, con éxito!");  
-        }else{
-            $result = array("mensaje" => "Ha ocurrido un error!");
-        } 
+        $cardType = str_contains($rows[0]["description"], "DÉBITO") ? "TDD" : "TDC";
+         if (apiAfiliados($conexion, $idCliente, $cardType, $clientType, $numeroTarjeta)){
+             if (sendMail($conexion, $idCliente))
+                 if (confirm("email", $conexion, $idCliente) === 0)
+                    $result = array("code" => 200, "msg" => "Se actualizo la tarjeta del cliente, con éxito!");
+                 else
+                     $result = array("code" => 400, "msg" => "Error al confirmar correo");
+             else
+                 $result = array("code" => 400, "msg" => "Error al enviar correo");
+         }  else
+             $result = array("code" => 400, "msg" => "Error al intentar enviar información API afiliados");
+
     }else{
-        $result = array("mensaje" => "Tarjeta incorrecta");
+        $result = array("code" => 400, "msg" => "La tarjeta ingresada es incorrecta");
     }
-    echo json_encode($result);          
+    return json_encode($result);
 }
 
-function apiAfiliados($conexion, $idCliente){
+function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
     #oauth/token
     $urlOauth = $conexion->urlOauth;
     $curlOauth = $conexion->startCurl($urlOauth);
@@ -176,19 +210,21 @@ function apiAfiliados($conexion, $idCliente){
         $token = $curlOauth['access_token'];
         $tokenType = $curlOauth['token_type'];
 
-        $queryTit = "SELECT rfc as clave, client_type, created_at as fecha_inicio, card, concat(name, ' ', middle_name, ' ', pater_surname, ' ', mater_surname) as nombre_titular, date_birth as fecha_nacimiento, cell_phone as celular, email as correo FROM clientes_hsbc WHERE id = '$idCliente';";
+        $queryTit = "SELECT rfc as clave, ch.created_at as fecha_inicio, concat(name, ' ', middle_name, ' ', pater_surname, ' ', mater_surname) as nombre_titular, date_birth as fecha_nacimiento, 
+                            cell_phone as celular, email as correo, IFNULL(suma_asegurada, 0) as suma_asegurada
+                      FROM clientes_hsbc ch LEFT JOIN hsbc_prima_$clientType hp ON hp.id = ch.id_prima WHERE ch.id = '$idCliente';";
+
         foreach($conexion->getData($queryTit) as $valTit){ 
             $clave = $valTit['clave'];
             $fecha_inicio = date("Y-m-d", strtotime($valTit['fecha_inicio']));
             $fecha_fin = date("Y-m-d", strtotime($fecha_inicio . "+ 1 year"));
-            $card = $valTit['card'];
             $ultimosTDC = "************" . substr($card, 12, 16);
             $nombre_titular = $valTit['nombre_titular'];
             $fecha_nacimiento = date("Y-m-d", strtotime($valTit['fecha_nacimiento']));
             $fecha_venta = date("Y-m-d", strtotime($valTit['fecha_inicio']));
             $celular = $valTit['celular'];
             $correo = $valTit['correo'];
-            $clientType = $valTit['client_type'];
+            $sumaAsegurada = $valTit['suma_asegurada'];
         }
 
         $cumpleanos = new DateTime($fecha_nacimiento);
@@ -208,7 +244,7 @@ function apiAfiliados($conexion, $idCliente){
                 "card" => $card,
                 "Tipo_Cobro" => "2",
                 "Canal_Venta" => "B2C",
-                "Tipo_Tarjeta" => "debit",
+                "Tipo_Tarjeta" => $cardType,
                 "clProyecto" => $valAs['clProyecto'],
                 "Nombre_Titular" => $nombre_titular,
                 "Fecha_Nacimiento" => $fecha_nacimiento,
@@ -218,7 +254,7 @@ function apiAfiliados($conexion, $idCliente){
                 "Edad" => $edad,
                 "Producto" => $clientType === "ap" ? "Accidentes Personales" : "Apoyo por hospitalización",
                 "Programa" => $valAs['producto'],
-                "Suma_Asegurada" => "0",
+                "Suma_Asegurada" => $sumaAsegurada,
                 "Fecha_Venta" => $fecha_venta
             ];
 
@@ -253,7 +289,7 @@ function apiAfiliados($conexion, $idCliente){
 
                 $i++;
             }
-            // $conexion->insertData($insertar, $data_ben);
+
             $urlAfiliados = $conexion->urlApiAfiliados;
             // #Enviamos mediante Curl la informacion a la API AFILIADOS
             $curlAfiliados = $conexion->startCurl($urlAfiliados, $tokenType, $token, $data_ben);
@@ -263,10 +299,15 @@ function apiAfiliados($conexion, $idCliente){
                 $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id, error) ";
                 $log_alta .= "VALUES('2','NO','". $valAs['producto'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
                 $conexion->insertData($log_alta);
-            }
-        } 
-        // var_dump($data_ben);
-    }
+                if ($errorApi !== 'OK')
+                    return false;
+            } else
+                return false;
+        }
+        return true;
+
+    } else
+        return false;
 }
 
 function sendMail($conexion, $idCliente){
@@ -343,7 +384,7 @@ function sendMail($conexion, $idCliente){
         if($asistencia == 4)
             $mail->AddAttachment('../docs/WK_Mascotas.pdf');
     }
-    $mail->send();
+    return $mail->send();
 }
 
 function formatoMoneda($numero)
@@ -489,7 +530,7 @@ switch ($action):
         $idCliente = $_POST['idCliente'];
         $code = genCode();
 
-        if(!updateCodeClient($conexion, $idCliente, $code)) {
+        if(updateCodeClient($conexion, $idCliente, $code) === 0) {
             $telefono = getCellClient($conexion, $idCliente);
 
             try {
@@ -507,7 +548,8 @@ switch ($action):
     case 'verifyCard':
         $idCliente = $_POST['idCliente'];   
         $numeroTarjeta = $_POST['numeroTarjeta'];   
-        verifyCard($conexion, $idCliente, $numeroTarjeta);
+        $clientType = $_POST['clientType'];
+        echo verifyCard($conexion, $idCliente, $numeroTarjeta, $clientType);
         break;
 
     case 'updatePercentage':

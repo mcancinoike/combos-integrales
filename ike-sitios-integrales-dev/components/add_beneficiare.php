@@ -8,11 +8,11 @@ include_once "../backend/post.php";
 	<div class="header__step">
 		<div class="header__step__content">
 			<a href="./" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
-				<img src="img/ike-logo.svg" class="header__ike"> | 
-				<img src="img/hsbc-logo2.svg" class="header__hsbc">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/ike-logo.svg" class="header__ike"> | 
+				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo2.svg" class="header__hsbc">
 			</div>
 		</div>
 	</div>

@@ -5,7 +5,7 @@
 	<div class="header__step">
 		<div class="header__step__content">
 			<a href="javascript:go2Step(7);" class="header__step__arrow">
-				<img src="img/icons/arrow-left.svg">
+				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">HSBC Seguros | Iké&#174; Asistencias</div>
 		</div>
@@ -26,7 +26,7 @@
 		</div>
 
 		<div class="note">
-			<img src="img/icons/info.svg">
+			<img src="<?php echo $_SESSION["relativePath"]?>img/icons/info.svg">
 			<p>Tu solicitud se enviará a revisión. No haremos ningún cobro a tu tarjeta hasta que tu solicitud sea aceptada en un máximo de 48 horas.</p>
 		</div>
 
@@ -41,7 +41,7 @@
 						</div>
 						<div class="frm__group check">
 							<input type="checkbox" name="condiciones" value="1" class="frm__control check">
-							<a href="docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del producto</a>
+							<a href="<?php echo $_SESSION["relativePath"]?>docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del producto</a>
 						</div>
 						<div class="frm__group check">
 							<input type="checkbox" name="envio" class="frm__control check">

@@ -1,6 +1,6 @@
 <?php
     session_start();
-    $relativePath = "";
+    $_SESSION["relativePath"] = "";
     $_SESSION["app"] = "ap";
 ?>
 <!DOCTYPE html>
@@ -23,7 +23,7 @@
 			<div class="header__step home line">
 				<div class="header__step__content">
 					<a href="javascript:;" class="header__step__arrow">
-						<img src="img/icons/arrow-left.svg">
+						<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 					</a>
 					<div class="header__step__title">HSBC Seguros</div>
 				</div>
@@ -31,8 +31,8 @@
 
 			<div class="atf">
 				<div class="atf__picture">
-					<img src="img/hsbc-seguro.png" class="mobile">
-					<img src="img/hsbc-seguro-desktop.png" class="desktop">
+					<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-seguro.png" class="mobile">
+					<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-seguro-desktop.png" class="desktop">
 				</div>
 				<div class="atf__txt">
 					<h1>¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!</h1>
@@ -41,11 +41,11 @@
 
 			<div class="info home">
 				<div class="breadcrumb">
-					Productos <img src="img/icons/arrow-red.svg"> Programa Seguros + Asistencia
+					Productos <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg"> Programa Seguros + Asistencia
 				</div>
 				<div class="box">
 					<div class="box__title">
-						<img src="img/icons/realiza.svg">
+						<img src="<?php echo $_SESSION["relativePath"]?>img/icons/realiza.svg">
 						Realiza tu solicitud y obtén:
 					</div>
 					<ul class="box__list">
@@ -60,7 +60,7 @@
 				</div>
 				<div class="box">
 					<div class="box__title">
-						<img src="img/icons/haz.svg">
+						<img src="<?php echo $_SESSION["relativePath"]?>img/icons/haz.svg">
 						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
 					</div>
 					<p class="box__txt">También podrás contratar tu Seguro por Accidentes Personales o el Programa de Asistencias Iké por separado.</p>
@@ -70,7 +70,7 @@
 		</section>
 	</div>
 	<div id="loading">
-		<img src="img/loading.svg" alt="cargando" style="width: 150px">
+		<img src="<?php echo $_SESSION["relativePath"]?>img/loading.svg" alt="cargando" style="width: 150px">
 	</div>
 	<footer>
 		<div class="footer__content">
