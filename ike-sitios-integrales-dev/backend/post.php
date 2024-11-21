@@ -40,5 +40,6 @@ echo '<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="' . 
         <input type="hidden" id="subtotal_mensual_asistencia" name="subtotal_mensual_asistencia" value="' . $subtotal_mensual_asistencia . '">
         <input type="hidden" id="prima" name="prima" value="' . $idPrima . '">
         <input type="hidden" id="sexo" name="sexo" value="' . $sexo . '">
-        <input type="hidden" id="asistencias" name="asistencias" value="' . $textAsistencia . '">';
+        <input type="hidden" id="asistencias" name="asistencias" value="' . $textAsistencia . '">
+        <input type="hidden" id="idCliente" name="idCliente" value="' . $idCliente . '">';
 ?>
