@@ -316,7 +316,7 @@ function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
                 $data_ben["Apellido_Materno_B$k"] = $maternoB;
                 $data_ben["Fecha_Nacimiento_B$k"] = $fechaNacB;
                 $data_ben["Estado_Civil_B$k"] = $civilB;
-                $data_ben["Porcentaje_B$k"] = "0";
+                $data_ben["Porcentaje_B$k"] = $valBn['porcentajeB'];
                 $data_ben["Sexo_B$k"] = $sexoB;
                 $data_ben["Rfc_B$k"] = $rfcB;
                 $data_ben["Parentesco_B$k"] = $parentescoB;
@@ -326,7 +326,8 @@ function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
 
                 $i++;
             }
-
+            var_dump($data_ben);
+            exit();
             $urlAfiliados = $conexion->urlApiAfiliados;
             // #Enviamos mediante Curl la informacion a la API AFILIADOS
             $curlAfiliados = $conexion->startCurl($urlAfiliados, $tokenType, $token, $data_ben);
@@ -334,7 +335,7 @@ function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
             if($curlAfiliados != false){
                 $errorApi =  $curlAfiliados['code']  =='200' ? 'OK':json_encode($curlAfiliados['error']); 
                 $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id, error) ";
-                $log_alta .= "VALUES('2','NO','". $valAs['producto'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
+                $log_alta .= "VALUES('2','NO','". $valAs['cuenta_ike'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
                 $conexion->insertData($log_alta);
                 if ($errorApi !== 'OK')
                     return false;
