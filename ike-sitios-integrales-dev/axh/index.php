@@ -18,7 +18,7 @@
 <!-- Page Header-->
 <?php include '../components/header.php' ?>
 
-<body>	
+<body>
 	<div id="main-content">
 		<section class="step show" id="home">
 			<div class="header__step home line">
@@ -64,11 +64,7 @@
 						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
 					</div>
 				</div><br>
-				<button class="box__btn" name="btnContinuar" id="btnContinuar">Continuar</button>
-				<!-- <div class="box__button">
-					<a href="registro.php" class="box__btn">Continuar</a>
-					<div class="box__button__line"></div>
-				</div> -->
+				<button class="box__btn" name="btnContinuar" id="step0">Continuar</button>
 			</div>
 		</section>
 	</div>

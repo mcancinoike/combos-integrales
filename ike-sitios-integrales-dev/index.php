@@ -65,7 +65,7 @@
 					</div>
 					<p class="box__txt">También podrás contratar tu Seguro por Accidentes Personales o el Programa de Asistencias Iké por separado.</p>
 				</div><br>
-				<button class="box__btn" name="btnContinuar" id="btnContinuar">Continuar</button>
+				<button class="box__btn" name="btnContinuar" id="step0">Continuar</button>
 			</div>
 		</section>
 	</div>

@@ -33,7 +33,7 @@ include_once "../backend/post.php";
 				<div class="frm__group">
 					<label>Ingresa el código</label>
 					<input type="text" name="codigoSms" class="frm__control" autocomplete="off">
-					<a href="javascript:sendNewCode(<?php echo $idCliente ?>);" id="sendNewCode" class="frm__generate">
+					<a href="javascript:void(0)" id="sendNewCode" class="frm__generate">
 						<img src="<?php echo $_SESSION["relativePath"]?>img/icons/refresh.svg">
 						Generar un código nuevo</a>
 				</div>

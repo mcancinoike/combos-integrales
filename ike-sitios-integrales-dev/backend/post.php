@@ -9,7 +9,7 @@ function formatoMoneda($numero)
    return number_format(floor(($numero*100))/100, 2);
 }
 
-$suma_asegurada = !isset($_POST['suma_asegurada']) ? "0.00" : $conexion->xssClean($_POST['suma_asegurada']);
+/*$suma_asegurada = !isset($_POST['suma_asegurada']) ? "0.00" : $conexion->xssClean($_POST['suma_asegurada']);
 $suma_asegurada =  empty($suma_asegurada) ? 0 : $suma_asegurada;
 
 $prima_anual = !isset($_POST['prima_anual']) ? "0.00" : $conexion->xssClean($_POST['prima_anual']);
@@ -41,5 +41,5 @@ echo '<input type="hidden" id="suma_asegurada" name="suma_asegurada" value="' . 
         <input type="hidden" id="prima" name="prima" value="' . $idPrima . '">
         <input type="hidden" id="sexo" name="sexo" value="' . $sexo . '">
         <input type="hidden" id="asistencias" name="asistencias" value="' . $textAsistencia . '">
-        <input type="hidden" id="idCliente" name="idCliente" value="' . $idCliente . '">';
+        <input type="hidden" id="idCliente" name="idCliente" value="' . $idCliente . '">';*/
 ?>

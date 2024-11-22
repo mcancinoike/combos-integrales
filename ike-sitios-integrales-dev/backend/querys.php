@@ -38,8 +38,8 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     if(!$idCliente){
         $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
     }else{
-        $asist = explode("|", $asistencias);   
-        foreach ($asist as $val2) {
+
+        foreach ($asistencias as $val2) {
             if($val2 != ""){
                 $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
                 $conexion->insertData($query2);
@@ -53,7 +53,6 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
 
 function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $estadoCivil, $sexo, $fechaNac, $rfc, $nacionalidad, $actividad, $residencia)
 {
-    $fecha_alta = date("Y-m-d H:i:s");    
 
     $query = "INSERT INTO beneficiaries_hsbc (id_cliente, relationship, name, middle_name, pater_surname, mater_surname, marital_status, sex, date_birth, rfc, nationality, economic_activity, residence, updated_at) 
                          VALUES(:id_cliente, :relationship, :name, :middle_name, :pater_surname, :mater_surname, :marital_status, :sex, :date_birth, :rfc, :nationality, :economic_activity, :residence, :updated_at);";
@@ -74,11 +73,13 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
         "residence" => $residencia,
         "updated_at" => "0000-00-00 00:00:00"
     ];
-    
-    if(!$conexion->insertData($query, $data)){
-        $result = array("mensaje" => "Ha ocurrido un error!");
+
+    $idBeneficiario = $conexion->insertData($query, $data);
+
+    if(!is_numeric($idBeneficiario)){
+        $result = array("msg" => "Ha ocurrido un error!");
     }else{
-        $result = array("mensaje" => "Se creó el beneficiario, con éxito!");       
+        $result = array("msg" => "Se creó el beneficiario, con éxito!", "idBeneficiario" => $idBeneficiario );
     }
     
     echo json_encode($result);
@@ -487,6 +488,25 @@ function getSumaAsegurada($conexion, $fechaNac, $sexo)
     return json_encode(["code" => 200, "msg" => "ok", "data" => $select]);
 }
 
+function getBeneficiaries($conexion, $idCliente)
+{
+    $beneficiarios = "";
+    $query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = $idCliente ORDER BY id ASC;";
+    foreach ($conexion->getData($query) as $val) {
+        $nombre = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
+        $beneficiarios .= '<div class="box__row b1">';
+        $beneficiarios .= '<div class="box__info"><div class="box__name">' . $nombre . '</div>';
+        $beneficiarios .= '<div class="box__action">';
+        $beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="' . $_SESSION["relativePath"] .'img/icons/edit.svg"></a>';
+        $beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $_SESSION["relativePath"] .'img/icons/delete.svg"></a>';
+        $beneficiarios .= '</div></div>';
+        $beneficiarios .= '<div class="box__percentage">Porcentaje';
+        $beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
+        $beneficiarios .= '</div></div></div><br>';
+    }
+    return $beneficiarios;
+}
+
 switch ($action):
     // ah
     case 'getSumaAsegurada':
@@ -591,5 +611,9 @@ switch ($action):
 
     case 'updatePercentage':
         echo updatePercentage($_POST["pBeneficiarios"], $conexion);
+        break;
+    case 'getBeneficiaries':
+        $idCliente = $_POST['idCliente'];
+        echo getBeneficiaries($conexion, $idCliente);
         break;
 endswitch;

@@ -6,15 +6,28 @@ let session = {
 		pater_surname: '',
 		mater_surname: '',
 		cell_phone: 0,
+		confirm_cell: 0,
 		email: '',
 		date_birth: '',
 		rfc: '',
 		id_prima: 0,
-		sexo: '',
-		card: ''
+		sexo: ''
 	},
 	asistencias: [],
-	step: 0
+	step: 0,
+	seguro: {
+		sumaAsegurada: 0,
+		pagoAnual: 0,
+		pagoMensual: 0
+	},
+	pagoTotalMensual: 0,
+	beneficiarios: [],
+	id_cliente: 0,
+	check: {
+		clienteHsbc: false,
+		avisoHsbc: false,
+		residenteHsbc: false
+	}
 }
 
 $(document).ready(function () {
@@ -64,27 +77,9 @@ $(document).ready(function () {
 
 	// home
 
-	$(document).on("click", "#btnContinuar", function (e) {
+	$(document).on("click", "#step0", function (e) {
 		e.preventDefault();
-		$.ajax({
-			url: relativePath + "components/step_1.php",
-			cache: false,
-			type: 'POST',
-			data: {},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				session.step = 1;
-				$("#main-content").html(data);
-			},
-			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
-			}
-		});
+		goStep(1);
 	});
 
 	// evento exclusivo ah
@@ -157,151 +152,22 @@ $(document).ready(function () {
 			$("#btnStep1").hide();
 	});
 
-	//Step 1
-
-	$(document).on("click", "#btnStep1", function () {
-		let suma_asegurada = $('input[name=suma_asegurada]').val();
-		let prima_anual = $('input[name=prima_anual]').val();
-		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
-		let idPrima = $('input[name=prima]').val();
-		let sexo = $('input[name=sexo]').val();
-
-		$.ajax({
-			url: relativePath + "components/step_2.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				suma_asegurada: suma_asegurada,
-				prima_anual: prima_anual,
-				subtotal_mensual: subtotal_mensual,
-				idPrima: idPrima,
-				sexo: sexo
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				$("#main-content").html(data);
-				session.step = 2;
-				if(idPrima == 0){
-					$('#resumen_seguro').hide();
-					$('#line_seguro').hide();
-				}
-			},
-			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
-			}
-		});		
-	});
+	// evneto exclusivo ap
 
 	$(document).on('click', "input[name=seguro]", function () {
 		addSeguro($(this));
 	});
 
-	$(document).on('click', '.chkbox', function () {
-		$('#tblStep2').show();
+	//Step 1
+
+	$(document).on("click", "#btnStep1", function (e) {
+		e.preventDefault();
+		goStep(2);
 	});
+
+
 
 	//Step 2
-
-	$(document).on("click", "#btnStep2", function () {
-		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
-			if (asistencia.checked) return asistencia.value;
-		}).get();
-		let isChecked = $('input[name=clienteHsbc]').is(':checked');
-		let isChecked2 = $('input[name=avisoHsbc]').is(':checked');
-		let isChecked3 = $('input[name=residenteHsbc]').is(':checked');
-		let suma_asegurada = $('input[name=suma_asegurada]').val();
-		let prima_anual = $('input[name=prima_anual]').val();
-		let subtotal_mensual = $('input[name=subtotal_mensual]').val();
-		let subtotal_mensual_asistencia = $('input[name=subtotal_mensual_asistencia]').val();
-		let idPrima = session.cliente.id_prima = $('input[name=prima]').val();
-		let sexo = $('input[name=sexo]').val();
-		let captcha_response = document.getElementById("g-recaptcha-response").value;
-
-		if (subtotal_mensual_asistencia == 0) {
-			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
-			return false;
-		}
-		
-		if (!isChecked) {
-			toastr.error("Debe ser cliente HSBC para poder continuar.");
-			return false;
-		}
-
-		if (!isChecked2) {
-			toastr.error("Debe aceptar el aviso de privacidad para poder continuar.");
-			return false;
-		}
-
-		if (!isChecked3) {
-			toastr.error("Debe aceptar que se encuentra en el territorio nacional para poder continuar.");
-			return false;
-		}
-
-
-		$.ajax({
-			url: relativePath + "backend/process/captcha.php",
-			cache: false,
-			type: 'POST',
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			data: {
-				captcha_response : captcha_response
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				$("#loading").hide();				
-				console.log(data);
-
-				let datos = JSON.parse(data);
-				let success = datos.success;
-				
-				if(success == false){
-					toastr.error("Algo salio mal, error en el captcha.");
-					return false;
-				}
-
-				$.ajax({
-					url: relativePath + "components/step_3.php",
-					cache: false,
-					type: 'POST',
-					data: {
-						suma_asegurada: suma_asegurada,
-						prima_anual: prima_anual,
-						subtotal_mensual: subtotal_mensual,
-						subtotal_mensual_asistencia: subtotal_mensual_asistencia,
-						idPrima: idPrima,
-						asistencias: asistencias,
-						sexo: sexo
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-					},
-					success: function (data) {
-						 session.step = 3;
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});	
-			},
-			error: function (request, status, error) {
-				console.error(error);
-				toastr.error("Error inesperado, intente más tarde por favor");
-			}
-		});
-	});
 
 	$(document).on('click', '.chkbox2', function () {
 		$('#tblStep2 .tbl__note').show();
@@ -310,7 +176,7 @@ $(document).ready(function () {
 		let costo = $(this).attr('data-costo');
 		let total = $('#tblStep2Total').attr('data-total');
 		var totalChecked = $('#tblAsistencias').find('input[name="asistencia[]"]:checked').length;
-		
+
 		if (checked) {
 			total = parseFloat(total) + parseFloat(costo);
 			$('#tblStep2 .a' + id).css('display', 'flex');
@@ -318,6 +184,7 @@ $(document).ready(function () {
 			total = parseFloat(total) - parseFloat(costo);
 			$('#tblStep2 .a' + id).hide();
 		}
+		session.pagoTotalMensual = total;
 
 		$('#tblStep2Total').attr('data-total', total);
 		let totalFormat = total;
@@ -326,10 +193,10 @@ $(document).ready(function () {
 		$('input[name=subtotal_mensual_asistencia]').val(totalFormat.toFixed(2));
 		if (totalChecked) {
 			$('#tblStep2 .tbl__note').show();
-			$('#tblStep2Total .subtotal').html('Total mensual a pagar del seguro + asistencias:');
+			$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro + asistencias:');
 		} else {
 			$('#tblStep2 .tbl__note').hide();
-			$('#tblStep2Total .subtotal').html('Total mensual a pagar del seguro:');
+			$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro:');
 		}
 
 	});
@@ -358,84 +225,148 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).on("click", "#btnStep2", function () {
+		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
+			if (asistencia.checked) return asistencia.value;
+		}).get(),
+			captcha_response = document.getElementById("g-recaptcha-response").value;
+
+		session.asistencias = asistencias;
+		session.check.clienteHsbc = $('input[name=clienteHsbc]').is(':checked');
+		session.check.avisoHsbc = $('input[name=avisoHsbc]').is(':checked');
+		session.check.residenteHsbc = $('input[name=residenteHsbc]').is(':checked');
+
+		if (session.pagoTotalMensual == 0) {
+			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
+			return false;
+		}
+		
+		if (!session.check.clienteHsbc) {
+			toastr.error("Debe ser cliente HSBC para poder continuar.");
+			return false;
+		}
+
+		if (!session.check.avisoHsbc) {
+			toastr.error("Debe aceptar el aviso de privacidad para poder continuar.");
+			return false;
+		}
+
+		if (!session.check.residenteHsbc) {
+			toastr.error("Debe aceptar que se encuentra en el territorio nacional para poder continuar.");
+			return false;
+		}
+
+		goStep(3);
+
+/*		$.ajax({
+			url: relativePath + "backend/process/captcha.php",
+			cache: false,
+			type: 'POST',
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			data: {
+				captcha_response : captcha_response
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (data) {
+				$("#loading").hide();				
+				console.log(data);
+
+				let datos = JSON.parse(data);
+				let success = datos.success;
+				
+				if(success == false){
+					toastr.error("Algo salio mal, error en el captcha.");
+					return false;
+				}
+				goStep(3);
+			},
+			error: function (request, status, error) {
+				console.error(error);
+				toastr.error("Error inesperado, intente más tarde por favor");
+			}
+		});*/
+	});
+
 	//Step 3
 
 	$(document).on("click", "#btnStep3", function () {
-		let idPrima = $('input[name=prima]').val();
-		let sexo = $('input[name=sexo]').val();
-		let asistencias = $('input[name=asistencias]').val();
-		let nombre = $('#frmRegister3 input[name=nombre]').val().trim();
-		let segundoNombre = $('#frmRegister3 input[name=segundoNombre]').val().trim();
-		let apellidoPaterno = $('#frmRegister3 input[name=apellidoPaterno]').val().trim();
-		let apellidoMaterno = $('#frmRegister3 input[name=apellidoMaterno]').val().trim();
-		let fechaNac = $('#frmRegister3 input[name=fechaNac]').val().trim();
-		let rfc = $('#frmRegister3 input[name=rfc]').val().trim();
-		let email = $('#frmRegister3 input[name=email]').val().trim();
-		let telefono = $('#frmRegister3 input[name=telefono]').val().trim();
+
+		session.cliente.name = $('#frmRegister3 input[name=nombre]').val().trim();
+		session.cliente.middle_name = $('#frmRegister3 input[name=segundoNombre]').val().trim();
+		session.cliente.pater_surname = $('#frmRegister3 input[name=apellidoPaterno]').val().trim();
+		session.cliente.mater_surname = $('#frmRegister3 input[name=apellidoMaterno]').val().trim();
+		session.cliente.date_birth = $('#frmRegister3 input[name=fechaNac]').val().trim();
+		session.cliente.rfc = $('#frmRegister3 input[name=rfc]').val().trim();
+		session.cliente.email = $('#frmRegister3 input[name=email]').val().trim();
+		session.cliente.cell_phone = $('#frmRegister3 input[name=telefono]').val().trim();
 
 		$('#frmErrMsg3').hide();
 
-		if (nombre == '') {
+		if (session.cliente.name == '') {
 			toastr.error("Escribe tu nombre");
 			$('input[name=nombre]').focus();
 			return false;
 		}
 
-		if (apellidoPaterno == '') {
+		if (session.cliente.pater_surname == '') {
 			toastr.error("Escribe tu apellido paterno");
 			$('input[name=apellidoPaterno]').focus();
 			return false;
 		}
 
-		if (apellidoMaterno == '') {
+		if (session.cliente.mater_surname == '') {
 			toastr.error("Escribe tu apellido materno");
 			$('input[name=apellidoMaterno]').focus();
 			return false;
 		}
 
-		if (fechaNac == '') {
+		if (session.cliente.date_birth == '') {
 			toastr.error("Selecciona la fecha de tu nacimiento");
 			$('input[name=fechaNac]').focus();
 			return false;
 		}
 
-		if (fechaNac > maxDate) {
+		if (session.cliente.date_birth > maxDate) {
 			toastr.error("Debe ser mayor de 18 años");
 			$('input[name=fechaNac]').focus();
 			return false;
 		}
 
-		if (rfc == '') {			
+		if (session.cliente.rfc == '') {
 			toastr.error("Escribe el RFC");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
-		if (rfc.length <= 11) {			
+		if (session.cliente.rfc.length <= 11) {
 			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
-		if (email == '') {
+		if (session.cliente.email == '') {
 			toastr.error("Escribe tu correo electrónico");
 			$('input[name=email]').focus();
 			return false;
 		}
 
-		if (!emailIsValid(email)) {
+		if (!emailIsValid(session.cliente.email)) {
 			toastr.error("Escribe un correo válido");
 			$('input[name=email]').focus();
 			return false;
 		}
 
-		if (telefono == '') {
+		if (session.cliente.cell_phone == '') {
 			toastr.error("Escribe tu teléfono");
 			$('input[name=telefono]').focus();
 			return false;
 		}
 
-		if (telefono.length < 10) {
+		if (session.cliente.cell_phone.length < 10) {
 			toastr.error("El teléfono tiene que tener 10 dígitos");
 			$('input[name=telefono]').focus();
 			return false;
@@ -451,17 +382,17 @@ $(document).ready(function () {
 			},
 			data: {
 				action: 'saveClient',
-				idPrima: idPrima,
-				asistencias: asistencias,
-				nombre: nombre,
-				segundoNombre: segundoNombre,
-				apellidoPaterno: apellidoPaterno,
-				apellidoMaterno: apellidoMaterno,
-				rfc: rfc,
-				fechaNac: fechaNac,
-				email: email,
-				telefono: telefono,
-				sexo: sexo,
+				idPrima: session.cliente.id_prima,
+				asistencias: session.asistencias,
+				nombre: session.cliente.name,
+				segundoNombre: session.cliente.middle_name,
+				apellidoPaterno: session.cliente.pater_surname,
+				apellidoMaterno: session.cliente.mater_surname,
+				rfc: session.cliente.rfc,
+				fechaNac: session.cliente.date_birth,
+				email: session.cliente.email,
+				telefono: session.cliente.cell_phone,
+				sexo: session.cliente.sexo,
 				clientType: app,
 			},
 			complete: function () {
@@ -471,28 +402,8 @@ $(document).ready(function () {
 				$("#loading").hide();
 
 				if (data.idCliente !== undefined) {
-					$.ajax({
-						url: relativePath + "components/step_4.php",
-						cache: false,
-						type: 'POST',
-						data: {
-							idCliente: data.idCliente
-						},
-						beforeSend: function () {
-							$("#loading").show();
-						},
-						complete: function () {
-							$("#loading").hide();
-						},
-						success: function (data) {
-							$("#main-content").html(data);
-							session.step = 4;
-							setTimer();
-						},
-						error: function (request, status, error) {
-							console.error(error);
-						}
-					});
+					session.id_cliente = data.idCliente;
+					goStep(4);
 				} else
 					toastr.error(data.msg);
 
@@ -507,220 +418,147 @@ $(document).ready(function () {
 	//Step 4
 
 	$(document).on("click", "#btnStep4", function () {
-		let codigo = $('input[name=codigoSms]').val().trim();
-		let idCliente = $('input[name=idCliente]').val();
+		const codigo = $('input[name=codigoSms]').val().trim(),
+		 		step = session.cliente.id_prima == 0 ? '7' : '5';
 
 		$('#frmErrMsg4').hide();
 
-		verifyCode(idCliente, codigo, function (codeIsValid) {
-			if (codeIsValid) {
-				const step = session.cliente.id_prima == 0 ? '7' : '5';
-				$.ajax({
-					url: relativePath + "components/step_" + step + ".php",
-					cache: false,
-					type: 'POST',
-					data: {
-						idCliente: idCliente
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-					},
-					success: function (data) {
-						session.step =parseInt(step);
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
-
-			} else {
-				toastr.error("El código es inválido");
-				$('input[name=codigoSms]').focus();
-			}
-		});
-
-		// $.ajax({
-		// 	url: relativePath + "components/step_5.php",
-		// 	cache: false,
-		// 	type: 'POST',
-		// 	data: {
-		// 		idCliente: idCliente
-		// 	},
-		// 	beforeSend: function () {
-		// 		$("#loading").show();
-		// 	},
-		// 	complete: function () {
-		// 		$("#loading").hide();
-		// 	},
-		// 	success: function (data) {
-		// 		$("#main-content").html(data);
-		// 	},
-		// 	error: function (request, status, error) {
-		// 		console.log('Ha ocurrido un error!');
-		// 	}
-		// });
+		if (session.cliente.confirm_cell == 1)
+			goStep(step);
+		else {
+			verifyCode(session.id_cliente, codigo, function (codeIsValid) {
+				if (codeIsValid)
+					goStep(step);
+				else {
+					toastr.error("El código es inválido");
+					$('input[name=codigoSms]').focus();
+				}
+			});
+		}
 	});
 
+	$(document).on("click", "#sendNewCode", function () {
+		sendNewCode(session.id_cliente);
+	});
 	//Step 5
 
 	$(document).on("click", "#btnStep5", function () {
-		let idCliente = $('input[name=idCliente]').val();
-		$.ajax({
-			url: relativePath + "components/add_beneficiare.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				idCliente: idCliente
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				$("#main-content").html(data);
-			},
-			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
-			}
-		});
+		goStep("5-2");
 	});
 
 	//Agregar Beneficiario
 
 	$(document).on("click", "#btnStepBenef", function () {
-		let idCliente = $('input[name=idCliente]').val();
-		let parentesco = $('#frmBeneficiario select[name=parentesco]').val();
-		let nombre = $('#frmBeneficiario input[name=nombre]').val().trim();
-		let segundoNombre = $('#frmBeneficiario input[name=segundoNombre]').val().trim();
-		let apellidoPaterno = $('#frmBeneficiario input[name=apellidoPaterno]').val().trim();
-		let apellidoMaterno = $('#frmBeneficiario input[name=apellidoMaterno]').val().trim();
-		let estadoCivil = $('#frmBeneficiario select[name=estadoCivil]').val();
-		let sexo = $('#frmBeneficiario select[name=sexo]').val();
-		let fechaNac = $('#frmBeneficiario input[name=fechaNac]').val().trim();
-		let rfc = $('#frmBeneficiario input[name=rfc]').val().trim();
-		let nacionalidad = $('#frmBeneficiario select[name=nacionalidad]').val();
-		let actividad = $('#frmBeneficiario select[name=actividad]').val();
-		let residencia = $('#frmBeneficiario select[name=residencia]').val();
+
+
+		const beneficiarios = {
+			parentesco: $('#frmBeneficiario select[name=parentesco]').val(),
+			nombre: $('#frmBeneficiario input[name=nombre]').val().trim(),
+			segundoNombre: $('#frmBeneficiario input[name=segundoNombre]').val().trim(),
+			apellidoPaterno: $('#frmBeneficiario input[name=apellidoPaterno]').val().trim(),
+			apellidoMaterno: $('#frmBeneficiario input[name=apellidoMaterno]').val().trim(),
+			estadoCivil: $('#frmBeneficiario select[name=estadoCivil]').val(),
+			sexo: $('#frmBeneficiario select[name=sexo]').val(),
+			fechaNac: $('#frmBeneficiario input[name=fechaNac]').val().trim(),
+			rfc: $('#frmBeneficiario input[name=rfc]').val().trim(),
+			nacionalidad: $('#frmBeneficiario select[name=nacionalidad]').val(),
+			actividad: $('#frmBeneficiario select[name=actividad]').val(),
+			residencia: $('#frmBeneficiario select[name=residencia]').val()
+		};
+
 
 		$('#frmErrMsgBenef').hide();
 
-		if (parentesco == '') {
+		if (beneficiarios.parentesco == '') {
 			toastr.error("Seleccione el parentesco");
 			$('input[name=parentesco]').focus().select();
 			return false;
 		}
 
-		if (nombre == '') {
+		if (beneficiarios.nombre == '') {
 			toastr.error("Escribe el nombre");
 			$('input[name=nombre]').focus();
 			return false;
 		}
 
-		if (apellidoPaterno == '') {
+		if (beneficiarios.segundoNombre == '') {
 			toastr.error("Escribe el apellido paterno");
 			$('input[name=apellidoPaterno]').focus();
 			return false;
 		}
 
-		if (apellidoMaterno == '') {
+		if (beneficiarios.apellidoMaterno == '') {
 			toastr.error("Escribe el apellido materno");
 			$('input[name=apellidoMaterno]').focus();
 			return false;
 		}
 
-		if (estadoCivil == '') {
+		if (beneficiarios.estadoCivil == '') {
 			toastr.error("Seleccione el estado civil");
 			$('input[name=estadoCivil]').focus();
 			return false;
 		}
 
-		if (fechaNac == '') {
+		if (beneficiarios.fechaNac == '') {
 			toastr.error("Selecciona la fecha de el nacimiento");
 			$('input[name=fechaNac]').focus();
 			return false;
 		}
 
-		if (rfc == '') {
+		if (beneficiarios.rfc == '') {
 			toastr.error("Escribe el RFC");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
-		if (rfc.length <= 11) {			
+		if (beneficiarios.rfc.length <= 11) {
 			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
-		if (nacionalidad == '') {
+		if (beneficiarios.nacionalidad == '') {
 			toastr.error("Selecciona la nacionalidad");
 			$('input[name=nacionalidad]').focus();
 			return false;
 		}
 
-		if (actividad == '') {
+		if (beneficiarios.actividad == '') {
 			toastr.error("Seleccione la actividad económica");
 			$('input[name=actividad]').focus();
 			return false;
 		}
 
-		if (residencia == '') {
+		if (beneficiarios.residencia == '') {
 			toastr.error("Seleccione el lugar de residencia");
 			$('input[name=residencia]').focus();
 			return false;
 		}
 
+		session.beneficiarios.push(beneficiarios);
+		let dataSend = beneficiarios;
+
+		dataSend.action = 'saveBeneficiare';
+		dataSend.idCliente = session.id_cliente;
+
+
 		$.ajax({
 			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
-			data: {
-				action: 'saveBeneficiare',
-				idCliente: idCliente,
-				parentesco: parentesco,
-				nombre: nombre,
-				segundoNombre: segundoNombre,
-				apellidoPaterno: apellidoPaterno,
-				apellidoMaterno: apellidoMaterno,
-				estadoCivil: estadoCivil,
-				sexo: sexo,
-				fechaNac: fechaNac,
-				rfc: rfc,
-				nacionalidad: nacionalidad,
-				actividad: actividad,
-				residencia: residencia
-			},
-			success: function (data) {
-				$.ajax({
-					url: relativePath + "components/step_6.php",
-					cache: false,
-					type: 'POST',
-					data: {
-						idCliente: idCliente
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-						session.step = 6;
-					},
-					success: function (data) {
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
+			data: dataSend,
+			success: function (response) {
+				if (response.idBeneficiario !== undefined){
+					session.beneficiarios[session.beneficiarios.length - 1].id = response.idBeneficiario;
+					goStep(6);
+				} else {
+					toastr.error(response.msg);
+				}
+
 			},
 			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
+				console.log(error);
+				toastr.error('Ha ocurrido un error!');
 			}
 		});
 	});
@@ -887,7 +725,6 @@ $(document).ready(function () {
 
 
 	$(document).on("click", "#btnStep6", function () {
-		const idCliente = $('input[name=idCliente]').val();
 		let porcentajes = 0,
 			pBeneficiarios = [];
 
@@ -899,30 +736,7 @@ $(document).ready(function () {
 		if (porcentajes === 100) {
 			updatePercentage(pBeneficiarios, function (response) {
 				if (response.status){
-					$.ajax({
-						url: relativePath + "components/step_7.php",
-						cache: false,
-						type: 'POST',
-						data: {
-							idCliente: idCliente
-						},
-						beforeSend: function () {
-							$("#loading").show();
-						},
-						complete: function () {
-							$("#loading").hide();
-						},
-						success: function (data) {
-							session.step = 7;
-							$("#main-content").html(data);
-						},
-						error: function (request, status, error) {
-							console.error(error);
-							toastr.error("Error al cargar paso 7");
-
-						}
-					});
-
+					goStep(7);
 				} else {
 					toastr.error(response.msg);
 					return false;
@@ -1046,8 +860,71 @@ $(document).ready(function () {
 	$(document).on("keypress", ".onlyNumbers", function(e) {
 		return onlyNumbers(e);
 	} );
+
+
 });
 
+function goStep(step) {
+	$.ajax({
+		url: relativePath + "components/step_" + step + ".php",
+		type: 'POST',
+		beforeSend: function () {
+			$("#loading").show();
+		},
+		complete: function () {
+			$("#loading").hide();
+		},
+		success: function (data) {
+			session.step = step;
+			$("#main-content").html(data);
+			loadValues(step);
+		},
+		error: function (request, status, error) {
+			console.log('Ha ocurrido un error al cargar el paso '+ step +'!');
+		}
+	});
+}
+
+function loadValues(step) {
+	switch (step) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			$("#step2SumaAsegurada").text(formatCurrency(session.seguro.sumaAsegurada, 2) + " MXN");
+			$("#step2PagoAnual").text(formatCurrency(session.seguro.pagoAnual, 2) + " MXN");
+			$(".subtotal2").text(formatCurrency(session.seguro.pagoMensual, 2) + " MXN");
+			$("#tblStep2Total").attr("data-total", session.seguro.pagoMensual);
+
+			if(session.cliente.id_prima == 0){
+				$('#resumen_seguro').hide();
+				$('#line_seguro').hide();
+			}
+			break;
+		case 3:
+			break;
+		case 4:
+			setTimer();
+			break;
+		case 5:
+			break;
+		case 6:
+			getBeneficiaries();
+			break;
+	}
+}
+function goStepSave() {
+	if (sessionStorage.getItem("saveData")){
+		session = JSON.parse(sessionStorage.getItem("saveData"));
+
+		switch (session.step) {
+			case 1:
+
+				break;
+		}
+	}
+}
 function addSeguro(nodo) {
 
 	let sumaAsegurada = nodo.attr('data-suma-asegurada');
@@ -1066,16 +943,20 @@ function addSeguro(nodo) {
 
 	$('#totalAnual').html(totalAnualFormat + ' MXN');
 
-	$('input[name=suma_asegurada]').val(sumaAsegurada);
-	$('input[name=prima_anual]').val(totalAnual);
-	$('input[name=subtotal_mensual]').val(pagoMensual);
-	$('input[name=prima]').val(idPrima);
+	session.seguro.sumaAsegurada = sumaAsegurada;
+	session.seguro.pagoAnual = totalAnual;
+	session.seguro.pagoMensual = session.pagoTotalMensual = pagoMensual;
+	session.cliente.id_prima = idPrima;
+	saveDataSession();
 
 	$('#resumenStep1').show();
 	$('#tblStep1').show();
 	$('.separator__line.s1').show();
 }
 
+function saveDataSession() {
+	sessionStorage.setItem("saveData", JSON.stringify(session));
+}
 function verifyCode(idCliente, code, rollback) {
 	$.ajax({
 		url: relativePath + "backend/querys.php",
@@ -1240,14 +1121,35 @@ function deleteBenef(id) {
 }
 
 function go2Step(id) {
-	$('.step').hide();
-	$('#step' + id).show();
-	$("html, body").animate({
-		scrollTop: 0
-	}, "slow");
-	return false;
+
 }
 
+function getBeneficiaries() {
+	$.ajax({
+		url: relativePath + "backend/querys.php",
+		cache: false,
+		type: 'POST',
+		dataType: 'JSON',
+		beforeSend: function () {
+			$("#loading").show();
+		},
+		data: {
+			action: 'getBeneficiaries',
+			idCliente: session.id_cliente,
+		},
+		complete: function () {
+			$("#loading").hide();
+		},
+		success: function (response) {
+			$("#listBenef").html(response);
+		},
+		error: function (request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al obtener beneficiarios");
+			rollback(false);
+		}
+	});
+}
 function go2StepEdit(id) {
 	$('.step').hide();
 	$('#step' + id).show();

@@ -5,7 +5,7 @@
 <section class="step show" id="step2">
     <div class="header__step">
 		<div class="header__step__content">
-			<a href="./" class="header__step__arrow">
+			<a href="javascript:goStep(1);" class="header__step__arrow">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
@@ -67,24 +67,20 @@
         <div class="tbl">
             <div class="tbl__body">
                 <div class="tbl__row">
-                    <div class="tbl__col left">
-                        Suma asegurada:
-                        <br>
-                        <?php echo "$" . formatoMoneda($suma_asegurada) . " MXN"; ?>
+                    <div class="tbl__col d-block left">
+                        <h4>Suma asegurada:</h4>
+                        <div id="step2SumaAsegurada"></div>
                     </div>
-                    <div class="tbl__col right">
-                        Suma total anual:
-                        <br>
-                        <?php echo "$" . formatoMoneda($prima_anual) . " MXN"; ?>
+                    <div class="tbl__col d-block right">
+                        <h4>Suma total anual:</h4>
+                        <div id="step2PagoAnual"></div>
                     </div>
                 </div>
                 <div class="tbl__row">
                     <div class="tbl__col left subtotal">
                         Subtotal mensual a pagar
                     </div>
-                    <div class="tbl__col right subtotal2">
-                        <?php echo "$" . formatoMoneda($subtotal_mensual) . " MXN"; ?>
-                    </div>
+                    <div class="tbl__col right subtotal2" id="step2PagoMensual"></div>
                 </div>
 
             </div>
@@ -119,15 +115,13 @@
 
     <div class="info">
 
-        <div class="tbl" id="tblStep2Total" data-total="<?php echo $subtotal_mensual; ?>">
+        <div class="tbl" id="tblStep2Total" data-total="">
             <div class="tbl__body">
                 <div class="tbl__row">
                     <div class="tbl__col left green subtotal">
                         Total mensual a pagar del seguro:
                     </div>
-                    <div class="tbl__col right green subtotal2">
-                        <?php echo "$" . formatoMoneda($subtotal_mensual) . " MXN"; ?>
-                    </div>
+                    <div class="tbl__col right green subtotal2"></div>
                 </div>
             </div>
         </div>
