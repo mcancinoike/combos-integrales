@@ -5,4 +5,4 @@
     const relativePath = '<?php echo $_SESSION["relativePath"]?>';
     const app = '<?php echo $_SESSION["app"]?>';
 </script>
-<script type="text/javascript" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=1.2.4"></script>
+<script type="text/javascript" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=2.0.1"></script>

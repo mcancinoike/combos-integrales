@@ -1,6 +1,5 @@
 <?php
 include_once "../backend/post.php";
-$idCliente = $_POST['idCliente'];
 $idBeneficiario = $_POST['idBeneficiario'];
 
 $query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id = '$idBeneficiario';";
@@ -19,7 +18,6 @@ foreach ($conexion->getData($query) as $val) {
 	$residencia = $val['residence'];
 }
 ?>
-<input type="hidden" id="idCliente" name="idCliente" value="<?php echo $idCliente; ?>">
 <input type="hidden" id="idBeneficiario" name="idBeneficiario" value="<?php echo $idBeneficiario; ?>">
 <section class="step show" id="editBeneficiario">
 	<div class="header__step">

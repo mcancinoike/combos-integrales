@@ -108,7 +108,7 @@ $(document).ready(function () {
 			$('select[name=sexo]').focus();
 			return false;
 		}
-
+		session.cliente.sexo = sexo;
 		$.ajax({
 			url: relativePath + "backend/querys.php",
 			cache: false,
@@ -228,7 +228,7 @@ $(document).ready(function () {
 	$(document).on("click", "#btnStep2", function () {
 		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
 			if (asistencia.checked) return asistencia.value;
-		}).get(),
+		}).get();
 			captcha_response = document.getElementById("g-recaptcha-response").value;
 
 		session.asistencias = asistencias;
@@ -256,9 +256,8 @@ $(document).ready(function () {
 			return false;
 		}
 
-		goStep(3);
 
-/*		$.ajax({
+		$.ajax({
 			url: relativePath + "backend/process/captcha.php",
 			cache: false,
 			type: 'POST',
@@ -288,7 +287,7 @@ $(document).ready(function () {
 				console.error(error);
 				toastr.error("Error inesperado, intente más tarde por favor");
 			}
-		});*/
+		});
 	});
 
 	//Step 3
@@ -371,6 +370,7 @@ $(document).ready(function () {
 			$('input[name=telefono]').focus();
 			return false;
 		}
+		const action = session.id_cliente == 0 ? 'saveClient' : 'updateClient';
 
 		$.ajax({
 			url: relativePath + "backend/querys.php",
@@ -381,7 +381,8 @@ $(document).ready(function () {
 				$("#loading").show();
 			},
 			data: {
-				action: 'saveClient',
+				idCliente: session.id_cliente,
+				action: action,
 				idPrima: session.cliente.id_prima,
 				asistencias: session.asistencias,
 				nombre: session.cliente.name,
@@ -753,33 +754,11 @@ $(document).ready(function () {
 	});
 
 	$(document).on("click", "#btnStep7", function () {
-		let idCliente = $('input[name=idCliente]').val();
-		$.ajax({
-			url: relativePath + "components/step_8.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				idCliente: idCliente
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				session.step = 8;
-				$("#main-content").html(data);
-			},
-			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
-			}
-		});
+		goStep(8);
 	});
 
 
 	$(document).on("click", "#btnStep8", function () {
-		let idCliente = $('input[name=idCliente]').val();
 		let numeroTarjeta = $('#frmCard input[name=numeroTarjeta]').val().trim();
 		let condiciones = $('#frmCard input[name=condiciones]').is(':checked');
 		let envio = $('#frmCard input[name=envio]').is(':checked');
@@ -815,9 +794,9 @@ $(document).ready(function () {
 			dataType: "JSON",
 			data: {
 				action: 'verifyCard',
-				idCliente: idCliente,
+				idCliente: session.id_cliente,
 				numeroTarjeta: numeroTarjeta,
-				clientType: app
+				clientType: session.cliente.clientType
 			},
 			beforeSend: function () {
 				$("#loading").show();
@@ -826,25 +805,7 @@ $(document).ready(function () {
 				console.log(data.mensaje);
 				$("#loading").hide();
 				if(data.code === 200){
-					$.ajax({
-						url: relativePath + "components/step_final.php",
-						cache: false,
-						type: 'POST',
-						data: {},
-						beforeSend: function () {
-							$("#loading").show();
-						},
-						complete: function () {
-							$("#loading").hide();
-						},
-						success: function (data) {
-							session.step = 9;
-							$("#main-content").html(data);
-						},
-						error: function (request, status, error) {
-							console.log('Ha ocurrido un error!');
-						}
-					});
+					goStep("final");
 				}else{
 					toastr.error(data.msg);
 					$('input[name=numeroTarjeta]').focus();
@@ -911,6 +872,10 @@ function loadValues(step) {
 			break;
 		case 6:
 			getBeneficiaries();
+			break;
+		case 7:
+			getResumSol();
+			$(".subtotal2").text(formatCurrency(session.pagoTotalMensual, 2) + " MXN");
 			break;
 	}
 }
@@ -1052,13 +1017,13 @@ function showAsistencia(id) {
 
 function editBenef(id) {
 	let idBeneficiario = id;
-	let idCliente = $('input[name=idCliente]').val();
+
 	$.ajax({
 		url: relativePath + "components/edit_beneficiare.php",
 		cache: false,
 		type: 'POST',
 		data: {
-			idCliente: idCliente,
+			idCliente: session.id_cliente,
 			idBeneficiario: idBeneficiario
 		},
 		beforeSend: function () {
@@ -1078,7 +1043,6 @@ function editBenef(id) {
 
 function deleteBenef(id) {
 	let idBeneficiario = id;
-	let idCliente = $('input[name=idCliente]').val();
 	let resp = confirm('¿Está seguro de eliminar este beneficiario?');
 
 	if (resp) {
@@ -1091,27 +1055,7 @@ function deleteBenef(id) {
 				idBeneficiario: idBeneficiario
 			},
 			success: function (data) {
-				$.ajax({
-					url: relativePath + "components/step_6.php",
-					cache: false,
-					type: 'POST',
-					data: {
-						idCliente: idCliente
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						session.step = 6;
-						$("#loading").hide();
-					},
-					success: function (data) {
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
+				goStep(6);
 			},
 			error: function (request, status, error) {
 				console.log('Ha ocurrido un error!');
@@ -1120,46 +1064,67 @@ function deleteBenef(id) {
 	}
 }
 
-function go2Step(id) {
-
-}
-
 function getBeneficiaries() {
 	$.ajax({
 		url: relativePath + "backend/querys.php",
-		cache: false,
 		type: 'POST',
-		dataType: 'JSON',
+		dataType: "JSON",
 		beforeSend: function () {
 			$("#loading").show();
 		},
 		data: {
 			action: 'getBeneficiaries',
 			idCliente: session.id_cliente,
+			path: relativePath
 		},
 		complete: function () {
 			$("#loading").hide();
 		},
 		success: function (response) {
-			$("#listBenef").html(response);
+			if (response.code == 200)
+				$("#listBenef").html(response.data);
+			else
+				toastr.error(response.msg);
 		},
 		error: function (request, status, error) {
 			console.error(error);
 			toastr.error("Error inesperado al obtener beneficiarios");
-			rollback(false);
 		}
 	});
 }
-function go2StepEdit(id) {
-	$('.step').hide();
-	$('#step' + id).show();
-	$('#isBack2Edit').val(1);
-	$("html, body").animate({
-		scrollTop: 0
-	}, "slow");
-	return false;
-}
 
+function getResumSol() {
+	$.ajax({
+		url: relativePath + "backend/querys.php",
+		type: 'POST',
+		dataType: "JSON",
+		beforeSend: function () {
+			$("#loading").show();
+		},
+		data: {
+			action: 'resumSoli',
+			idCliente: session.id_cliente,
+			app: app
+		},
+		complete: function () {
+			$("#loading").hide();
+		},
+		success: function (response) {
+			if (response.code == 200){
+				const data = response.data.split("___")
+				$("#resumSoli").html(data[0]);
+				$("#resumAsitencias").html(data[1]);
+				$("#resumBenef").html(data[2]);
+			}
+			else
+				toastr.error(response.msg);
+		},
+		error: function (request, status, error) {
+			console.error(error);
+			toastr.error("Error inesperado al resumen de datos");
+		}
+	});
+}
 function emailIsValid(email) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }

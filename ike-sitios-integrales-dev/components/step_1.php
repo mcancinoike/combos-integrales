@@ -23,7 +23,7 @@
 
 	<div class="info">
 		<div class="box">
-			<div class="box__title">
+			<div class="box__title">z
 				Primero, solicita tu Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?>
 			</div>
 			<p class="box__txt2">Si no quieres este seguro puedes dar clic en "Continuar". Al hacerlo, pasarás directo a las asistencias.</p>

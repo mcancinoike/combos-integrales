@@ -4,7 +4,7 @@
 <section class="step show" id="step7">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a href="./" class="header__step__arrow">
+			<a href="javascript:goStep(6)" class="header__step__arrow">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
@@ -38,51 +38,11 @@
 		<div class="resume action">
 			<h3 class="resume__title">Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?> </h3>
 			<div class="resume__action">
-				<a href="javascript:go2StepEdit(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
 				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
 			</div>
 		</div>
-
-		<?php
-                $seguro = "";
-				$count = 0;
-				$prima = 0;
-                $select = $_SESSION["app"] === "ap" ? ", suma_asegurada, prima_mensual, prima_anual" : ", suma_asegurada, hombre, mujer, sexo";
-                $query = "SELECT cl.id_prima $select FROM clientes_hsbc cl INNER JOIN hsbc_prima_{$_SESSION["app"]} hp ON cl.id_prima = hp.id WHERE cl.id = '$idCliente';";
-                foreach ($conexion->getData($query) as $val) {
-					$count++;
-					$prima = $_SESSION["app"] === "ap" ? $val['prima_mensual'] : ($val['sexo'] == 'hombre' ? $val['hombre'] : $val['mujer']);
-					$seguro .= '<div class="tbl">';
-					$seguro .= '<div class="tbl__body">';
-					$seguro .= '<div class="tbl__row">';
-					$seguro .= '<div class="tbl__col left">';
-					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($val['suma_asegurada']) .' MXN';
-					$seguro .= '</div>';
-                    if ($_SESSION["app"] === "ap")
-					    $seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($val['prima_anual']) .' MXN';
-
-					$seguro .= '</div></div><div class="tbl__row">';
-					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
-					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($prima) .' MXN</div>';
-					$seguro .= '</div></div></div>';
-
-				}
-				if($count == 0){
-					$cero = 0;
-					$seguro .= '<div class="tbl">';
-					$seguro .= '<div class="tbl__body">';
-					$seguro .= '<div class="tbl__row">';
-					$seguro .= '<div class="tbl__col left">';
-					$seguro .= 'Suma asegurada:<br>$ '. formatoMoneda($cero) .' MXN';
-					$seguro .= '</div>';
-					$seguro .= '<div class="tbl__col right">Prima anual:<br>$ '. formatoMoneda($cero) .' MXN';
-					$seguro .= '</div></div><div class="tbl__row">';
-					$seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
-					$seguro .= '<div class="tbl__col right subtotal2">$ '. formatoMoneda($cero) .' MXN</div>';
-					$seguro .= '</div></div></div>';
-				}
-				echo $seguro;
-		?>
+        <span id="resumSoli"></span>
 	</div>
 
 	<div class="separator__line"></div>
@@ -92,30 +52,11 @@
 		<div class="resume action">
 			<h3 class="resume__title">Programa de Asistencias Iké</h3>
 			<div class="resume__action">
-				<a href="javascript:go2StepEdit(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
 				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
 			</div>
 		</div>
-		
-		<?php 
-			$asistencias = "";
-			$price = 0;
-			$query = "SELECT ass.assistance, ass.price FROM hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE id_cliente = '$idCliente';";
-			$asistencias .= '<div class="tbl"><div class="tbl__body">';
-			foreach ($conexion->getData($query) as $val) {
-				$price = $price + $val['price'];				
-				$asistencias .= '<div class="tbl__row">';
-				$asistencias .= '<div class="tbl__col left">'. $val['assistance'] .'</div>';
-				$asistencias .= '<div class="tbl__col right">+$'. formatoMoneda($val['price']) .' MXN</div></div>';				
-			}
-			$asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
-			$asistencias .= '<div class="tbl__col right subtotal2">$'. formatoMoneda($price) .' MXN</div></div>';
-			$asistencias .= '<div class="tbl__note"><img src="' . $_SESSION["relativePath"] . 'img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
-
-			$asistencias .= '</div></div>';
-
-			echo $asistencias;
-		?>		
+		<span id="resumAsitencias"></span>
 	</div>
 
 	<div class="separator__line"></div>
@@ -128,37 +69,25 @@
 					<div class="tbl__col left green subtotal">
 						<strong>Total mensual a pagar del seguro + asistencias</strong>
 					</div>
-					<div class="tbl__col right green subtotal2">
-						$<?php echo formatoMoneda(($prima + $price))?> MXN
-					</div>
+					<div class="tbl__col right green subtotal2"></div>
 				</div>
 			</div>
 		</div>
 	</div>
-    <?php if ($count > 0): ?>
+    <?php
+    $count = 1;
+    if ($count > 0): ?>
         <div class="separator__line"></div>
         <div class="info">
             <div class="resume action">
                 <h3 class="resume__title">Beneficiarios para mi seguro</h3>
                 <div class="resume__action">
-                    <a href="javascript:go2StepEdit(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-                    <a href="javascript:go2StepEdit(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+                    <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+                    <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
                 </div>
             </div>
-
+            <span id="resumBenef"></span>
             <?php
-                    $beneficiarios = "";
-                    $query = "SELECT * FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
-                    foreach ($conexion->getData($query) as $val) {
-                        $name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
-                        $beneficiarios .= '<div class="tbl"><div class="tbl__body">';
-                        $beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
-                        $beneficiarios .= '<img src="' . $_SESSION["relativePath"] . 'img/icons/person2.svg">';
-                        $beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">' . $val['percentage'] . '%</span></p>';
-                        $beneficiarios .= '</div></div></div></div>';
-                    }
-                    echo $beneficiarios;
-
                endif;
             ?>
 		<div class="box__button stp">

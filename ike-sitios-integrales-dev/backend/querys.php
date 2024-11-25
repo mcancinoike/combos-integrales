@@ -31,23 +31,63 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
       "rfc" => $rfc,
       "id_prima" => $idPrima,
       "sexo" => $sexo,
-      "updated_at" => "0000-00-00 00:00:00"
+      "updated_at" => '0000-00-00 00:00:00'
     ];
 
     $idCliente = $conexion->insertData($query, $data);
-    if(!$idCliente){
+    if(!is_numeric($idCliente)){
         $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
     }else{
 
         foreach ($asistencias as $val2) {
             if($val2 != ""){
-                $query2 = "INSERT INTO hsbc_cliente_assistance (id, id_cliente, id_assistance, active, created_at, updated_at) VALUES('', '$idCliente', '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, active, created_at, updated_at) VALUES($idCliente, '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
                 $conexion->insertData($query2);
             }  
         }     
         $result = array("msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
     }
     
+    return $result;
+}
+
+function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType, $idCliente)
+{
+
+    $query = "UPDATE clientes_hsbc SET client_type = :client_type, name = :name, middle_name = :middle_name, 
+                                       pater_surname = :pater_surname, mater_surname = :mater_surname, cell_phone = :cell_phone,
+                                       code_cell = :code_cell, email = :email, date_birth = :date_birth, rfc = :rfc, 
+                                       id_prima = :id:prima, sexo = :sexo WHERE id = :id:id;";
+    $data = [
+        "client_type" => $clientType,
+        "name" => $nombre,
+        "middle_name" => $segundoNombre,
+        "pater_surname" => $apellidoPaterno,
+        "mater_surname" => $apellidoMaterno,
+        "cell_phone" => $telefono,
+        "code_cell" => $code,
+        "email" => $email,
+        "date_birth" => $fechaNac,
+        "rfc" => $rfc,
+        "id_prima" => $idPrima,
+        "sexo" => $sexo,
+        "id" => $idCliente,
+    ];
+
+    $idCliente = $conexion->insertData($query, $data);
+    if(!is_numeric($idCliente)){
+        $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
+    }else{
+
+        foreach ($asistencias as $val2) {
+            if($val2 != ""){
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, active, created_at, updated_at) VALUES($idCliente, '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
+                $conexion->insertData($query2);
+            }
+        }
+        $result = array("msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
+    }
+
     return $result;
 }
 
@@ -239,6 +279,7 @@ function verifyCard($conexion, $idCliente, $numeroTarjeta, $clientType)
 }
 
 function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
+    return true;
     #oauth/token
     $urlOauth = $conexion->urlOauth;
     $curlOauth = $conexion->startCurl($urlOauth);
@@ -488,8 +529,9 @@ function getSumaAsegurada($conexion, $fechaNac, $sexo)
     return json_encode(["code" => 200, "msg" => "ok", "data" => $select]);
 }
 
-function getBeneficiaries($conexion, $idCliente)
+function getBeneficiaries($conexion, $idCliente, $path)
 {
+
     $beneficiarios = "";
     $query = "SELECT * FROM beneficiaries_hsbc WHERE active = 1 AND id_cliente = $idCliente ORDER BY id ASC;";
     foreach ($conexion->getData($query) as $val) {
@@ -497,14 +539,84 @@ function getBeneficiaries($conexion, $idCliente)
         $beneficiarios .= '<div class="box__row b1">';
         $beneficiarios .= '<div class="box__info"><div class="box__name">' . $nombre . '</div>';
         $beneficiarios .= '<div class="box__action">';
-        $beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="' . $_SESSION["relativePath"] .'img/icons/edit.svg"></a>';
-        $beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $_SESSION["relativePath"] .'img/icons/delete.svg"></a>';
+        $beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="' . $path .'img/icons/edit.svg"></a>';
+        $beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $path .'img/icons/delete.svg"></a>';
         $beneficiarios .= '</div></div>';
         $beneficiarios .= '<div class="box__percentage">Porcentaje';
         $beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
         $beneficiarios .= '</div></div></div><br>';
     }
     return $beneficiarios;
+}
+
+function resumSoli($conexion, $idCliente, $app)
+{
+    $seguro = "";
+    $relativePath = $app === "ap" ? "" : "../";
+    $count = 0;
+    $select = $app === "ap" ? ", suma_asegurada, prima_mensual, prima_anual" : ", suma_asegurada, hombre, mujer, sexo";
+    $query = "SELECT cl.id_prima $select FROM clientes_hsbc cl INNER JOIN hsbc_prima_$app hp ON cl.id_prima = hp.id WHERE cl.id = '$idCliente';";
+    foreach ($conexion->getData($query) as $val) {
+        $count++;
+        $prima = $app === "ap" ? $val['prima_mensual'] : ($val['sexo'] == 'hombre' ? $val['hombre'] : $val['mujer']);
+        $seguro .= '<div class="tbl">';
+        $seguro .= '<div class="tbl__body">';
+        $seguro .= '<div class="tbl__row">';
+        $seguro .= '<div class="tbl__col left">';
+        $seguro .= 'Suma asegurada:<br>$ ' . formatoMoneda($val['suma_asegurada']) . ' MXN';
+        $seguro .= '</div>';
+        if ($app === "ap")
+            $seguro .= '<div class="tbl__col right">Prima anual:<br>$ ' . formatoMoneda($val['prima_anual']) . ' MXN';
+
+        $seguro .= '</div></div><div class="tbl__row">';
+        $seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+        $seguro .= '<div class="tbl__col right subtotal2">$ ' . formatoMoneda($prima) . ' MXN</div>';
+        $seguro .= '</div></div></div>';
+
+    }
+    if ($count == 0) {
+        $cero = 0;
+        $seguro .= '<div class="tbl">';
+        $seguro .= '<div class="tbl__body">';
+        $seguro .= '<div class="tbl__row">';
+        $seguro .= '<div class="tbl__col left">';
+        $seguro .= 'Suma asegurada:<br>$ ' . formatoMoneda($cero) . ' MXN';
+        $seguro .= '</div>';
+        $seguro .= '<div class="tbl__col right">Prima anual:<br>$ ' . formatoMoneda($cero) . ' MXN';
+        $seguro .= '</div></div><div class="tbl__row">';
+        $seguro .= '<div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+        $seguro .= '<div class="tbl__col right subtotal2">$ ' . formatoMoneda($cero) . ' MXN</div>';
+        $seguro .= '</div></div></div>';
+    }
+
+    $asistencias = "";
+    $price = 0;
+    $query = "SELECT ass.assistance, ass.price FROM hsbc_cliente_assistance ca INNER JOIN hsbc_assistance ass ON ca.id_assistance = ass.id WHERE id_cliente = '$idCliente';";
+    $asistencias .= '<div class="tbl"><div class="tbl__body">';
+    foreach ($conexion->getData($query) as $val) {
+        $price = $price + $val['price'];
+        $asistencias .= '<div class="tbl__row">';
+        $asistencias .= '<div class="tbl__col left">'. $val['assistance'] .'</div>';
+        $asistencias .= '<div class="tbl__col right">+$'. formatoMoneda($val['price']) .' MXN</div></div>';
+    }
+    $asistencias .= '<div class="tbl__row"><div class="tbl__col left subtotal">Subtotal mensual a pagar</div>';
+    $asistencias .= '<div class="tbl__col right subtotal2">$'. formatoMoneda($price) .' MXN</div></div>';
+    $asistencias .= '<div class="tbl__note"><img src="' . $relativePath . 'img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>';
+
+    $asistencias .= '</div></div>';
+
+    $beneficiarios = "";
+    $query = "SELECT * FROM beneficiaries_hsbc WHERE id_cliente = '$idCliente';";
+    foreach ($conexion->getData($query) as $val) {
+        $name = $val['name'] . " " . $val['middle_name'] . " " . $val['pater_surname'] . " " . $val['mater_surname'];
+        $beneficiarios .= '<div class="tbl"><div class="tbl__body">';
+        $beneficiarios .= '<div class="tbl__row"><div class="tbl__col left full">';
+        $beneficiarios .= '<img src="' . $relativePath . 'img/icons/person2.svg">';
+        $beneficiarios .= '<p> ' . $name . ' <br><span class="percentage">' . $val['percentage'] . '%</span></p>';
+        $beneficiarios .= '</div></div></div></div>';
+    }
+
+    return $seguro . "___" . $asistencias . "___" .$beneficiarios;
 }
 
 switch ($action):
@@ -534,6 +646,25 @@ switch ($action):
         if (isset($result["idCliente"]))
             $result["msgCode"] = sendCodeCell($code, $telefono, $conexion);
 
+        echo json_encode($result);
+        break;
+
+    case 'updateClient':
+        $asistencias = $_POST['asistencias'];
+        $idPrima = $_POST['idPrima'];
+        $nombre = $_POST['nombre'];
+        $segundoNombre = $_POST['segundoNombre'];
+        $apellidoPaterno = $_POST['apellidoPaterno'];
+        $apellidoMaterno = $_POST['apellidoMaterno'];
+        $fechaNac = $_POST['fechaNac'];
+        $rfc = $_POST['rfc'];
+        $email = $_POST['email'];
+        $telefono = $_POST['telefono'];
+        $sexo = $_POST['sexo'];
+        $clientType = $_POST['clientType'];
+        $idCliente = $_POST['idCliente'];
+        $code = genCode();
+        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType, $idCliente);
         echo json_encode($result);
         break;
 
@@ -614,6 +745,17 @@ switch ($action):
         break;
     case 'getBeneficiaries':
         $idCliente = $_POST['idCliente'];
-        echo getBeneficiaries($conexion, $idCliente);
+        $path = $_POST['path'];
+        $data = getBeneficiaries($conexion, $idCliente, $path);
+            echo json_encode(["code" => 200, "data" => $data]);
+        break;
+    case 'resumSoli':
+        $idCliente = $_POST['idCliente'];
+        $app = $_POST['app'];
+        $data = resumSoli($conexion, $idCliente, $app);
+        if ($data !== '')
+            echo json_encode(["code" => 200, "data" => $data]);
+        else
+            echo json_encode(["code" => 400, "msg" => "Error al obtener Resumen de datos"]);
         break;
 endswitch;
