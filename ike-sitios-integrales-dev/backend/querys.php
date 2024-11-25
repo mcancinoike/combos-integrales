@@ -279,7 +279,6 @@ function verifyCard($conexion, $idCliente, $numeroTarjeta, $clientType)
 }
 
 function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
-    return true;
     #oauth/token
     $urlOauth = $conexion->urlOauth;
     $curlOauth = $conexion->startCurl($urlOauth);
