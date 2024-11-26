@@ -4,7 +4,7 @@
 <section class="step show" id="step7">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a href="javascript:goStep(6)" class="header__step__arrow">
+			<a href="javascript:goStep(6, 7)" class="header__step__arrow">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
@@ -38,8 +38,9 @@
 		<div class="resume action">
 			<h3 class="resume__title">Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?> </h3>
 			<div class="resume__action">
-				<a href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+				<a class="icon-seguro-edit" href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a class="icon-seguro-del" href="javascript:deleteSeguro();"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+				<a class="icon-seguro-add" href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
 			</div>
 		</div>
         <span id="resumSoli"></span>
@@ -52,8 +53,9 @@
 		<div class="resume action">
 			<h3 class="resume__title">Programa de Asistencias Iké</h3>
 			<div class="resume__action">
-				<a href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-				<a href="javascript:;"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+				<a class="icon-asistencias-edit" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a class="icon-asistencias-del" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+                <a class="icon-asistencias-add" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
 			</div>
 		</div>
 		<span id="resumAsitencias"></span>
@@ -74,25 +76,22 @@
 			</div>
 		</div>
 	</div>
-    <?php
-    $count = 1;
-    if ($count > 0): ?>
-        <div class="separator__line"></div>
-        <div class="info">
-            <div class="resume action">
-                <h3 class="resume__title">Beneficiarios para mi seguro</h3>
-                <div class="resume__action">
-                    <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-                    <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
-                </div>
+
+    <div class="separator__line section-ben"></div>
+
+    <div class="info section-ben"">
+        <div class="resume action">
+            <h3 class="resume__title">Beneficiarios para mi seguro</h3>
+            <div class="resume__action">
+                <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+                <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
             </div>
-            <span id="resumBenef"></span>
-            <?php
-               endif;
-            ?>
-		<div class="box__button stp">
-			<button class="box__btn" id="btnStep7">Continuar</button>
-			<div class="box__button__line"></div>
-		</div>
-	</div>
+        </div>
+        <span id="resumBenef"></span>
+    </div>
+
+    <div class="box__button stp">
+        <button class="box__btn" id="btnStep7">Continuar</button>
+        <div class="box__button__line"></div>
+    </div>
 </section>

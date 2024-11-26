@@ -70,7 +70,7 @@
 		</section>
 	</div>
 	<div id="loading">
-		<img src="<?php echo $_SESSION["relativePath"]?>img/loading.svg" alt="cargando" style="width: 150px">
+		<img src="<?php echo $_SESSION["relativePath"]?>img/loading.svg" alt="cargando">
 	</div>
 	<footer>
 		<div class="footer__content">

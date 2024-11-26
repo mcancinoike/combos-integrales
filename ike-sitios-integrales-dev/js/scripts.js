@@ -1,3 +1,4 @@
+
 let session = {
 	cliente: {
 		clientType: app,
@@ -27,12 +28,11 @@ let session = {
 		clienteHsbc: false,
 		avisoHsbc: false,
 		residenteHsbc: false
-	}
+	},
+	card: ''
 }
 
 $(document).ready(function () {
-
-	$("#loading").hide();
 
 	toastr.options = {
 		"closeButton": false,
@@ -109,6 +109,7 @@ $(document).ready(function () {
 			return false;
 		}
 		session.cliente.sexo = sexo;
+		session.cliente.date_birth = fechaNac;
 		$.ajax({
 			url: relativePath + "backend/querys.php",
 			cache: false,
@@ -132,6 +133,10 @@ $(document).ready(function () {
 				if (response.code == 200) {
 					$("#ajaxSumaAsegurada").html(response.data);
 					$("input[name=sexo]").val(sexo);
+
+					if (session.cliente.id_prima !== 0){
+						$("#sumaAseguradaS1").val(session.cliente.id_prima).change();
+					}
 
 				} else {
 					toastr.error(response.msg);
@@ -170,35 +175,7 @@ $(document).ready(function () {
 	//Step 2
 
 	$(document).on('click', '.chkbox2', function () {
-		$('#tblStep2 .tbl__note').show();
-		let checked = $(this).is(':checked');
-		let id = $(this).val();
-		let costo = $(this).attr('data-costo');
-		let total = $('#tblStep2Total').attr('data-total');
-		var totalChecked = $('#tblAsistencias').find('input[name="asistencia[]"]:checked').length;
-
-		if (checked) {
-			total = parseFloat(total) + parseFloat(costo);
-			$('#tblStep2 .a' + id).css('display', 'flex');
-		} else {
-			total = parseFloat(total) - parseFloat(costo);
-			$('#tblStep2 .a' + id).hide();
-		}
-		session.pagoTotalMensual = total;
-
-		$('#tblStep2Total').attr('data-total', total);
-		let totalFormat = total;
-
-		$('#tblStep2Total .subtotal2').html('$' + totalFormat.toFixed(2) + ' MXN');
-		$('input[name=subtotal_mensual_asistencia]').val(totalFormat.toFixed(2));
-		if (totalChecked) {
-			$('#tblStep2 .tbl__note').show();
-			$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro + asistencias:');
-		} else {
-			$('#tblStep2 .tbl__note').hide();
-			$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro:');
-		}
-
+		checkAsistencias($(this));
 	});
 
 	$('#clienteHsbc').on('click', function() {
@@ -229,7 +206,7 @@ $(document).ready(function () {
 		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
 			if (asistencia.checked) return asistencia.value;
 		}).get();
-			captcha_response = document.getElementById("g-recaptcha-response").value;
+			//captcha_response = document.getElementById("g-recaptcha-response").value;
 
 		session.asistencias = asistencias;
 		session.check.clienteHsbc = $('input[name=clienteHsbc]').is(':checked');
@@ -256,8 +233,8 @@ $(document).ready(function () {
 			return false;
 		}
 
-
-		$.ajax({
+		goStep(3);
+/*		$.ajax({
 			url: relativePath + "backend/process/captcha.php",
 			cache: false,
 			type: 'POST',
@@ -287,7 +264,7 @@ $(document).ready(function () {
 				console.error(error);
 				toastr.error("Error inesperado, intente más tarde por favor");
 			}
-		});
+		});*/
 	});
 
 	//Step 3
@@ -399,14 +376,20 @@ $(document).ready(function () {
 			complete: function () {
 				$("#loading").hide();
 			},
-			success: function (data) {
+			success: function (response) {
 				$("#loading").hide();
 
-				if (data.idCliente !== undefined) {
-					session.id_cliente = data.idCliente;
-					goStep(4);
+				if (response.code === 200) {
+					const step = session.id_cliente === 0 || session.cliente.confirm_cell === 0 ? 4 :
+										session.beneficiarios.length === 0 && session.cliente.id_prima !== 0 ? 5 :
+										session.beneficiarios.length !== 0 && session.cliente.id_prima !== 0 ? 6 : 7;
+
+					if (session.id_cliente === 0)
+						session.id_cliente = response.idCliente;
+
+						goStep(step);
 				} else
-					toastr.error(data.msg);
+					toastr.error(response.msg);
 
 			},
 			error: function (request, status, error) {
@@ -428,9 +411,10 @@ $(document).ready(function () {
 			goStep(step);
 		else {
 			verifyCode(session.id_cliente, codigo, function (codeIsValid) {
-				if (codeIsValid)
+				if (codeIsValid){
+					session.cliente.confirm_cell = 1;
 					goStep(step);
-				else {
+				} else {
 					toastr.error("El código es inválido");
 					$('input[name=codigoSms]').focus();
 				}
@@ -565,7 +549,6 @@ $(document).ready(function () {
 	});
 
 	$(document).on("click", "#btnUpdateBenef", function () {
-		let idCliente = $('input[name=idCliente]').val();
 		let idBeneficiario = $('input[name=idBeneficiario]').val();
 		let parentesco = $('#frmEditBenef select[name=parentesco]').val();
 		let nombre = $('#frmEditBenef input[name=nombre]').val().trim();
@@ -669,28 +652,7 @@ $(document).ready(function () {
 				residencia: residencia
 			},
 			success: function (data) {
-				$.ajax({
-					url: relativePath + "components/step_6.php",
-					cache: false,
-					type: 'POST',
-					data: {
-						idCliente: idCliente,
-						idBeneficiario: idBeneficiario
-					},
-					beforeSend: function () {
-						$("#loading").show();
-					},
-					complete: function () {
-						$("#loading").hide();
-					},
-					success: function (data) {
-						session.step = 6;
-						$("#main-content").html(data);
-					},
-					error: function (request, status, error) {
-						console.log('Ha ocurrido un error!');
-					}
-				});
+				goStep(6);
 			},
 			error: function (request, status, error) {
 				console.log('Ha ocurrido un error!');
@@ -700,28 +662,7 @@ $(document).ready(function () {
 
 
 	$(document).on("click", "#btnNewBenef", function () {		
-		let idCliente = $('input[name=idCliente]').val();
-
-		$.ajax({
-			url: relativePath + "components/add_beneficiare.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				idCliente: idCliente
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				$("#main-content").html(data);
-			},
-			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
-			}
-		});
+		goStep("5-2");
 	});
 
 
@@ -766,7 +707,7 @@ $(document).ready(function () {
 		$('#frmErrMsg8').hide();
 
 		if (numeroTarjeta == '') {
-			toastr.error("Escriba el número de la tarjeta.");
+			toastr.error("Escriba un número de tarjeta válida.");
 			$('input[name=numeroTarjeta]').focus();
 			return false;
 		}
@@ -818,6 +759,26 @@ $(document).ready(function () {
 		});
 	});
 
+	$(document).on("keyup", "#cardChange", function (e) {
+		e.preventDefault();
+
+		const card = $(this).val();
+
+		if (card.length === 1 || session.card.length > 16)
+			session.card = '';
+
+		if (!isNaN(card))
+			session.card = card;
+		else if (isNaN(card) && session.card.length <= 16)
+			session.card += card.slice(-1);
+
+		let last = card.slice(-4);
+		$(this).val(last.padStart(card.length, "*"));
+
+	    if (session.card.length === 16 && !isNaN(session.card))
+			$("input[name=numeroTarjeta]").val(session.card);
+	});
+
 	$(document).on("keypress", ".onlyNumbers", function(e) {
 		return onlyNumbers(e);
 	} );
@@ -825,32 +786,87 @@ $(document).ready(function () {
 
 });
 
-function goStep(step) {
+
+function checkAsistencias(nodo) {
+
+	$('#tblStep2 .tbl__note').show();
+	let checked = nodo.is(':checked');
+	let id = nodo.val();
+	let costo = nodo.attr('data-costo');
+	let total = $('#tblStep2Total').attr('data-total');
+	var totalChecked = $('#tblAsistencias').find('input[name="asistencia[]"]:checked').length;
+
+	if (checked) {
+		total = parseFloat(total) + parseFloat(costo);
+		$('#tblStep2 .a' + id).css('display', 'flex');
+	} else {
+		total = parseFloat(total) - parseFloat(costo);
+		$('#tblStep2 .a' + id).hide();
+	}
+	session.pagoTotalMensual = total;
+
+	$('#tblStep2Total').attr('data-total', total);
+	let totalFormat = total;
+
+	$('#tblStep2Total .subtotal2').html('$' + totalFormat.toFixed(2) + ' MXN');
+	$('input[name=subtotal_mensual_asistencia]').val(totalFormat.toFixed(2));
+	if (totalChecked) {
+		$('#tblStep2 .tbl__note').show();
+		$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro + asistencias:');
+	} else {
+		$('#tblStep2 .tbl__note').hide();
+		$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro:');
+	}
+
+}
+
+function goStep(step, stepActual = null) {
+
+	if (session.cliente.id_prima === 0 && step === 6 && stepActual === 7)
+		step = 3;
+
+	$("#loading").show();
 	$.ajax({
 		url: relativePath + "components/step_" + step + ".php",
 		type: 'POST',
 		beforeSend: function () {
 			$("#loading").show();
 		},
-		complete: function () {
-			$("#loading").hide();
-		},
 		success: function (data) {
+			$("#loading").hide();
 			session.step = step;
 			$("#main-content").html(data);
+			saveDataSession();
 			loadValues(step);
 		},
 		error: function (request, status, error) {
-			console.log('Ha ocurrido un error al cargar el paso '+ step +'!');
+			$("#loading").hide();
+			console.error(error);
+			toastr.error('Ha ocurrido un error al cargar el paso '+ step +'!');
 		}
 	});
 }
 
 function loadValues(step) {
+	step = step === "5-2" ? step : parseInt(step);
 	switch (step) {
-		case 0:
-			break;
 		case 1:
+				if (session.cliente.id_prima !== 0) {
+					if (app == "ap") {
+						$("input[name=seguro]").each(function() {
+							if ($(this).val() == session.cliente.id_prima){
+								$(this).attr("checked", true);
+								addSeguro($(this));
+							}
+						});
+
+					} else {
+						$('input[name=fechaNac]').val(session.cliente.date_birth);
+						$('select[name=sexo]').val(session.cliente.sexo);
+						$("#sexo").change();
+					}
+
+				}
 			break;
 		case 2:
 			$("#step2SumaAsegurada").text(formatCurrency(session.seguro.sumaAsegurada, 2) + " MXN");
@@ -862,8 +878,40 @@ function loadValues(step) {
 				$('#resumen_seguro').hide();
 				$('#line_seguro').hide();
 			}
+
+			if (session.asistencias.length !== 0) {
+
+				session.asistencias.forEach(function (saveAsis) {
+
+					$(".chkbox2").each(function () {
+						const asistencia = $(this);
+
+						if (asistencia.val() == saveAsis) {
+							asistencia.attr("checked", true);
+							checkAsistencias(asistencia);
+							return false;
+						}
+
+					});
+				});
+			}
+
+			$("input[name=clienteHsbc]").attr("checked", session.check.clienteHsbc);
+			$("input[name=avisoHsbc]").attr("checked", session.check.avisoHsbc);
+			$("input[name=residenteHsbc]").attr("checked", session.check.residenteHsbc);
+
 			break;
 		case 3:
+			if (session.id_cliente !== 0){
+			  $('#frmRegister3 input[name=nombre]').val(session.cliente.name);
+			  $('#frmRegister3 input[name=segundoNombre]').val(session.cliente.middle_name);
+			  $('#frmRegister3 input[name=apellidoPaterno]').val(session.cliente.pater_surname);
+			  $('#frmRegister3 input[name=apellidoMaterno]').val(session.cliente.mater_surname);
+			  $('#frmRegister3 input[name=fechaNac]').val(session.cliente.date_birth);
+			  $('#frmRegister3 input[name=rfc]').val(session.cliente.rfc);
+			  $('#frmRegister3 input[name=email]').val(session.cliente.email);
+			  $('#frmRegister3 input[name=telefono]').val(session.cliente.cell_phone);
+			}
 			break;
 		case 4:
 			setTimer();
@@ -876,19 +924,35 @@ function loadValues(step) {
 		case 7:
 			getResumSol();
 			$(".subtotal2").text(formatCurrency(session.pagoTotalMensual, 2) + " MXN");
+			if (session.cliente.id_prima === 0){
+				$(".section-ben, .icon-seguro-del, .icon-seguro-edit").hide();
+				$(".icon-seguro-add").show();
+			}
+			else {
+				$(".section-ben, .icon-seguro-del, .icon-seguro-edit").show();
+				$(".icon-seguro-add").hide();
+			}
+
+			if (session.asistencias.length === 0){
+				$(".icon-asistencias-del, .icon-asistencias-edit").hide();
+				$(".icon-asistencias-add").show();
+			}
+			else {
+				$(".icon-asistencias-del, .icon-asistencias-edit").show();
+				$(".icon-asistencias-add").hide();
+			}
+			break;
+		case "final":
+			localStorage.clear();
 			break;
 	}
 }
 function goStepSave() {
-	if (sessionStorage.getItem("saveData")){
-		session = JSON.parse(sessionStorage.getItem("saveData"));
-
-		switch (session.step) {
-			case 1:
-
-				break;
-		}
-	}
+	if (localStorage.getItem("saveData")){
+		session = JSON.parse(localStorage.getItem("saveData"));
+		goStep(session.step);
+	} else
+		$("#loading").hide();
 }
 function addSeguro(nodo) {
 
@@ -912,7 +976,6 @@ function addSeguro(nodo) {
 	session.seguro.pagoAnual = totalAnual;
 	session.seguro.pagoMensual = session.pagoTotalMensual = pagoMensual;
 	session.cliente.id_prima = idPrima;
-	saveDataSession();
 
 	$('#resumenStep1').show();
 	$('#tblStep1').show();
@@ -920,7 +983,7 @@ function addSeguro(nodo) {
 }
 
 function saveDataSession() {
-	sessionStorage.setItem("saveData", JSON.stringify(session));
+	localStorage.setItem("saveData", JSON.stringify(session));
 }
 function verifyCode(idCliente, code, rollback) {
 	$.ajax({
@@ -1093,6 +1156,40 @@ function getBeneficiaries() {
 	});
 }
 
+function deleteSeguro() {
+	const resp = confirm('¿Realmente desea eliminar el seguro?');
+
+	if (resp) {
+		$.ajax({
+			url: relativePath + "backend/querys.php",
+			type: 'POST',
+			dataType: "JSON",
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			data: {
+				action: 'deleteSeguro',
+				idCliente: session.id_cliente
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (response) {
+				if (response.code === 200) {
+					session.cliente.id_prima = 0;
+					session.cliente.sexo = session.cliente.date_birth = '';
+					goStep(7);
+				} else
+					toastr.error(response.msg);
+			},
+			error: function (request, status, error) {
+				console.error(error);
+				toastr.error("Error inesperado al intener borrar seguro, intente nuevamente por favor");
+			}
+		});
+	}
+}
+
 function getResumSol() {
 	$.ajax({
 		url: relativePath + "backend/querys.php",
@@ -1198,3 +1295,5 @@ function onlyNumbers(e){
 	const key = e.charCode;
 	return key >= 48 && key <= 57;
 }
+
+goStepSave();

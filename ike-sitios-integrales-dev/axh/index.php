@@ -69,7 +69,7 @@
 		</section>
 	</div>
 	<div id="loading">
-		<img src="../img/loading.svg" alt="cargando" style="width: 150px">
+		<img src="../img/loading.svg" alt="cargando">
 	</div>
 	<footer>
 		<div class="footer__content">

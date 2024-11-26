@@ -36,28 +36,28 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
 
     $idCliente = $conexion->insertData($query, $data);
     if(!is_numeric($idCliente)){
-        $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
+        $result = array("code" => 400, "msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
     }else{
 
         foreach ($asistencias as $val2) {
             if($val2 != ""){
-                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, active, created_at, updated_at) VALUES($idCliente, '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, updated_at) VALUES($idCliente, '$val2', '0000-00-00 00:00:00');";
                 $conexion->insertData($query2);
             }  
         }     
-        $result = array("msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
+        $result = array("code" => 200, "msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
     }
     
     return $result;
 }
 
-function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType, $idCliente)
+function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $idPrima, $asistencias, $sexo, $clientType, $idCliente)
 {
 
     $query = "UPDATE clientes_hsbc SET client_type = :client_type, name = :name, middle_name = :middle_name, 
                                        pater_surname = :pater_surname, mater_surname = :mater_surname, cell_phone = :cell_phone,
-                                       code_cell = :code_cell, email = :email, date_birth = :date_birth, rfc = :rfc, 
-                                       id_prima = :id:prima, sexo = :sexo WHERE id = :id:id;";
+                                       email = :email, date_birth = :date_birth, rfc = :rfc, 
+                                       id_prima = :id_prima, sexo = :sexo WHERE id = :id;";
     $data = [
         "client_type" => $clientType,
         "name" => $nombre,
@@ -65,7 +65,6 @@ function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $ape
         "pater_surname" => $apellidoPaterno,
         "mater_surname" => $apellidoMaterno,
         "cell_phone" => $telefono,
-        "code_cell" => $code,
         "email" => $email,
         "date_birth" => $fechaNac,
         "rfc" => $rfc,
@@ -74,18 +73,58 @@ function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $ape
         "id" => $idCliente,
     ];
 
-    $idCliente = $conexion->insertData($query, $data);
-    if(!is_numeric($idCliente)){
-        $result = array("msg" => "Error al intentar guardar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
+    if(!is_numeric($conexion->insertData($query, $data))){
+        $result = array("code" => 400, "msg" => "Error al intentar actualizar su información, asegúrese que sus datos son correctos e intente nuevamente por favor");
     }else{
+        $conexion->beginTransaction();
 
-        foreach ($asistencias as $val2) {
-            if($val2 != ""){
-                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, active, created_at, updated_at) VALUES($idCliente, '$val2', 1, '$fecha_alta', '0000-00-00 00:00:00');";
-                $conexion->insertData($query2);
+        try {
+            if (count($asistencias) > 0) {
+                sort($asistencias);
+
+                $query = "SELECT id_assistance FROM hsbc_cliente_assistance WHERE id_cliente = :id_cliente ORDER BY id ASC";
+                $rowsClientAsis = $conexion->getData($query, ["id_cliente" => $idCliente]);
+
+                if (count($rowsClientAsis) > 0) {
+
+                    $asistenciasSave = [];
+                    for ($i = 0; $i < count($rowsClientAsis); $i++)
+                            $asistenciasSave[] = $rowsClientAsis[$i]["id_assistance"];
+
+                    $query = "SELECT id FROM hsbc_assistance ORDER BY id ASC";
+                    foreach ($conexion->getData($query) as $row) {
+
+                        if (in_array($row["id"], $asistenciasSave) && !in_array($row["id"], $asistencias)) { // si la asistencias guardada existe y la nueva NO borramos
+
+                            $query = "DELETE FROM hsbc_cliente_assistance WHERE id_cliente = :id_cliente AND id_assistance = :id_assistance";
+                            $conexion->insertData($query, ['id_cliente' => $idCliente, "id_assistance" => $row["id"]]);
+
+
+                        } else if (!in_array($row["id"], $asistenciasSave) && in_array($row["id"], $asistencias)) { // si la asistencias guardada NO existe y la nueva SI insertamos
+                            $query = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance , updated_at) VALUES(:id_cliente, :id_assistance, '0000-00-00 00:00:00');";
+                            $conexion->insertData($query, ["id_cliente" => $idCliente, "id_assistance" => $row["id"]]);
+                        }
+                    }
+
+                } else {
+                    foreach ($asistencias as $id_asistencia) {
+                        $query = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance , updated_at) VALUES(:id_cliente, :id_assistance, '0000-00-00 00:00:00');";
+                        $conexion->insertData($query, ["id_cliente" => $idCliente, "id_assistance" => $id_asistencia]);
+                    }
+                }
+
+            } else {
+                $query = "DELETE FROM hsbc_cliente_assistance WHERE id_cliente = :id_cliente";
+                $conexion->insertData($query, ['id_cliente' => $idCliente]);
+
             }
+            $conexion->commit();
+            $result = array("code" => 200, "msg" => "Se actualizó el cliente, con éxito!");
+        }catch (\Exception $exception) {
+            $conexion->rollBack();
+            $result = array("code" => 400, "msg" => "Ocurrió un error al tratar de actualizar asistencias, intente nuevamente por favor");
         }
-        $result = array("msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
+
     }
 
     return $result;
@@ -173,6 +212,36 @@ function deleteBeneficiare($conexion, $idBeneficiario)
     
     echo json_encode($result);
 }
+
+function deleteSeguro($conexion, $idCliente)
+{
+
+    try {
+        $conexion->beginTransaction();
+        $query = "UPDATE clientes_hsbc SET id_prima = 0 WHERE id = :idCliente";
+        if($conexion->insertData($query, ["idCliente" => $idCliente]) === 0){
+            $query = "DELETE FROM beneficiaries_hsbc WHERE id_cliente = :idCliente";
+            if($conexion->insertData($query, ["idCliente" => $idCliente]) === 0){
+                $conexion->commit();
+                return true;
+            }else {
+                $conexion->rollback();
+                return false;
+            }
+        }else {
+            $conexion->rollBack();
+            return false;
+        }
+    }catch (Exception $e){
+        error_log("Error eliminar seguro. " . $e->getMessage());
+        $conexion->rollBack();
+        return false;
+    }
+
+
+
+}
+
 
 function genCode()
 {
@@ -542,7 +611,8 @@ function getBeneficiaries($conexion, $idCliente, $path)
         $beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $path .'img/icons/delete.svg"></a>';
         $beneficiarios .= '</div></div>';
         $beneficiarios .= '<div class="box__percentage">Porcentaje';
-        $beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
+        $porcentaje =  $val['percentage'] == 0 ? "" : $val['percentage'];
+        $beneficiarios .= '<div class="box__percentage__input"><input type="text" data-idb="'.$val['id'].'" value="'. $porcentaje .'" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %';
         $beneficiarios .= '</div></div></div><br>';
     }
     return $beneficiarios;
@@ -662,8 +732,7 @@ switch ($action):
         $sexo = $_POST['sexo'];
         $clientType = $_POST['clientType'];
         $idCliente = $_POST['idCliente'];
-        $code = genCode();
-        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType, $idCliente);
+        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $idPrima, $asistencias, $sexo, $clientType, $idCliente);
         echo json_encode($result);
         break;
 
@@ -756,5 +825,13 @@ switch ($action):
             echo json_encode(["code" => 200, "data" => $data]);
         else
             echo json_encode(["code" => 400, "msg" => "Error al obtener Resumen de datos"]);
+        break;
+    case 'deleteSeguro':
+        $idCliente = $_POST['idCliente'];
+
+        if (deleteSeguro($conexion, $idCliente))
+            echo json_encode(["code" => 200]);
+        else
+            echo json_encode(["code" => 400, "msg" => "Error al eliminar seguro"]);
         break;
 endswitch;

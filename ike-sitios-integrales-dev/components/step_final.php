@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <section class="step show" id="ty">
     <div class="ty">
         <div class="ty__box">

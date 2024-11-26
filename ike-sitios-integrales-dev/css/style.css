@@ -1312,6 +1312,11 @@ footer a {
 	height: 100%;
 }
 
+#loading img {
+	width: 150px;
+	height: 150px;
+	margin: auto;
+}
 .frm__generate {
 	color: #767676;
 	margin-top: 10px;
