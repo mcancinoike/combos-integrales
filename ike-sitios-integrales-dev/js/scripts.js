@@ -29,7 +29,8 @@ let session = {
 		avisoHsbc: false,
 		residenteHsbc: false
 	},
-	card: ''
+	card: '',
+	captcha: false
 }
 
 $(document).ready(function () {
@@ -206,7 +207,8 @@ $(document).ready(function () {
 		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
 			if (asistencia.checked) return asistencia.value;
 		}).get();
-			//captcha_response = document.getElementById("g-recaptcha-response").value;
+
+		const captcha_response = session.captcha ? '' : document.getElementById("g-recaptcha-response").value;
 
 		session.asistencias = asistencias;
 		session.check.clienteHsbc = $('input[name=clienteHsbc]').is(':checked');
@@ -233,38 +235,43 @@ $(document).ready(function () {
 			return false;
 		}
 
-		goStep(3);
-/*		$.ajax({
-			url: relativePath + "backend/process/captcha.php",
-			cache: false,
-			type: 'POST',
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			data: {
-				captcha_response : captcha_response
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				$("#loading").hide();				
-				console.log(data);
+		if (!session.captcha) {
+			$.ajax({
+				url: relativePath + "backend/process/captcha.php",
+				cache: false,
+				type: 'POST',
+				beforeSend: function () {
+					$("#loading").show();
+				},
+				data: {
+					captcha_response : captcha_response
+				},
+				complete: function () {
+					$("#loading").hide();
+				},
+				success: function (data) {
+					$("#loading").hide();
+					console.log(data);
 
-				let datos = JSON.parse(data);
-				let success = datos.success;
-				
-				if(success == false){
-					toastr.error("Algo salio mal, error en el captcha.");
-					return false;
+					let datos = JSON.parse(data);
+					let success = datos.success;
+
+					if(success == false){
+						toastr.error("Algo salio mal, error en el captcha.");
+						return false;
+					}
+					session.captcha = true;
+					goStep(3);
+				},
+				error: function (request, status, error) {
+					console.error(error);
+					toastr.error("Error inesperado, intente más tarde por favor");
 				}
-				goStep(3);
-			},
-			error: function (request, status, error) {
-				console.error(error);
-				toastr.error("Error inesperado, intente más tarde por favor");
-			}
-		});*/
+			});
+		} else {
+			goStep(3);
+		}
+
 	});
 
 	//Step 3
