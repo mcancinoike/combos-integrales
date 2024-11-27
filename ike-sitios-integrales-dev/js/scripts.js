@@ -925,6 +925,9 @@ function loadValues(step) {
 			break;
 		case 5:
 			break;
+		case "5-2":
+			$('select[name=nacionalidad], select[name=actividad], select[name=residencia]').select2();
+			break;
 		case 6:
 			getBeneficiaries();
 			break;
