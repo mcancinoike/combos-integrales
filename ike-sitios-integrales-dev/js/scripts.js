@@ -208,7 +208,7 @@ $(document).ready(function () {
 			if (asistencia.checked) return asistencia.value;
 		}).get();
 
-		const captcha_response = session.captcha ? '' : document.getElementById("g-recaptcha-response").value;
+		const captcha_response = session.captcha ? '' : $(".g-recaptcha-response").last().val();
 
 		session.asistencias = asistencias;
 		session.check.clienteHsbc = $('input[name=clienteHsbc]').is(':checked');
@@ -1183,9 +1183,11 @@ function deleteSeguro() {
 			},
 			success: function (response) {
 				if (response.code === 200) {
-					session.cliente.id_prima = 0;
-					session.cliente.sexo = session.cliente.date_birth = '';
-					goStep(7);
+					session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
+					session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
+					session.cliente.sexo = '';
+					const step = session.asistencias.length === 0 ? 3 : 7;
+					goStep(step);
 				} else
 					toastr.error(response.msg);
 			},
