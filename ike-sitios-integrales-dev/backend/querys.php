@@ -14,7 +14,6 @@ $action = $_POST['action'];
 
 function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $code, $idPrima, $asistencias, $sexo, $clientType)
 {
-    $fecha_alta = date("Y-m-d H:i:s");
 
     $query = "INSERT INTO clientes_hsbc (client_type, name, middle_name, pater_surname, mater_surname, cell_phone, code_cell, email, date_birth, rfc, id_prima, sexo, updated_at) 
                      VALUES(:client_type, :name, :middle_name, :pater_surname, :mater_surname, :cell_phone, :code_cell, :email, :date_birth, :rfc, :id_prima, :sexo, :updated_at);";
@@ -40,10 +39,9 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     }else{
 
         foreach ($asistencias as $val2) {
-            if($val2 != ""){
-                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, updated_at) VALUES($idCliente, '$val2', '0000-00-00 00:00:00');";
-                $conexion->insertData($query2);
-            }  
+
+                $query2 = "INSERT INTO hsbc_cliente_assistance (id_cliente, id_assistance, updated_at) VALUES(:id_cliente, :id_assistance , '0000-00-00 00:00:00');";
+                $conexion->insertData($query2, ["id_cliente" => $idCliente, "id_assistance" => $val2]);
         }     
         $result = array("code" => 200, "msg" => "Se creó el cliente, con éxito!", "idCliente" => $idCliente);
     }
@@ -697,7 +695,7 @@ switch ($action):
         break;
 
     case 'saveClient':
-        $asistencias = $_POST['asistencias'];
+        $asistencias = isset($_POST['asistencias']) ? $_POST['asistencias'] : [];
         $idPrima = $_POST['idPrima'];
         $nombre = $_POST['nombre'];
         $segundoNombre = $_POST['segundoNombre'];
@@ -719,7 +717,7 @@ switch ($action):
         break;
 
     case 'updateClient':
-        $asistencias = $_POST['asistencias'];
+        $asistencias = isset($_POST['asistencias']) ? $_POST['asistencias'] : [];
         $idPrima = $_POST['idPrima'];
         $nombre = $_POST['nombre'];
         $segundoNombre = $_POST['segundoNombre'];

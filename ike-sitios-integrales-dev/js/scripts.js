@@ -539,6 +539,12 @@ $(document).ready(function () {
 			cache: false,
 			type: 'POST',
 			data: dataSend,
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
 			success: function (response) {
 				if (response.idBeneficiario !== undefined){
 					session.beneficiarios[session.beneficiarios.length - 1].id = response.idBeneficiario;
@@ -550,7 +556,7 @@ $(document).ready(function () {
 			},
 			error: function (request, status, error) {
 				console.log(error);
-				toastr.error('Ha ocurrido un error!');
+				toastr.error('Ha ocurrido un error al intentar guardar beneficiario!');
 			}
 		});
 	});
@@ -929,6 +935,11 @@ function loadValues(step) {
 			$('select[name=nacionalidad], select[name=actividad], select[name=residencia]').select2();
 			break;
 		case 6:
+			if (session.beneficiarios.length === 5)
+				$("#btnNewBenef").hide();
+			else
+				$("#btnNewBenef").show();
+
 			getBeneficiaries();
 			break;
 		case 7:
@@ -1117,7 +1128,7 @@ function editBenef(id) {
 function deleteBenef(id) {
 	let idBeneficiario = id;
 	let resp = confirm('¿Está seguro de eliminar este beneficiario?');
-
+	session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== idBeneficiario});
 	if (resp) {
 		$.ajax({
 			url: relativePath + "backend/querys.php",
@@ -1189,7 +1200,8 @@ function deleteSeguro() {
 					session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
 					session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
 					session.cliente.sexo = '';
-					const step = session.asistencias.length === 0 ? 3 : 7;
+					session.beneficiarios = [];
+					const step = session.asistencias.length === 0 ? 2 : 7;
 					goStep(step);
 				} else
 					toastr.error(response.msg);
