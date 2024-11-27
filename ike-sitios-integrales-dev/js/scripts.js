@@ -473,7 +473,7 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (beneficiarios.segundoNombre == '') {
+		if (beneficiarios.apellidoPaterno == '') {
 			toastr.error("Escribe el apellido paterno");
 			$('input[name=apellidoPaterno]').focus();
 			return false;
@@ -855,7 +855,7 @@ function goStep(step, stepActual = null) {
 }
 
 function loadValues(step) {
-	step = step === "5-2" ? step : parseInt(step);
+	step = step === "5-2" || step === "final" ? step : parseInt(step);
 	switch (step) {
 		case 1:
 				if (session.cliente.id_prima !== 0) {
