@@ -964,6 +964,29 @@ function loadValues(step) {
 			}
 			break;
 		case "final":
+			let msgHead = '',
+				msgSeguro = '';
+
+			if (session.cliente.id_prima === 0) {
+				msgHead = "<h3>¡Felicidades! Ahora cuentas con tu(s) programa(s) de asistencia y podrás hacer uso de tus beneficios en un lapso de 48 horas.</h3>";
+
+			} else {
+				msgHead = "<h2>¡Solicitud enviada con éxito!</h2>";
+
+				msgSeguro = "                <ul>\n" +
+							"                    <li>Tu solicitud de contratación de seguro se encuentra en evaluación.</li>\n" +
+							"                    <li>De ser aceptada, haremos el cargo a la cuenta que capturaste y enviaremos tu póliza al correo registrado en un lapso de 48 horas.</li>\n" +
+							"                    <li>Deberás recibir la póliza de confirmación en tu correo electrónico. Si no la recibes, llama al <a href='tel:5557213322'>55 5721 3322</a> para confirmar la contratación.</li>\n";
+
+
+				if (session.asistencias.length !== 0)
+					msgSeguro += "                    <li>Podrás hacer uso de tu(s) programa(s) de asistencia en un lapso de 48 hrs.</li>\n";
+
+					msgSeguro += "                </ul>";
+			}
+			$("#msg-head").html(msgHead);
+			$("#msg-seguro").html(msgSeguro);
+
 			localStorage.clear();
 			break;
 	}
@@ -1128,7 +1151,6 @@ function editBenef(id) {
 function deleteBenef(id) {
 	let idBeneficiario = id;
 	let resp = confirm('¿Está seguro de eliminar este beneficiario?');
-	session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== idBeneficiario});
 	if (resp) {
 		$.ajax({
 			url: relativePath + "backend/querys.php",
@@ -1138,11 +1160,19 @@ function deleteBenef(id) {
 				action: 'deleteBeneficiare',
 				idBeneficiario: idBeneficiario
 			},
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
 			success: function (data) {
+				session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== idBeneficiario});
 				goStep(6);
 			},
 			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
+				console.error(error);
+				toastr.error("Error inesperado al eliminar beneficiario");
 			}
 		});
 	}

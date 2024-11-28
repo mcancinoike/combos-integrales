@@ -1,5 +1,6 @@
 <?php
     include_once "../backend/post.php";
+    $captchaPublic = $conexion->captchaPublic;
     echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 ?>
 <section class="step show" id="step2">
