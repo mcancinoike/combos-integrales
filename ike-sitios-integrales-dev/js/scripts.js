@@ -320,13 +320,19 @@ $(document).ready(function () {
 		}
 
 		if (session.cliente.rfc == '') {
-			toastr.error("Escribe el RFC");
+			toastr.error("Escribe el RFC con homoclave");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
 		if (session.cliente.rfc.length <= 11) {
-			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
+			toastr.error("El RFC con homoclave debe tener entre 12 y 13 caracteres");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
+		if (!validRFC(session.cliente.rfc)) {
+			toastr.error("Verifica que tu RFC con homoclave esté escrito correctamente");
 			$('input[name=rfc]').focus();
 			return false;
 		}
@@ -509,6 +515,18 @@ $(document).ready(function () {
 			return false;
 		}
 
+		if (!validRFC(beneficiarios.rfc)) {
+			toastr.error("Verifica que el RFC con homoclave esté escrito correctamente");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
+		if (beneficiarios.rfc === session.cliente.rfc) {
+			toastr.error("El contratante no puede agregarse como beneficiario");
+			$('input[name=rfc]').focus();
+			return false;
+		}
+
 		if (beneficiarios.nacionalidad == '') {
 			toastr.error("Selecciona la nacionalidad");
 			$('input[name=nacionalidad]').focus();
@@ -649,6 +667,7 @@ $(document).ready(function () {
 			cache: false,
 			type: 'POST',
 			data: {
+				idCliente: session.id_cliente,
 				action: 'updateBeneficiare',
 				idBeneficiario: idBeneficiario,
 				parentesco: parentesco,
@@ -664,11 +683,21 @@ $(document).ready(function () {
 				actividad: actividad,
 				residencia: residencia
 			},
-			success: function (data) {
-				goStep(6);
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (response) {
+				if (response.code === 200)
+					goStep(6);
+				else
+					toastr.error(response.msg);
 			},
 			error: function (request, status, error) {
-				console.log('Ha ocurrido un error!');
+				console.log(error);
+				toastr.error('Error al intentar actualizar beneficiario!');
 			}
 		});
 	});
@@ -921,9 +950,12 @@ function loadValues(step) {
 			  $('#frmRegister3 input[name=apellidoPaterno]').val(session.cliente.pater_surname);
 			  $('#frmRegister3 input[name=apellidoMaterno]').val(session.cliente.mater_surname);
 			  $('#frmRegister3 input[name=fechaNac]').val(session.cliente.date_birth);
-			  $('#frmRegister3 input[name=rfc]').val(session.cliente.rfc);
+			  $('#frmRegister3 input[name=rfc]').val(session.cliente.rfc).prop("disabled", true);
 			  $('#frmRegister3 input[name=email]').val(session.cliente.email);
 			  $('#frmRegister3 input[name=telefono]').val(session.cliente.cell_phone);
+
+			  if (session.cliente.confirm_cell === 1)
+			  	$('#frmRegister3 input[name=telefono]').prop("disabled", true);
 			}
 			break;
 		case 4:
@@ -1348,6 +1380,43 @@ function setTimer() {
 function onlyNumbers(e){
 	const key = e.charCode;
 	return key >= 48 && key <= 57;
+}
+
+function validRFC(rfc, aceptarGenerico = true) {
+	const re       = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/,
+	      validado = rfc.match(re);
+
+	if (!validado)  //Coincide con el formato general del regex?
+		return false;
+
+	//Separar el dígito verificador del resto del RFC
+	const digitoVerificador = validado.pop(),
+		rfcSinDigito      = validado.slice(1).join(''),
+		len               = rfcSinDigito.length,
+
+		//Obtener el digito esperado
+		diccionario       = "0123456789ABCDEFGHIJKLMN&OPQRSTUVWXYZ Ñ",
+		indice            = len + 1;
+	var   suma,
+		digitoEsperado;
+
+	if (len == 12) suma = 0
+	else suma = 481; //Ajuste para persona moral
+
+	for(let i=0; i<len; i++)
+		suma += diccionario.indexOf(rfcSinDigito.charAt(i)) * (indice - i);
+	digitoEsperado = 11 - suma % 11;
+	if (digitoEsperado == 11) digitoEsperado = 0;
+	else if (digitoEsperado == 10) digitoEsperado = "A";
+
+	//El dígito verificador coincide con el esperado?
+	// o es un RFC Genérico (ventas a público general)?
+	if ((digitoVerificador != digitoEsperado)
+		&& (!aceptarGenerico || rfcSinDigito + digitoVerificador != "XAXX010101000"))
+		return false;
+	else if (!aceptarGenerico && rfcSinDigito + digitoVerificador == "XEXX010101000")
+		return false;
+	return rfcSinDigito + digitoVerificador;
 }
 
 goStepSave();

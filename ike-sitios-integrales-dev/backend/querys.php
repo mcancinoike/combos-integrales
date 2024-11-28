@@ -49,23 +49,20 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     return $result;
 }
 
-function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $idPrima, $asistencias, $sexo, $clientType, $idCliente)
+function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente)
 {
 
-    $query = "UPDATE clientes_hsbc SET client_type = :client_type, name = :name, middle_name = :middle_name, 
-                                       pater_surname = :pater_surname, mater_surname = :mater_surname, cell_phone = :cell_phone,
-                                       email = :email, date_birth = :date_birth, rfc = :rfc, 
+    $query = "UPDATE clientes_hsbc SET name = :name, middle_name = :middle_name, 
+                                       pater_surname = :pater_surname, mater_surname = :mater_surname,
+                                       email = :email, date_birth = :date_birth, 
                                        id_prima = :id_prima, sexo = :sexo WHERE id = :id;";
     $data = [
-        "client_type" => $clientType,
         "name" => $nombre,
         "middle_name" => $segundoNombre,
         "pater_surname" => $apellidoPaterno,
         "mater_surname" => $apellidoMaterno,
-        "cell_phone" => $telefono,
         "email" => $email,
         "date_birth" => $fechaNac,
-        "rfc" => $rfc,
         "id_prima" => $idPrima,
         "sexo" => $sexo,
         "id" => $idCliente,
@@ -153,12 +150,11 @@ function saveBeneficiare($conexion, $idCliente, $parentesco, $nombre, $segundoNo
 
     $idBeneficiario = $conexion->insertData($query, $data);
 
-    if(!is_numeric($idBeneficiario)){
-        $result = array("msg" => "Ha ocurrido un error!");
-    }else{
-        $result = array("msg" => "Se creó el beneficiario, con éxito!", "idBeneficiario" => $idBeneficiario );
-    }
-    
+    if(!is_numeric($idBeneficiario))
+        $result = array("code" => 200, "msg" => "Ha ocurrido un error!");
+    else
+        $result = array("code" => 400, "msg" => "Se creó el beneficiario, con éxito!", "idBeneficiario" => $idBeneficiario );
+
     echo json_encode($result);
 }
 
@@ -188,9 +184,9 @@ function updateBeneficiare($conexion, $idBeneficiario, $parentesco, $nombre, $se
     ];
 
     if($conexion->insertData($query, $data) === 0){
-        $result = array("mensaje" => "Ha ocurrido un error!");
+        $result = array("code" => 200, "msg" => "Se actualizaron los beneficiario, con éxito!");
     }else{
-        $result = array("mensaje" => "Se actualizaron los beneficiario, con éxito!");       
+        $result = array("code" => 400, "msg" => "Ha ocurrido un error!");
     }
     
     echo json_encode($result);
@@ -686,6 +682,34 @@ function resumSoli($conexion, $idCliente, $app)
     return $seguro . "___" . $asistencias . "___" .$beneficiarios;
 }
 
+function verifyRFC($conexion, $rfc, $verify,  $idBenORtypeClient, $idCliente = 0){
+
+    switch ($verify) {
+        case "cliente":
+            $query = "SELECT id FROM clientes_hsbc WHERE rfc = :rfc AND active = 1 AND client_type = :client_type";
+            $data =  ["rfc" => $rfc, "client_type" => $idBenORtypeClient];
+            break;
+        case "beneficiario":
+            $query = "SELECT id, rfc FROM beneficiaries_hsbc WHERE rfc = :rfc AND active = 1 AND id_cliente = :idCliente";
+            $data =  ["rfc" => $rfc, "idCliente" => $idCliente];
+            break;
+    }
+    $rows = $conexion->getData($query, $data);
+
+    if(count($rows)){
+        if ($idBenORtypeClient !== 0 && $idCliente !== 0){
+            foreach ($rows as $row) {
+                if ($row["id"] != $idBenORtypeClient)
+                    return true;
+            }
+            return false;
+        } else
+            return true;
+    }
+    else
+        return false;
+}
+
 switch ($action):
     // ah
     case 'getSumaAsegurada':
@@ -695,6 +719,12 @@ switch ($action):
         break;
 
     case 'saveClient':
+
+        if (verifyRFC($conexion, $_POST['rfc'], "cliente", $_POST['clientType'])) {
+           echo json_encode(array("code" => 400, "msg" => "Tus datos ya han sido registrados anteriormente"));
+           exit();
+        }
+
         $asistencias = isset($_POST['asistencias']) ? $_POST['asistencias'] : [];
         $idPrima = $_POST['idPrima'];
         $nombre = $_POST['nombre'];
@@ -724,17 +754,19 @@ switch ($action):
         $apellidoPaterno = $_POST['apellidoPaterno'];
         $apellidoMaterno = $_POST['apellidoMaterno'];
         $fechaNac = $_POST['fechaNac'];
-        $rfc = $_POST['rfc'];
         $email = $_POST['email'];
-        $telefono = $_POST['telefono'];
         $sexo = $_POST['sexo'];
         $clientType = $_POST['clientType'];
         $idCliente = $_POST['idCliente'];
-        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $rfc, $email, $telefono, $idPrima, $asistencias, $sexo, $clientType, $idCliente);
+        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente);
         echo json_encode($result);
         break;
 
     case 'saveBeneficiare':
+        if (verifyRFC($conexion, $_POST['rfc'], "beneficiario", 0, $_POST['idCliente'])) {
+            echo json_encode(array("code" => 400, "msg" => "El beneficiario que intentas agregar ya ha sido registrado anteriormente"));
+            exit();
+        }
         $idCliente = $_POST['idCliente'];
         $parentesco = $_POST['parentesco'];
         $nombre = $_POST['nombre'];
@@ -752,6 +784,10 @@ switch ($action):
         break;
 
     case 'updateBeneficiare':
+        if (verifyRFC($conexion, $_POST['rfc'], "beneficiario", $_POST['idBeneficiario'], $_POST['idCliente'])) {
+            echo json_encode(array("code" => 400, "msg" => "El beneficiario que intentas actualizar ya ha sido registrado anteriormente"));
+            exit();
+        }
         $idBeneficiario = $_POST['idBeneficiario'];
         $parentesco = $_POST['parentesco'];
         $nombre = $_POST['nombre'];
