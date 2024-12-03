@@ -33,7 +33,7 @@ let session = {
 	cardMask: '',
 	confirmCard: '',
 	captcha: false
-}
+}, minDate, maxDate;
 
 $(document).ready(function () {
 
@@ -55,22 +55,19 @@ $(document).ready(function () {
 		"positionClass": "toast-bottom-right"
 	}
 
-	let minDate;
-	let maxDate;
-
 	$(function () {
 		var dtToday = new Date();
 
 		var month = dtToday.getMonth() + 1; // jan=0; feb=1 .......
 		var day = dtToday.getDate();
-		var year = dtToday.getFullYear() - 18;
+		var yearMin = dtToday.getFullYear() - 18;
+		var yearMax = dtToday.getFullYear() - 64;
 		if (month < 10)
 			month = '0' + month.toString();
 		if (day < 10)
 			day = '0' + day.toString();
-		minDate = year + '-' + month + '-' + day;
-		maxDate = year + '-' + month + '-' + day;
-		$('#frmRegister3 input[name=fechaNac]').attr('max', maxDate);
+		minDate = yearMin + '-' + month + '-' + day;
+		maxDate = yearMax + '-' + month + '-' + day;
 	});
 
 	$(document).on("click", ".lightbox__close", function () {
@@ -221,7 +218,7 @@ $(document).ready(function () {
 			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
 			return false;
 		}
-		
+
 		if (!session.check.clienteHsbc) {
 			toastr.error("Debe ser cliente HSBC para poder continuar.");
 			return false;
@@ -315,8 +312,8 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (session.cliente.date_birth > maxDate) {
-			toastr.error("Debe ser mayor de 18 años");
+		if (session.cliente.date_birth > minDate || session.cliente.date_birth < maxDate) {
+			toastr.error("Debe ser mayor de 18 años y menor a 65 años");
 			$('input[name=fechaNac]').focus();
 			return false;
 		}
