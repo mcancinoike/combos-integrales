@@ -18,7 +18,7 @@ foreach ($conexion->getData($query) as $val) {
 	$residencia = $val['residence'];
 }
 ?>
-<input type="hidden" id="idBeneficiario" name="idBeneficiario" value="<?php echo $idBeneficiario; ?>">
+<input type="hidden" id="idBeneficiario" name="idBeneficiario" value="<?php echo htmlspecialchars($idBeneficiario, ENT_NOQUOTES, 'UTF-8'); ?>">
 <section class="step show" id="editBeneficiario">
 	<div class="header__step">
 		<div class="header__step__content">
@@ -58,19 +58,19 @@ foreach ($conexion->getData($query) as $val) {
 					</div>
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control" value="<?php echo $nombre; ?>">
+						<input type="text" name="nombre" class="frm__control" value="<?php echo htmlspecialchars($nombre, ENT_NOQUOTES, 'UTF-8'); ?>">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control" value="<?php echo $nombre2; ?>">
+						<input type="text" name="segundoNombre" class="frm__control" value="<?php echo htmlspecialchars($nombre2, ENT_NOQUOTES, 'UTF-8'); ?>">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control" value="<?php echo $paterno; ?>">
+						<input type="text" name="apellidoPaterno" class="frm__control" value="<?php echo htmlspecialchars($paterno, ENT_NOQUOTES, 'UTF-8'); ?>">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control" value="<?php echo $materno; ?>">
+						<input type="text" name="apellidoMaterno" class="frm__control" value="<?php echo htmlspecialchars($materno, ENT_NOQUOTES, 'UTF-8'); ?>">
 					</div>
 					<div class="frm__group">
 						<label>Estado civil*</label>
@@ -95,11 +95,11 @@ foreach ($conexion->getData($query) as $val) {
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control" value="<?php echo $fechaNac; ?>">
+						<input type="date" name="fechaNac" class="frm__control" value="<?php echo htmlspecialchars($fechaNac, ENT_NOQUOTES, 'UTF-8'); ?>">
 					</div>
 					<div class="frm__group">
 						<label>RFC</label>
-						<input type="text" name="rfc" class="frm__control" maxlength="13" value="<?php echo $rfc; ?>">
+						<input type="text" name="rfc" class="frm__control" maxlength="13" value="<?php echo htmlspecialchars($rfc, ENT_NOQUOTES, 'UTF-8'); ?>">
 						<span class="desktop">El RFC no debe llevar guiones</span>
 					</div>
 					<div class="frm__group">
