@@ -35,10 +35,13 @@
 				<form id="frmCard">
 					<div class="frm pay">
 						<div class="frm__group">
-							<label for="cardChange">Número de tarjeta*</label>
+							<label for="card">Número de tarjeta*</label>
 							<p class="frm__note">Solo son válidas Tarjetas de Débito o Crédito HSBC.</p>
-							<input type="hidden" name="numeroTarjeta" class="frm__control" maxlength="16">
-                            <input type="text" autocomplete="off" id="cardChange" oncopy="return false" onpaste="return false" name="cardChange" class="frm__control onlyNumbers" minlength="16" placeholder="************1234" maxlength="16">
+                            <div class="input-card">
+                                <input type="password" autocomplete="off" id="card" oncopy="return false" onpaste="return false" name="numeroTarjeta" class="onlyNumbers" minlength="16"  maxlength="16">
+                                <img id="eye" data-type="off" title="Mostrar/Ocultar número de tarjeta" src="<?php echo $_SESSION["relativePath"]?>img/icons/eye-off.svg">
+                            </div>
+
 						</div>
 						<div class="frm__group check">
 							<input type="checkbox" name="condiciones" value="1" class="frm__control check">

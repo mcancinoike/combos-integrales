@@ -30,6 +30,8 @@ let session = {
 		residenteHsbc: false
 	},
 	card: '',
+	cardMask: '',
+	confirmCard: '',
 	captcha: false
 }
 
@@ -801,24 +803,17 @@ $(document).ready(function () {
 		});
 	});
 
-	$(document).on("keyup", "#cardChange", function (e) {
-		e.preventDefault();
 
-		const card = $(this).val();
-
-		if (card.length === 1 || session.card.length > 16)
-			session.card = '';
-
-		if (!isNaN(card))
-			session.card = card;
-		else if (isNaN(card) && session.card.length <= 16)
-			session.card += card.slice(-1);
-
-		let last = card.slice(-4);
-		$(this).val(last.padStart(card.length, "*"));
-
-	    if (session.card.length === 16 && !isNaN(session.card))
-			$("input[name=numeroTarjeta]").val(session.card);
+	$(document).on("click", "#eye", function () {
+		if ($(this).attr("data-type") === "off") {
+			$(this).attr("data-type", "on");
+			$(this).attr("src", relativePath + "img/icons/eye.svg");
+			$("#card").attr("type", "text");
+		} else {
+			$(this).attr("data-type", "off");
+			$(this).attr("src", relativePath + "img/icons/eye-off.svg");
+			$("#card").attr("type", "password");
+		}
 	});
 
 	$(document).on("keypress", ".onlyNumbers", function(e) {
@@ -828,6 +823,11 @@ $(document).ready(function () {
 
 });
 
+function hashCreditCard(number){
+	const str = String(number).replace(" ","").replace("-","")
+	const last = str.slice(-4)
+	return last.padStart(str.length,"*")
+}
 
 function checkAsistencias(nodo) {
 
