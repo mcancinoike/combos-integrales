@@ -134,7 +134,7 @@ $(document).ready(function () {
 				$("#loading").hide();
 
 				if (response.code == 200) {
-					$("#ajaxSumaAsegurada").html(response.data);
+					$("#ajaxSumaAsegurada").html(DOMPurify.sanitize(response.data));
 					$("input[name=sexo]").val(sexo);
 
 					if (session.cliente.id_prima !== 0){
@@ -877,7 +877,7 @@ function goStep(step, stepActual = null) {
 		success: function (data) {
 			$("#loading").hide();
 			session.step = step;
-			$("#main-content").html(data);
+			$("#main-content").html(DOMPurify.sanitize(data));
 			saveDataSession();
 			loadValues(step);
 		},
@@ -1172,7 +1172,7 @@ function editBenef(id) {
 			$("#loading").hide();
 		},
 		success: function (data) {
-			$("#main-content").html(data);
+			$("#main-content").html(DOMPurify.sanitize(data));
 		},
 		error: function (request, status, error) {
 			console.log('Ha ocurrido un error!');
@@ -1228,7 +1228,7 @@ function getBeneficiaries() {
 		},
 		success: function (response) {
 			if (response.code == 200)
-				$("#listBenef").html(response.data);
+				$("#listBenef").html(DOMPurify.sanitize(response.data));
 			else
 				toastr.error(response.msg);
 		},
@@ -1295,9 +1295,9 @@ function getResumSol() {
 		success: function (response) {
 			if (response.code == 200){
 				const data = response.data.split("___")
-				$("#resumSoli").html(data[0]);
-				$("#resumAsitencias").html(data[1]);
-				$("#resumBenef").html(data[2]);
+				$("#resumSoli").html(DOMPurify.sanitize(data[0]));
+				$("#resumAsitencias").html(DOMPurify.sanitize(data[1]));
+				$("#resumBenef").html(DOMPurify.sanitize(data[2]));
 			}
 			else
 				toastr.error(response.msg);
