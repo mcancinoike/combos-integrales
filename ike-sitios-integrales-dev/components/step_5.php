@@ -4,7 +4,7 @@
 <section class="step show" id="step5">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a href="javascript:goStep(3)" class="header__step__arrow">
+			<a class="header__step__arrow">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">

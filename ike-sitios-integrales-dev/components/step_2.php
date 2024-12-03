@@ -1,12 +1,11 @@
 <?php
     include_once "../backend/post.php";
     $captchaPublic = $conexion->captchaPublic;
-    echo '<script src="https://www.google.com/recaptcha/api.js" async defer></script>';
 ?>
 <section class="step show" id="step2">
     <div class="header__step">
 		<div class="header__step__content">
-			<a href="javascript:goStep(1);" class="header__step__arrow">
+			<a class="header__step__arrow">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">

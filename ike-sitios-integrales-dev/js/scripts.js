@@ -33,7 +33,7 @@ let session = {
 	cardMask: '',
 	confirmCard: '',
 	captcha: false
-}
+}, minDate, maxDate;
 
 $(document).ready(function () {
 
@@ -55,22 +55,19 @@ $(document).ready(function () {
 		"positionClass": "toast-bottom-right"
 	}
 
-	let minDate;
-	let maxDate;
-
 	$(function () {
 		var dtToday = new Date();
 
 		var month = dtToday.getMonth() + 1; // jan=0; feb=1 .......
 		var day = dtToday.getDate();
-		var year = dtToday.getFullYear() - 18;
+		var yearMin = dtToday.getFullYear() - 18;
+		var yearMax = dtToday.getFullYear() - 65;
 		if (month < 10)
 			month = '0' + month.toString();
 		if (day < 10)
 			day = '0' + day.toString();
-		minDate = year + '-' + month + '-' + day;
-		maxDate = year + '-' + month + '-' + day;
-		$('#frmRegister3 input[name=fechaNac]').attr('max', maxDate);
+		minDate = yearMin + '-' + month + '-' + day;
+		maxDate = yearMax + '-' + month + '-' + day;
 	});
 
 	$(document).on("click", ".lightbox__close", function () {
@@ -221,7 +218,7 @@ $(document).ready(function () {
 			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
 			return false;
 		}
-		
+
 		if (!session.check.clienteHsbc) {
 			toastr.error("Debe ser cliente HSBC para poder continuar.");
 			return false;
@@ -315,8 +312,8 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (session.cliente.date_birth > maxDate) {
-			toastr.error("Debe ser mayor de 18 años");
+		if (session.cliente.date_birth > minDate || session.cliente.date_birth < maxDate) {
+			toastr.error("Debe ser mayor de 18 años y menor de 65 años");
 			$('input[name=fechaNac]').focus();
 			return false;
 		}
@@ -505,6 +502,13 @@ $(document).ready(function () {
 			return false;
 		}
 
+		if (beneficiarios.fechaNac > minDate || beneficiarios.fechaNac < maxDate) {
+			toastr.error("El beneficiario debe ser mayor de 18 años y menor de 65 años");
+			$('input[name=fechaNac]').focus();
+			return false;
+		}
+
+
 		if (beneficiarios.rfc == '') {
 			toastr.error("Escribe el RFC");
 			$('input[name=rfc]').focus();
@@ -524,7 +528,7 @@ $(document).ready(function () {
 		}
 
 		if (beneficiarios.rfc === session.cliente.rfc) {
-			toastr.error("El contratante no puede agregarse como beneficiario");
+			toastr.error("El asegurado no puede agregarse como beneficiario");
 			$('input[name=rfc]').focus();
 			return false;
 		}
@@ -911,6 +915,9 @@ function loadValues(step) {
 				}
 			break;
 		case 2:
+			$("#main-content").append('<script src="https://www.google.com/recaptcha/api.js" async defer></script>');
+			$(".header__step__content a").attr("href", "javascript:goStep(1)");
+
 			$("#step2SumaAsegurada").text(formatCurrency(session.seguro.sumaAsegurada, 2) + " MXN");
 			$("#step2PagoAnual").text(formatCurrency(session.seguro.pagoAnual, 2) + " MXN");
 			$(".subtotal2").text(formatCurrency(session.seguro.pagoMensual, 2) + " MXN");
@@ -944,6 +951,8 @@ function loadValues(step) {
 
 			break;
 		case 3:
+			$(".header__step__content a").attr("href", "javascript:goStep(2)");
+
 			if (session.id_cliente !== 0){
 			  $('#frmRegister3 input[name=nombre]').val(session.cliente.name);
 			  $('#frmRegister3 input[name=segundoNombre]').val(session.cliente.middle_name);
@@ -959,14 +968,18 @@ function loadValues(step) {
 			}
 			break;
 		case 4:
+			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			setTimer();
 			break;
 		case 5:
+			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			break;
 		case "5-2":
+			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			$('select[name=nacionalidad], select[name=actividad], select[name=residencia]').select2();
 			break;
 		case 6:
+			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			if (session.beneficiarios.length === 5)
 				$("#btnNewBenef").hide();
 			else
@@ -975,6 +988,7 @@ function loadValues(step) {
 			getBeneficiaries();
 			break;
 		case 7:
+			$(".header__step__content a").attr("href", "javascript:goStep(6, 7)");
 			getResumSol();
 			$(".subtotal2").text(formatCurrency(session.pagoTotalMensual, 2) + " MXN");
 			if (session.cliente.id_prima === 0){
@@ -994,6 +1008,9 @@ function loadValues(step) {
 				$(".icon-asistencias-del, .icon-asistencias-edit").show();
 				$(".icon-asistencias-add").hide();
 			}
+			break;
+		case 8:
+			$(".header__step__content a").attr("href", "javascript:goStep(7)");
 			break;
 		case "final":
 			let msgHead = '',
@@ -1173,6 +1190,7 @@ function editBenef(id) {
 		},
 		success: function (data) {
 			$("#main-content").html(DOMPurify.sanitize(data));
+			$(".header__step__content a").attr("href", "javascript:goStep(6)");
 		},
 		error: function (request, status, error) {
 			console.log('Ha ocurrido un error!');
@@ -1334,15 +1352,15 @@ function formatCurrency(monto, decimales = 0) {
 	}
 }
 
+let timeConfirmCell;
 function setTimer() {
 
 	var countDownDate = new Date();
 	countDownDate.setSeconds(countDownDate.getSeconds() + 116);
-
 	countDownDate.getTime();
-
+	clearInterval(timeConfirmCell);
 	// Update the count down every 1 second
-	var x = setInterval(function () {
+	timeConfirmCell = setInterval(function () {
 
 		// Get today's date and time
 		var now = new Date().getTime();
@@ -1364,7 +1382,7 @@ function setTimer() {
 
 		// If the count down is finished, write some text
 		if (distance < 0) {
-			clearInterval(x);
+			clearInterval(timeConfirmCell);
 			$('#timer i').html("0:00");
 			$('#sendNewCode').show();
 			$('#btnStep4').hide();
