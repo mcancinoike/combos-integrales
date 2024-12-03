@@ -1133,7 +1133,7 @@ function sendNewCode(idCliente) {
 			$("#loading").hide();
 		},
 		success: function (response) {
-			if (response.status === "ok") {
+			if (response.code === 200) {
 				$('#sendNewCode').hide();
 				$('#btnStep4').show();
 				setTimer();

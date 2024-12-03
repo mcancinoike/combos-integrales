@@ -825,14 +825,15 @@ switch ($action):
 
             try {
                 sendCodeCell($code, $telefono, $conexion);
-                echo json_encode(array("status" => "ok"));
+                $response = array("code" => 200, "msg" => "ok");
 
             } catch (Exception $e) {
-                echo json_encode(array("status" => "Error inesperado al enviar SMS, intente más tarde por favor"));
+                $response = array("code" => 400, "msg" => "Error inesperado, intente más tarde por favor");
             }
         } else {
-            echo json_encode(array("status" => "Error al actualizar código"));
+            $response = array("code" => 400, "msg" => "Error al actualizar código");
         }
+        echo json_encode($response);
         break;
 
     case 'verifyCard':
