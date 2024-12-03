@@ -497,8 +497,8 @@ function sendMail($conexion, $idCliente){
     $mail->SMTPAuth = true; 
     $mail->AddEmbeddedImage('../img/headerMail.png', 'headerMail', 'headerMail.png');
     $mail->AddEmbeddedImage('../img/footerMail.png', 'footerMail', 'footerMail.png');
-    $mail->Username = 'AKIASWTWHVISO27R4S7R';
-    $mail->Password = 'BIWnz2eaTb7DgUA1VdNWw3NX1jvlPjDoPPETy4CZIR01';
+    $mail->Username = $conexion->mailUser;
+    $mail->Password = $conexion->mailPassword;
     $mail->Port = 587;     
     $mail->ClearAllRecipients();
 

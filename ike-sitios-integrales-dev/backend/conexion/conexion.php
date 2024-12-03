@@ -20,6 +20,8 @@ class Conexion
     public $urlOauth;
     public $urlApiAfiliados;
     public $authorizationOauth;
+    public $mailUser;
+    public $mailPassword;
 
     function __construct()
     {
@@ -39,19 +41,21 @@ class Conexion
         $this->urlOauth = $data["urlOauth"];
         $this->authorizationOauth = $data["authorizationOauth"];
         $this->urlApiAfiliados = $data["urlApiAfiliados"];
+        $this->mailUser = $data["mailUs"];
+        $this->mailPassword = $data["mailPa"];
 
         try {
             $this->conexion = new PDO("mysql:host=" . $this->serverDBEscritura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            
+            error_log( 'Falló la conexión de Escritura: ' . $e->getMessage());
         }
         if ($this->ambiente != 2) {
             try {
                 $this->conexionLectura = new PDO("mysql:host=" . $this->serverDBLectura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
                 $this->conexionLectura->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                
+                error_log( 'Falló la conexión de Lectura: ' . $e->getMessage());
             }
         } else {
             $this->conexionLectura = $this->conexion;
