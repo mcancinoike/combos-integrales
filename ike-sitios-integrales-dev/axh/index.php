@@ -9,7 +9,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Seguro para Apoyo por Hospitalización HSBC</title>
-	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
+	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales en minutos!">
 	<link rel="shortcut icon" href="../img/favicon.ico">
     <?php
         include_once '../components/css.php';

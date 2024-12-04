@@ -1376,3 +1376,11 @@ footer a {
 	margin-right: 7px;
 	margin-left: 10px;
 }
+
+#pagoMensual {
+	display: contents;
+}
+
+.border-bttom-gray {
+	border-bottom: 1px solid #ccc;
+}

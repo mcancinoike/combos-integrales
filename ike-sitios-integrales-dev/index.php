@@ -10,7 +10,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Seguro por Accidentes Personales HSBC</title>
-	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!">
+	<meta name="description" content="¡Solicita tu Seguro por Accidentes Personales en minutos!">
 	<link rel="shortcut icon" href="img/favicon.ico">
     <?php include_once 'components/css.php'; ?>
 </head>
@@ -35,7 +35,7 @@
 					<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-seguro-desktop.png" class="desktop">
 				</div>
 				<div class="atf__txt">
-					<h1>¡Solicita tu Seguro por Accidentes Personales HSBC en minutos!</h1>
+					<h1>¡Solicita tu Seguro por Accidentes Personales en minutos!</h1>
 				</div>
 			</div>
 
@@ -49,7 +49,7 @@
 						Realiza tu solicitud y obtén:
 					</div>
 					<ul class="box__list">
-						<li>Seguro por Accidentes Personales HSBC</li>
+						<li>Seguro de Accidentes Personales</li>
 					</ul>
 					<p class="box__txt">Te protegemos en caso de muerte accidental, pérdidas orgánicas y fractura de huesos, entre otros, con un costo mensual accesible.</p>
 					<ul class="box__list">

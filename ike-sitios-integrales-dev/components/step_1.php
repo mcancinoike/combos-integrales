@@ -83,7 +83,7 @@
 
 		<div class="tbl" id="tblStep1">
 			<div class="tbl__body">
-				<div class="tbl__row">
+				<div class="tbl__row border-0">
 					<div class="tbl__col left suma">
 						<div>Suma asegurada:</div>
 						<div id="sumaAsegurada">$750,000 MXN</div>
@@ -93,6 +93,11 @@
 						<div id="totalAnual">$1,740.00 MXN</div>
 					</div>
 				</div>
+                <div class="row">
+                    <div class="col-12 border-bttom-gray">
+                        <h6 class="box__txt2">Vigencia anual con renovación automática</h6>
+                    </div>
+                </div>
 				<div class="tbl__row">
 					<div class="tbl__col left green subtotal">
 						Subtotal mensual a pagar:
