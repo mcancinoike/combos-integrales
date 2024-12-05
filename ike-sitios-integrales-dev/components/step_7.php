@@ -38,9 +38,9 @@
 		<div class="resume action">
 			<h3 class="resume__title">Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?> </h3>
 			<div class="resume__action">
-				<a class="icon-seguro-edit" href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-				<a class="icon-seguro-del" href="javascript:deleteSeguro();"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
-				<a class="icon-seguro-add" href="javascript:goStep(1);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
+				<a class="icon-seguro-edi gostep-1 cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a class="icon-seguro-del del-seguro cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+				<a class="icon-seguro-add gostep-1 cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
 			</div>
 		</div>
         <span id="resumSoli"></span>
@@ -53,9 +53,9 @@
 		<div class="resume action">
 			<h3 class="resume__title">Programa de Asistencias Iké</h3>
 			<div class="resume__action">
-				<a class="icon-asistencias-edit" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-				<a class="icon-asistencias-del" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
-                <a class="icon-asistencias-add" href="javascript:goStep(2);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
+				<a class="icon-asistencias-edit gostep-2 cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a class="icon-asistencias-del gostep-2 cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+                <a class="icon-asistencias-add gostep-2 cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
 			</div>
 		</div>
 		<span id="resumAsitencias"></span>
@@ -83,8 +83,8 @@
         <div class="resume action">
             <h3 class="resume__title">Beneficiarios para mi seguro</h3>
             <div class="resume__action">
-                <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
-                <a href="javascript:goStep(6);"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
+                <a class="cursor-pointer gostep-6"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+                <a class="cursor-pointer gostep-6"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
             </div>
         </div>
         <span id="resumBenef"></span>

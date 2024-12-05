@@ -34,7 +34,7 @@
 		</div>
 
 		<div class="box__button2">
-			<a href="javascript:;" class="box__btn2" id="btnStep5">
+			<a class="box__btn2 cursor-pointer" id="btnStep5">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg">
 				Agregar beneficiario
 			</a>

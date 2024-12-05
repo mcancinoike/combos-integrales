@@ -38,7 +38,7 @@
 							<label for="card">Número de tarjeta*</label>
 							<p class="frm__note">Solo son válidas Tarjetas de Débito o Crédito HSBC.</p>
                             <div class="input-card">
-                                <input type="password" autocomplete="off" id="card" oncopy="return false" onpaste="return false" name="numeroTarjeta" class="onlyNumbers" minlength="16"  maxlength="16">
+                                <input type="text" autocomplete="off" id="card" oncopy="return false" onpaste="return false" name="numeroTarjeta" class="onlyNumbers text-security-on" minlength="16"  maxlength="16">
                                 <img id="eye" data-type="off" title="Mostrar/Ocultar número de tarjeta" src="<?php echo $_SESSION["relativePath"]?>img/icons/eye-off.svg">
                             </div>
 

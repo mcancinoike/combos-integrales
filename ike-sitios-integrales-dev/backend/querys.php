@@ -601,8 +601,8 @@ function getBeneficiaries($conexion, $idCliente, $path)
         $beneficiarios .= '<div class="box__row b1">';
         $beneficiarios .= '<div class="box__info"><div class="box__name">' . $nombre . '</div>';
         $beneficiarios .= '<div class="box__action">';
-        $beneficiarios .= '<a href="javascript:editBenef(' . $val['id'] . ');"><img src="' . $path .'img/icons/edit.svg"></a>';
-        $beneficiarios .= '<a href="javascript:deleteBenef(' . $val['id'] .');"><img src="' . $path .'img/icons/delete.svg"></a>';
+        $beneficiarios .= '<a class="cursor-pointer btn-e-ben" data-id="' . $val['id'] . '"><img src="' . $path .'img/icons/edit.svg"></a>';
+        $beneficiarios .= '<a class="cursor-pointer btn-del-ben" data-id="' . $val['id'] . '"><img src="' . $path .'img/icons/delete.svg"></a>';
         $beneficiarios .= '</div></div>';
         $beneficiarios .= '<div class="box__percentage">Porcentaje';
         $porcentaje =  $val['percentage'] == 0 ? "" : $val['percentage'];

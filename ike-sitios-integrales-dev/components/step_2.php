@@ -47,7 +47,7 @@
                     $asistencias .= ' <div class="tbl__asistencia">';
                     $asistencias .= '<h3>' . $val['assistance'] . '</h3>';
                     $asistencias .= '<p>' . $val['description'] . '</p>';
-                    $asistencias .= '<a href="javascript:showAsistencia(\'' . $mAsistencia . '\');" class="more"> Conoce más <img src="' . $_SESSION["relativePath"] . 'img/icons/arrow-more.svg"></a>';
+                    $asistencias .= '<a data-modal="'.$mAsistencia.'" class="more cursor-pointer"> Conoce más <img src="' . $_SESSION["relativePath"] . 'img/icons/arrow-more.svg"></a>';
                     $asistencias .= '</div></div>';
                     $asistencias .= '<div class="tbl__col2 price">+ $' . $val['price'] . '</div></div>';
                 }
@@ -291,7 +291,7 @@
         <h2 class="asis__title">Asistencia para Padres</h2>
 
         <div class="asis__picture">
-            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/padres.jpg">
         </div>
 
         <div class="asis__box">
@@ -406,7 +406,7 @@
         <h2 class="asis__title">Asistencia Senior</h2>
 
         <div class="asis__picture">
-            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior.jpg">
         </div>
 
         <div class="asis__box">
@@ -501,7 +501,7 @@
         <h2 class="asis__title">Asistencia para Jóvenes</h2>
 
         <div class="asis__picture">
-            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/jovenes.jpg">
         </div>
 
         <div class="asis__box">
@@ -594,7 +594,7 @@
         <h2 class="asis__title">Asistencia para Mascotas</h2>
 
         <div class="asis__picture">
-            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/senior-desktop.png">
+            <img src="<?php echo $_SESSION["relativePath"]?>img/asistencias/mascotas.jpg">
         </div>
 
         <div class="asis__box">

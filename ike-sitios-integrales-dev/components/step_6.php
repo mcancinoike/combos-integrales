@@ -31,7 +31,7 @@
 		<div class="box__lista" id="listBenef"></div>
 
 		<div class="box__button2">
-			<a href="javascript:;" class="box__btn2" id="btnNewBenef">
+			<a class="box__btn2 cursor-pointer" id="btnNewBenef">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg">
 				Agregar otro beneficiario
 			</a>

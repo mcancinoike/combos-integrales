@@ -1384,3 +1384,15 @@ footer a {
 .border-bttom-gray {
 	border-bottom: 1px solid #ccc;
 }
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.text-security-on {
+	-webkit-text-security: square;
+}
+
+.text-security-off {
+	-webkit-text-security: none;
+}

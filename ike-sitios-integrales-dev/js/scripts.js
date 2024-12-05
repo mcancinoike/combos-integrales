@@ -178,6 +178,10 @@ $(document).ready(function () {
 		checkAsistencias($(this));
 	});
 
+	$(document).on("click", ".asistencia .more", function () {
+		showAsistencia($(this).attr("data-modal"));
+	});
+
 	$('#clienteHsbc').on('click', function() {
 		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
 			$('#btnStep2').removeClass('disabled');
@@ -708,8 +712,15 @@ $(document).ready(function () {
 		});
 	});
 
+	$(document).on("click", ".btn-e-ben", function () {
+		editBenef($(this).attr("data-id"));
+	});
 
-	$(document).on("click", "#btnNewBenef", function () {		
+	$(document).on("click", ".btn-del-ben", function () {
+		deleteBenef($(this).attr("data-id"));
+	});
+
+	$(document).on("click", "#btnNewBenef", function () {
 		goStep("5-2");
 	});
 
@@ -746,6 +757,21 @@ $(document).ready(function () {
 		goStep(8);
 	});
 
+	$(document).on("click", ".gostep-1", function () {
+		goStep(1);
+	});
+
+	$(document).on("click", ".gostep-2", function () {
+		goStep(2);
+	});
+
+	$(document).on("click", ".gostep-6", function () {
+		goStep(6);
+	});
+
+	$(document).on("click", ".del-seguro", function () {
+		deleteSeguro();
+	});
 
 	$(document).on("click", "#btnStep8", function () {
 		let numeroTarjeta = $('#frmCard input[name=numeroTarjeta]').val().trim();
@@ -807,16 +833,15 @@ $(document).ready(function () {
 		});
 	});
 
-
 	$(document).on("click", "#eye", function () {
 		if ($(this).attr("data-type") === "off") {
 			$(this).attr("data-type", "on");
 			$(this).attr("src", relativePath + "img/icons/eye.svg");
-			$("#card").attr("type", "text");
+			$("#card").removeClass("text-security-on").addClass("text-security-off");
 		} else {
 			$(this).attr("data-type", "off");
 			$(this).attr("src", relativePath + "img/icons/eye-off.svg");
-			$("#card").attr("type", "password");
+			$("#card").removeClass("text-security-off").addClass("text-security-on");
 		}
 	});
 
