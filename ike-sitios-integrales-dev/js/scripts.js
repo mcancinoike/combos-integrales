@@ -1067,8 +1067,13 @@ function loadValues(step) {
 }
 function goStepSave() {
 	if (localStorage.getItem("saveData")){
-		session = JSON.parse(localStorage.getItem("saveData"));
-		goStep(session.step);
+		const sessionSave = JSON.parse(localStorage.getItem("saveData"));
+		if (session.cliente.clientType === sessionSave.cliente.clientType){
+			session = sessionSave;
+			goStep(session.step);
+		} else {
+			$("#loading").hide();
+		}
 	} else
 		$("#loading").hide();
 }
