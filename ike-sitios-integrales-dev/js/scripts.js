@@ -1242,7 +1242,7 @@ function deleteBenef(id) {
 				$("#loading").hide();
 			},
 			success: function (data) {
-				session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== idBeneficiario});
+				session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== parseInt(idBeneficiario)});
 				goStep(6);
 			},
 			error: function (request, status, error) {
