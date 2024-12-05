@@ -555,7 +555,6 @@ $(document).ready(function () {
 			return false;
 		}
 
-		session.beneficiarios.push(beneficiarios);
 		let dataSend = beneficiarios;
 
 		dataSend.action = 'saveBeneficiare';
@@ -575,6 +574,7 @@ $(document).ready(function () {
 			},
 			success: function (response) {
 				if (response.idBeneficiario !== undefined){
+					session.beneficiarios.push(beneficiarios);
 					session.beneficiarios[session.beneficiarios.length - 1].id = response.idBeneficiario;
 					goStep(6);
 				} else {
