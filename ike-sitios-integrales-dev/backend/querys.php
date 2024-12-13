@@ -426,7 +426,7 @@ function apiAfiliados($conexion, $idCliente, $cardType, $clientType, $card){
                 $data_ben["Parentesco_B$k"] = $parentescoB;
                 $data_ben["Nacionalidad_B$k"] = $nacionalidadB;
                 $data_ben["Residencia_B$k"] = $residenciaB;
-                $data_ben["Actividad_B$k"] = $actividadB;
+                $data_ben["Actividad_B$k"] = str_replace(',', ' ',$actividadB);
 
                 $i++;
             }

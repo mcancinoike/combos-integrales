@@ -32,19 +32,19 @@
 				<div class="frm">
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control" maxlength="60">
+						<input type="text" name="nombre" class="frm__control onlyLetters" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control" maxlength="60">
+						<input type="text" name="segundoNombre" class="frm__control onlyLetters" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control" maxlength="60">
+						<input type="text" name="apellidoPaterno" class="frm__control onlyLetters" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control" maxlength="60">
+						<input type="text" name="apellidoMaterno" class="frm__control onlyLetters" maxlength="60">
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
@@ -64,7 +64,7 @@
 					<div class="frm__group">
 						<label>Número celular*</label>
 						<span class="mobile">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
-						<input type="text" name="telefono" class="frm__control" maxlength="10">
+						<input type="text" name="telefono" class="frm__control onlyNumbers" maxlength="10">
 						<span class="desktop">Enviaremos un código de validación a este número. Por favor, ten tu dispositivo a la mano.</span>
 					</div>
 				</div>

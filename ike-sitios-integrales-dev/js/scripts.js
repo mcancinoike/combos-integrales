@@ -849,6 +849,10 @@ $(document).ready(function () {
 		return onlyNumbers(e);
 	} );
 
+	$(document).on("keypress", ".onlyLetters", function(e) {
+		return onlyLetters(e);
+	} );
+
 
 });
 
@@ -1428,6 +1432,10 @@ function setTimer() {
 function onlyNumbers(e){
 	const key = e.charCode;
 	return key >= 48 && key <= 57;
+}
+
+function onlyLetters(e) {
+	return /[ A-Z]+$/i.test(String.fromCharCode(e.charCode));//\u00C0-\u017F
 }
 
 function validRFC(rfc, aceptarGenerico = true) {

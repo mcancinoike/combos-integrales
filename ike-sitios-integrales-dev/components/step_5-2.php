@@ -41,19 +41,19 @@ include_once "../backend/post.php";
 					</div>
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control">
+						<input type="text" name="nombre" class="frm__control onlyLetters">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
-						<input type="text" name="segundoNombre" class="frm__control">
+						<input type="text" name="segundoNombre" class="frm__control onlyLetters">
 					</div>
 					<div class="frm__group">
 						<label>Apellido paterno*</label>
-						<input type="text" name="apellidoPaterno" class="frm__control">
+						<input type="text" name="apellidoPaterno" class="frm__control onlyLetters">
 					</div>
 					<div class="frm__group">
 						<label>Apellido materno*</label>
-						<input type="text" name="apellidoMaterno" class="frm__control">
+						<input type="text" name="apellidoMaterno" class="frm__control onlyLetters">
 					</div>
 					<div class="frm__group">
 						<label>Estado civil*</label>
