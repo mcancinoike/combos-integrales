@@ -499,14 +499,22 @@ function sendMail($conexion, $idCliente){
     $mail->AddEmbeddedImage('../img/footerMail.png', 'footerMail', 'footerMail.png');
     $mail->Username = $conexion->mailUser;
     $mail->Password = $conexion->mailPassword;
-    $mail->Port = 587;     
+    $mail->Port = 587;
+    $mail->SMTPSecure='TLS';
+    $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
     $mail->ClearAllRecipients();
 
     $mail->CharSet = 'UTF-8';
     $mail->MsgHTML($body);
     $mail->IsHTML(true);
 
-    $mail->SetFrom('Notificaciones@ikeasistencia.com', 'HSBC ' . $textAsis);
+    $mail->SetFrom('notificaciones@ikeasistencia.com', 'HSBC ' . $textAsis);
     $mail->Subject = 'Kit de Bienvenida y Términos & Condiciones HSBC ' . $textAsis;
     $mail->addAddress($mailClient, $nameClient);
 
@@ -525,7 +533,12 @@ function sendMail($conexion, $idCliente){
         if($asistencia == 4)
             $mail->AddAttachment('../docs/WK_Mascotas.pdf');
     }
-    return $mail->send();
+    if($mail->send())
+        return true;
+    else {
+        error_log('Error al enviar correo: ' . $mail->ErrorInfo);
+        return false;
+    }
 }
 
 function formatoMoneda($numero)
