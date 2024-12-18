@@ -39,7 +39,7 @@ foreach ($conexion->getData($query) as $val) {
 			</div>
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
-			<form id="frmEditBenef" autocomplete="on">
+			<form id="frmEditBenef" autocomplete="off">
 				<div class="frm">
 					<div class="frm__group">
 						<label>Parentesco*</label>

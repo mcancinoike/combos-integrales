@@ -22,7 +22,7 @@ include_once "../backend/post.php";
 			</div>
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
-			<form id="frmBeneficiario" autocomplete="on">
+			<form id="frmBeneficiario" autocomplete="off">
 				<div class="frm">
 					<div class="frm__group">
 						<label>Parentesco*</label>

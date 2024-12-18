@@ -28,7 +28,7 @@
 			</div>
 			<p class="box__txt2">Los datos marcados con * son obligatorios</p>
 
-			<form id="frmRegister3" autocomplete="on">
+			<form id="frmRegister3" autocomplete="off">
 				<div class="frm">
 					<div class="frm__group">
 						<label>Nombre*</label>
