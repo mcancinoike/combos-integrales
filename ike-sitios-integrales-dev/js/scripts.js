@@ -853,6 +853,11 @@ $(document).ready(function () {
 		return onlyLetters(e);
 	} );
 
+	$(document).on("change", ".onlyLetters", function() {
+		$(".onlyLetters").each(function () {
+			$(this).val(delTildesEspeciales($(this).val()));
+		});
+	} );
 
 });
 
@@ -1437,6 +1442,11 @@ function onlyNumbers(e){
 function onlyLetters(e) {
 	return /[ A-Z]+$/i.test(String.fromCharCode(e.charCode));//\u00C0-\u017F
 }
+function delTildesEspeciales(text) {
+	return text.normalize('NFD').replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9 ]/g,"");
+}
+
+
 
 function validRFC(rfc, aceptarGenerico = true) {
 	const re       = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/,
