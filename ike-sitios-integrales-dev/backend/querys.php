@@ -49,12 +49,12 @@ function saveClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apell
     return $result;
 }
 
-function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente)
+function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente, $cellPhone)
 {
 
     $query = "UPDATE clientes_hsbc SET name = :name, middle_name = :middle_name, 
                                        pater_surname = :pater_surname, mater_surname = :mater_surname,
-                                       email = :email, date_birth = :date_birth, 
+                                       email = :email, date_birth = :date_birth, cell_phone = :cell_phone,
                                        id_prima = :id_prima, sexo = :sexo WHERE id = :id;";
     $data = [
         "name" => $nombre,
@@ -65,6 +65,7 @@ function updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $ape
         "date_birth" => $fechaNac,
         "id_prima" => $idPrima,
         "sexo" => $sexo,
+        "cell_phone" => $cellPhone,
         "id" => $idCliente,
     ];
 
@@ -771,7 +772,8 @@ switch ($action):
         $sexo = $_POST['sexo'];
         $clientType = $_POST['clientType'];
         $idCliente = $_POST['idCliente'];
-        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente);
+        $cellPhone = $_POST['telefono'];
+        $result = updateClient($conexion, $nombre, $segundoNombre, $apellidoPaterno, $apellidoMaterno, $fechaNac, $email, $idPrima, $asistencias, $sexo, $idCliente, $cellPhone);
         echo json_encode($result);
         break;
 
