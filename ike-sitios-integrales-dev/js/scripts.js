@@ -403,6 +403,9 @@ $(document).ready(function () {
 					if (session.id_cliente === 0)
 						session.id_cliente = response.idCliente;
 
+					if (step === 4 && session.id_cliente !== 0)
+						sendNewCode(session.id_cliente);
+
 						goStep(step);
 				} else
 					toastr.error(response.msg);
