@@ -1,12 +1,13 @@
 
 let session = {
 	cliente: {
-		clientType: app,
+		client_type: app,
 		name: '',
 		middle_name: '',
 		pater_surname: '',
 		mater_surname: '',
 		cell_phone: 0,
+		code_cell: 0,
 		confirm_cell: 0,
 		email: '',
 		date_birth: '',
@@ -23,15 +24,12 @@ let session = {
 	},
 	pagoTotalMensual: 0,
 	beneficiarios: [],
-	id_cliente: 0,
 	check: {
 		clienteHsbc: false,
 		avisoHsbc: false,
 		residenteHsbc: false
 	},
 	card: '',
-	cardMask: '',
-	confirmCard: '',
 	captcha: false
 }, minDate, maxDate;
 
@@ -175,45 +173,44 @@ $(document).ready(function () {
 	//Step 2
 
 	$(document).on('click', '.chkbox2', function () {
+
+		if ($(this).is(":checked")){
+			//if (session.asistencias.find((asistencia) => asistencia == $(this).val()) === undefined)
+				session.asistencias.push({
+					                      id_assistance: parseInt($(this).val()),
+										  name: $(this).parent().find(".tbl__asistencia h3").text(),
+										  price: parseFloat($(this).attr("data-costo"))
+										 });
+		} else
+			session.asistencias = session.asistencias.filter(asistencia => asistencia.id_assistance != $(this).val());
 		checkAsistencias($(this));
+		saveDataSession();
 	});
 
 	$(document).on("click", ".asistencia .more", function () {
 		showAsistencia($(this).attr("data-modal"));
 	});
 
-	$('#clienteHsbc').on('click', function() {
-		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
-			$('#btnStep2').removeClass('disabled');
-		} else {
-			$('#btnStep2').addClass('disabled');
-		}
+	$(document).on("click", 'input[name=clienteHsbc]', function() {
+		session.check.clienteHsbc = $(this).is(":checked");
 	});
 
-	$('#avisoPrivacidadA').on('click', function() {
-		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
-			$('#btnStep2').removeClass('disabled');
-		} else {
-			$('#btnStep2').addClass('disabled');
-		}
+	$(document).on("click", 'input[name=residenteHsbc]', function() {
+		session.check.residenteHsbc = $(this).is(":checked");
 	});
 
-	$('#territorioNacional').on('click', function() {
-		if ($('#clienteHsbc').is(':checked') && $('#avisoPrivacidadA').is(':checked') && $('#territorioNacional').is(':checked')) {
-			$('#btnStep2').removeClass('disabled');
-		} else {
-			$('#btnStep2').addClass('disabled');
-		}
+	$(document).on("click", 'input[name=avisoHsbc]', function() {
+		session.check.avisoHsbc = $(this).is(":checked");
 	});
 
 	$(document).on("click", "#btnStep2", function () {
-		let asistencias = $("input[name='asistencia[]']").map((i, asistencia) => {
-			if (asistencia.checked) return asistencia.value;
-		}).get();
+/*		$("input[name='asistencia[]']").each((i, asistencia) => {
+			if (asistencia.checked)
+				session.asistencias[i].id_assistance = parseInt(asistencia.value);
+		}).get();*/
 
 		const captcha_response = session.captcha ? '' : $(".g-recaptcha-response").last().val();
 
-		session.asistencias = asistencias;
 		session.check.clienteHsbc = $('input[name=clienteHsbc]').is(':checked');
 		session.check.avisoHsbc = $('input[name=avisoHsbc]').is(':checked');
 		session.check.residenteHsbc = $('input[name=residenteHsbc]').is(':checked');
@@ -363,86 +360,39 @@ $(document).ready(function () {
 			$('input[name=telefono]').focus();
 			return false;
 		}
-		const action = session.id_cliente == 0 ? 'saveClient' : 'updateClient';
 
-		$.ajax({
-			url: relativePath + "backend/querys.php",
-			cache: false,
-			type: 'POST',
-			dataType: "JSON",
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			data: {
-				idCliente: session.id_cliente,
-				action: action,
-				idPrima: session.cliente.id_prima,
-				asistencias: session.asistencias,
-				nombre: session.cliente.name,
-				segundoNombre: session.cliente.middle_name,
-				apellidoPaterno: session.cliente.pater_surname,
-				apellidoMaterno: session.cliente.mater_surname,
-				rfc: session.cliente.rfc,
-				fechaNac: session.cliente.date_birth,
-				email: session.cliente.email,
-				telefono: session.cliente.cell_phone,
-				sexo: session.cliente.sexo,
-				clientType: app,
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (response) {
-				$("#loading").hide();
 
-				if (response.code === 200) {
-					const step = session.id_cliente === 0 || session.cliente.confirm_cell === 0 ? 4 :
-										session.beneficiarios.length === 0 && session.cliente.id_prima !== 0 ? 5 :
-										session.beneficiarios.length !== 0 && session.cliente.id_prima !== 0 ? 6 : 7;
+		const step = session.cliente.confirm_cell === 0 ? 4 :
+							  session.beneficiarios.length === 0 && session.cliente.id_prima !== 0 ? 5 :
+							  session.beneficiarios.length !== 0 && session.cliente.id_prima !== 0 ? 6 : 7;
 
-					if (session.id_cliente === 0)
-						session.id_cliente = response.idCliente;
+		goStep(step);
 
-					if (step === 4 && session.id_cliente !== 0)
-						sendNewCode(session.id_cliente);
-
-						goStep(step);
-				} else
-					toastr.error(response.msg);
-
-			},
-			error: function (request, status, error) {
-				console.error(error);
-				toastr.error("Error inesperado, intente más tarde por favor");
-			}
-		});
 	});
 
 	//Step 4
 
 	$(document).on("click", "#btnStep4", function () {
 		const codigo = $('input[name=codigoSms]').val().trim(),
-		 		step = session.cliente.id_prima == 0 ? '7' : '5';
+		 		step = session.cliente.id_prima === 0 ? '7' : '5';
 
 		$('#frmErrMsg4').hide();
 
-		if (session.cliente.confirm_cell == 1)
+		if (session.cliente.confirm_cell === 1)
 			goStep(step);
 		else {
-			verifyCode(session.id_cliente, codigo, function (codeIsValid) {
-				if (codeIsValid){
+				if (codigo === session.cliente.code_cell){
 					session.cliente.confirm_cell = 1;
 					goStep(step);
 				} else {
 					toastr.error("El código es inválido");
 					$('input[name=codigoSms]').focus();
 				}
-			});
 		}
 	});
 
 	$(document).on("click", "#sendNewCode", function () {
-		sendNewCode(session.id_cliente);
+		sendCode();
 	});
 	//Step 5
 
@@ -453,270 +403,15 @@ $(document).ready(function () {
 	//Agregar Beneficiario
 
 	$(document).on("click", "#btnStepBenef", function () {
-
-
-		const beneficiarios = {
-			parentesco: $('#frmBeneficiario select[name=parentesco]').val(),
-			nombre: $('#frmBeneficiario input[name=nombre]').val().trim(),
-			segundoNombre: $('#frmBeneficiario input[name=segundoNombre]').val().trim(),
-			apellidoPaterno: $('#frmBeneficiario input[name=apellidoPaterno]').val().trim(),
-			apellidoMaterno: $('#frmBeneficiario input[name=apellidoMaterno]').val().trim(),
-			estadoCivil: $('#frmBeneficiario select[name=estadoCivil]').val(),
-			sexo: $('#frmBeneficiario select[name=sexo]').val(),
-			fechaNac: $('#frmBeneficiario input[name=fechaNac]').val().trim(),
-			rfc: $('#frmBeneficiario input[name=rfc]').val().trim(),
-			nacionalidad: $('#frmBeneficiario select[name=nacionalidad]').val(),
-			actividad: $('#frmBeneficiario select[name=actividad]').val(),
-			residencia: $('#frmBeneficiario select[name=residencia]').val()
-		};
-
-
-		$('#frmErrMsgBenef').hide();
-
-		if (beneficiarios.parentesco == '') {
-			toastr.error("Seleccione el parentesco");
-			$('input[name=parentesco]').focus().select();
-			return false;
-		}
-
-		if (beneficiarios.nombre == '') {
-			toastr.error("Escribe el nombre");
-			$('input[name=nombre]').focus();
-			return false;
-		}
-
-		if (beneficiarios.apellidoPaterno == '') {
-			toastr.error("Escribe el apellido paterno");
-			$('input[name=apellidoPaterno]').focus();
-			return false;
-		}
-
-		if (beneficiarios.apellidoMaterno == '') {
-			toastr.error("Escribe el apellido materno");
-			$('input[name=apellidoMaterno]').focus();
-			return false;
-		}
-
-		if (beneficiarios.estadoCivil == '') {
-			toastr.error("Seleccione el estado civil");
-			$('input[name=estadoCivil]').focus();
-			return false;
-		}
-
-		if (beneficiarios.fechaNac == '') {
-			toastr.error("Selecciona la fecha de el nacimiento");
-			$('input[name=fechaNac]').focus();
-			return false;
-		}
-
-		if (beneficiarios.fechaNac > minDate || beneficiarios.fechaNac < maxDate) {
-			toastr.error("El beneficiario debe ser mayor de 18 años y menor de 65 años");
-			$('input[name=fechaNac]').focus();
-			return false;
-		}
-
-
-		if (beneficiarios.rfc == '') {
-			toastr.error("Escribe el RFC");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (beneficiarios.rfc.length <= 11) {
-			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (!validRFC(beneficiarios.rfc)) {
-			toastr.error("Verifica que el RFC con homoclave esté escrito correctamente");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (beneficiarios.rfc === session.cliente.rfc) {
-			toastr.error("El asegurado no puede agregarse como beneficiario");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (beneficiarios.nacionalidad == '') {
-			toastr.error("Selecciona la nacionalidad");
-			$('input[name=nacionalidad]').focus();
-			return false;
-		}
-
-		if (beneficiarios.actividad == '') {
-			toastr.error("Seleccione la actividad económica");
-			$('input[name=actividad]').focus();
-			return false;
-		}
-
-		if (beneficiarios.residencia == '') {
-			toastr.error("Seleccione el lugar de residencia");
-			$('input[name=residencia]').focus();
-			return false;
-		}
-
-		let dataSend = beneficiarios;
-
-		dataSend.action = 'saveBeneficiare';
-		dataSend.idCliente = session.id_cliente;
-
-
-		$.ajax({
-			url: relativePath + "backend/querys.php",
-			cache: false,
-			type: 'POST',
-			data: dataSend,
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (response) {
-				if (response.idBeneficiario !== undefined){
-					session.beneficiarios.push(beneficiarios);
-					session.beneficiarios[session.beneficiarios.length - 1].id = response.idBeneficiario;
-					goStep(6);
-				} else {
-					toastr.error(response.msg);
-				}
-
-			},
-			error: function (request, status, error) {
-				console.log(error);
-				toastr.error('Ha ocurrido un error al intentar guardar beneficiario!');
-			}
-		});
+		addUpdateBeneficiary();
 	});
 
 	$(document).on("click", "#btnUpdateBenef", function () {
-		let idBeneficiario = $('input[name=idBeneficiario]').val();
-		let parentesco = $('#frmEditBenef select[name=parentesco]').val();
-		let nombre = $('#frmEditBenef input[name=nombre]').val().trim();
-		let segundoNombre = $('#frmEditBenef input[name=segundoNombre]').val().trim();
-		let apellidoPaterno = $('#frmEditBenef input[name=apellidoPaterno]').val().trim();
-		let apellidoMaterno = $('#frmEditBenef input[name=apellidoMaterno]').val().trim();
-		let estadoCivil = $('#frmEditBenef select[name=estadoCivil]').val();
-		let sexo = $('#frmEditBenef select[name=sexo]').val();
-		let fechaNac = $('#frmEditBenef input[name=fechaNac]').val().trim();
-		let rfc = $('#frmEditBenef input[name=rfc]').val();
-		let nacionalidad = $('#frmEditBenef select[name=nacionalidad]').val();
-		let actividad = $('#frmEditBenef select[name=actividad]').val();
-		let residencia = $('#frmEditBenef select[name=residencia]').val();
-
-		$('#frmErrMsgBenef2').hide();
-
-		if (parentesco == '') {
-			toastr.error("Seleccione el parentesco");
-			$('input[name=parentesco]').focus().select();
-			return false;
-		}
-
-		if (nombre == '') {
-			toastr.error("Escribe el nombre");
-			$('input[name=nombre]').focus();
-			return false;
-		}
-
-		if (apellidoPaterno == '') {
-			toastr.error("Escribe el apellido paterno");
-			$('input[name=apellidoPaterno]').focus();
-			return false;
-		}
-
-		if (apellidoMaterno == '') {
-			toastr.error("Escribe el apellido materno");
-			$('input[name=apellidoMaterno]').focus();
-			return false;
-		}
-
-		if (estadoCivil == '') {
-			toastr.error("Seleccione el estado civil");
-			$('input[name=estadoCivil]').focus();
-			return false;
-		}
-
-		if (fechaNac == '') {
-			toastr.error("Selecciona la fecha de el nacimiento");
-			$('input[name=fechaNac]').focus();
-			return false;
-		}
-
-		if (rfc == '') {
-			toastr.error("Escribe el RFC");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (rfc.length <= 11) {			
-			toastr.error("El RFC debe tener entre 12 y 13 caracteres");
-			$('input[name=rfc]').focus();
-			return false;
-		}
-
-		if (nacionalidad == '') {
-			toastr.error("Selecciona la nacionalidad");
-			$('input[name=nacionalidad]').focus();
-			return false;
-		}
-
-		if (actividad == '') {
-			toastr.error("Seleccione la actividad económica");
-			$('input[name=actividad]').focus();
-			return false;
-		}
-
-		if (residencia == '') {
-			toastr.error("Seleccione el lugar de residencia");
-			$('input[name=residencia]').focus();
-			return false;
-		}
-
-		$.ajax({
-			url: relativePath + "backend/querys.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				idCliente: session.id_cliente,
-				action: 'updateBeneficiare',
-				idBeneficiario: idBeneficiario,
-				parentesco: parentesco,
-				nombre: nombre,
-				segundoNombre: segundoNombre,
-				apellidoPaterno: apellidoPaterno,
-				apellidoMaterno: apellidoMaterno,
-				estadoCivil: estadoCivil,
-				sexo: sexo,
-				fechaNac: fechaNac,
-				rfc: rfc,
-				nacionalidad: nacionalidad,
-				actividad: actividad,
-				residencia: residencia
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (response) {
-				if (response.code === 200)
-					goStep(6);
-				else
-					toastr.error(response.msg);
-			},
-			error: function (request, status, error) {
-				console.log(error);
-				toastr.error('Error al intentar actualizar beneficiario!');
-			}
-		});
+		addUpdateBeneficiary(parseInt($(this).attr("data-preId")));
 	});
 
 	$(document).on("click", ".btn-e-ben", function () {
-		editBenef($(this).attr("data-id"));
+		editBenef(parseInt($(this).attr("data-id")));
 	});
 
 	$(document).on("click", ".btn-del-ben", function () {
@@ -729,30 +424,19 @@ $(document).ready(function () {
 
 
 	$(document).on("click", "#btnStep6", function () {
-		let porcentajes = 0,
-			pBeneficiarios = [];
+		let porcentajes = 0;
 
 		$("input[name='porcentaje[]']").each((i, porcentaje) => {
 			 porcentajes += parseInt(porcentaje.value);
-			pBeneficiarios.push({idBeneficiario: porcentaje.getAttribute("data-idb"), porcentaje: porcentaje.value});
 		});
 
-		if (porcentajes === 100) {
-			updatePercentage(pBeneficiarios, function (response) {
-				if (response.status){
-					goStep(7);
-				} else {
-					toastr.error(response.msg);
-					return false;
-				}
-			});
-
-		} else {
+		if (porcentajes === 100)
+			 goStep(7);
+		else {
 			toastr.error("La suma de los porcentajes debe ser 100");
 			$('input[name=porcentaje]').focus();
 			return false;
 		}
-
 
 	});
 
@@ -770,6 +454,11 @@ $(document).ready(function () {
 
 	$(document).on("click", ".gostep-6", function () {
 		goStep(6);
+	});
+
+	$(document).on("keyup", "input[name='porcentaje[]']", function () {
+		session.beneficiarios[parseInt($(this).attr("data-idb")) - 1].percentage = parseInt($(this).val());
+		saveDataSession();
 	});
 
 	$(document).on("click", ".del-seguro", function () {
@@ -805,16 +494,15 @@ $(document).ready(function () {
 			return false;
 		}
 
+		session.card = numeroTarjeta;
 		$.ajax({
 			url: relativePath + "backend/querys.php",
 			cache: false,
 			type: 'POST',
 			dataType: "JSON",
 			data: {
-				action: 'verifyCard',
-				idCliente: session.id_cliente,
-				numeroTarjeta: numeroTarjeta,
-				clientType: session.cliente.clientType
+				action: 'insertAllData',
+				allData: session
 			},
 			beforeSend: function () {
 				$("#loading").show();
@@ -863,12 +551,6 @@ $(document).ready(function () {
 	} );
 
 });
-
-function hashCreditCard(number){
-	const str = String(number).replace(" ","").replace("-","")
-	const last = str.slice(-4)
-	return last.padStart(str.length,"*")
-}
 
 function checkAsistencias(nodo) {
 
@@ -972,7 +654,7 @@ function loadValues(step) {
 					$(".chkbox2").each(function () {
 						const asistencia = $(this);
 
-						if (asistencia.val() == saveAsis) {
+						if (asistencia.val() == saveAsis.id_assistance) {
 							asistencia.attr("checked", true);
 							checkAsistencias(asistencia);
 							return false;
@@ -990,13 +672,13 @@ function loadValues(step) {
 		case 3:
 			$(".header__step__content a").attr("href", "javascript:goStep(2)");
 
-			if (session.id_cliente !== 0){
+			if (session.cliente.rfc !== ''){
 			  $('#frmRegister3 input[name=nombre]').val(session.cliente.name);
 			  $('#frmRegister3 input[name=segundoNombre]').val(session.cliente.middle_name);
 			  $('#frmRegister3 input[name=apellidoPaterno]').val(session.cliente.pater_surname);
 			  $('#frmRegister3 input[name=apellidoMaterno]').val(session.cliente.mater_surname);
 			  $('#frmRegister3 input[name=fechaNac]').val(session.cliente.date_birth);
-			  $('#frmRegister3 input[name=rfc]').val(session.cliente.rfc).prop("disabled", true);
+			  $('#frmRegister3 input[name=rfc]').val(session.cliente.rfc);
 			  $('#frmRegister3 input[name=email]').val(session.cliente.email);
 			  $('#frmRegister3 input[name=telefono]').val(session.cliente.cell_phone);
 
@@ -1006,7 +688,7 @@ function loadValues(step) {
 			break;
 		case 4:
 			$(".header__step__content a").attr("href", "javascript:goStep(3)");
-			setTimer();
+			sendCode();
 			break;
 		case 5:
 			$(".header__step__content a").attr("href", "javascript:goStep(3)");
@@ -1022,7 +704,7 @@ function loadValues(step) {
 			else
 				$("#btnNewBenef").show();
 
-			getBeneficiaries();
+				getBeneficiaries();
 			break;
 		case 7:
 			$(".header__step__content a").attr("href", "javascript:goStep(6, 7)");
@@ -1080,7 +762,7 @@ function loadValues(step) {
 function goStepSave() {
 	if (localStorage.getItem("saveData")){
 		const sessionSave = JSON.parse(localStorage.getItem("saveData"));
-		if (session.cliente.clientType === sessionSave.cliente.clientType){
+		if (session.cliente.client_type === sessionSave.cliente.client_type){
 			session = sessionSave;
 			goStep(session.step);
 		} else {
@@ -1102,15 +784,15 @@ function addSeguro(nodo) {
 
 	$('#pagoMensual').html('$' + pagoMensualFormat + ' MXN');
 
-	let totalAnual = pagoMensual * 12;
+	let totalAnual = nodo.attr("data-prima-anual") === undefined ? Math.round(pagoMensual * 12) : parseInt(nodo.attr("data-prima-anual"));
 	let totalAnualFormat = formatCurrency(totalAnual, 2);
 
 	$('#totalAnual').html(totalAnualFormat + ' MXN');
 
 	session.seguro.sumaAsegurada = sumaAsegurada;
 	session.seguro.pagoAnual = totalAnual;
-	session.seguro.pagoMensual = session.pagoTotalMensual = pagoMensual;
-	session.cliente.id_prima = idPrima;
+	session.seguro.pagoMensual = session.pagoTotalMensual = parseFloat(pagoMensual);
+	session.cliente.id_prima = parseInt(idPrima);
 
 	$('#resumenStep1').show();
 	$('#tblStep1').show();
@@ -1120,92 +802,37 @@ function addSeguro(nodo) {
 function saveDataSession() {
 	localStorage.setItem("saveData", JSON.stringify(session));
 }
-function verifyCode(idCliente, code, rollback) {
+function sendCode() {
 	$.ajax({
-		url: relativePath + "backend/querys.php",
-		cache: false,
-		type: 'POST',
-		dataType: 'JSON',
-		beforeSend: function () {
-			$("#loading").show();
-		},
-		data: {
-			action: 'verifyCode',
-			idCliente: idCliente,
-			code: code
-		},
-		complete: function () {
-			$("#loading").hide();
-		},
-		success: function (response) {
-			rollback(response.isValid);
-		},
-		error: function (request, status, error) {
-			console.error(error);
-			toastr.error("Error inesperado al verificar código, intente nuevamente por favor");
-			rollback(false);
-		}
-	});
-}
-
-function updatePercentage(pBeneficiarios, rollback) {
-	$.ajax({
-		url: relativePath + "backend/querys.php",
-		cache: false,
-		type: 'POST',
-		dataType: 'JSON',
-		beforeSend: function () {
-			$("#loading").show();
-		},
-		data: {
-			action: 'updatePercentage',
-			pBeneficiarios: pBeneficiarios
-		},
-		complete: function () {
-			$("#loading").hide();
-		},
-		success: function (response) {
-			rollback(response);
-		},
-		error: function (request, status, error) {
-			console.error(error);
-			toastr.error("Error inesperado al guardar porcentajes, intente nuevamente por favor");
-			rollback(false);
-		}
-	});
-}
-
-function sendNewCode(idCliente) {
-	$.ajax({
-		url: relativePath + "backend/querys.php",
-		cache: false,
-		type: 'POST',
-		dataType: 'JSON',
-		beforeSend: function () {
-			$("#loading").show();
-		},
-		data: {
-			action: 'sendNewCode',
-			idCliente: idCliente
-		},
-		complete: function () {
-			$("#loading").hide();
-		},
-		success: function (response) {
-			if (response.code === 200) {
-				$('#sendNewCode').hide();
-				$('#btnStep4').show();
-				setTimer();
-			} else {
-				toastr.error(response.status);
+			url: relativePath + "backend/querys.php",
+			cache: false,
+			type: 'POST',
+			dataType: 'JSON',
+			beforeSend: function () {
+				$("#loading").show();
+			},
+			data: {
+				action: 'sendCode',
+				cell_phone: session.cliente.cell_phone
+			},
+			complete: function () {
+				$("#loading").hide();
+			},
+			success: function (response) {
+				if (response.code === 200) {
+					$('#sendNewCode').hide();
+					$('#btnStep4').show();
+					session.cliente.code_cell = response.codeCell;
+					setTimer();
+				} else {
+					toastr.error(response.msg);
+				}
+			},
+			error: function (request, status, error) {
+				console.error(error);
+				toastr.error("Error inesperado al enviar código, intente nuevamente por favor");
 			}
-
-		},
-		error: function (request, status, error) {
-			console.error(error);
-			toastr.error("Error inesperado al reenviar código, intente nuevamente por favor");
-		}
-	});
+	 });
 }
 
 function showAsistencia(id) {
@@ -1213,17 +840,12 @@ function showAsistencia(id) {
 	$('#' + id).show();
 }
 
-function editBenef(id) {
-	let idBeneficiario = id;
+function editBenef(preId) {
 
 	$.ajax({
 		url: relativePath + "components/edit_beneficiare.php",
 		cache: false,
 		type: 'POST',
-		data: {
-			idCliente: session.id_cliente,
-			idBeneficiario: idBeneficiario
-		},
 		beforeSend: function () {
 			$("#loading").show();
 		},
@@ -1233,6 +855,23 @@ function editBenef(id) {
 		success: function (data) {
 			$("#main-content").html(DOMPurify.sanitize(data));
 			$(".header__step__content a").attr("href", "javascript:goStep(6)");
+
+			const ben = session.beneficiarios.filter(benef => benef.preId === preId)[0];
+
+			$("select[name=parentesco]").val(ben.relationship);
+			$("input[name=nombre]").val(ben.name);
+			$("input[name=segundoNombre]").val(ben.middle_name);
+			$("input[name=apellidoPaterno]").val(ben.pater_surname);
+			$("input[name=apellidoMaterno]").val(ben.mater_surname);
+			$("select[name=estadoCivil]").val(ben.marital_status);
+			$("select[name=sexo]").val(ben.sex);
+			$("input[name=fechaNac]").val(ben.date_birth);
+			$("input[name=rfc]").val(ben.rfc);
+			$("select[name=nacionalidad]").val(ben.nationality);
+			$("select[name=actividad]").val(ben.economic_activity);
+			$("select[name=residencia]").val(ben.residence);
+			$("#btnUpdateBenef").attr("data-preId", preId);
+
 		},
 		error: function (request, status, error) {
 			console.log('Ha ocurrido un error!');
@@ -1240,141 +879,105 @@ function editBenef(id) {
 	});
 }
 
-function deleteBenef(id) {
-	let idBeneficiario = id;
+function deleteBenef(preId) {
+
 	let resp = confirm('¿Está seguro de eliminar este beneficiario?');
 	if (resp) {
-		$.ajax({
-			url: relativePath + "backend/querys.php",
-			cache: false,
-			type: 'POST',
-			data: {
-				action: 'deleteBeneficiare',
-				idBeneficiario: idBeneficiario
-			},
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (data) {
-				session.beneficiarios = session.beneficiarios.filter((data) => {return data.id !== parseInt(idBeneficiario)});
-				goStep(6);
-			},
-			error: function (request, status, error) {
-				console.error(error);
-				toastr.error("Error inesperado al eliminar beneficiario");
-			}
-		});
+		session.beneficiarios = session.beneficiarios.filter((data) => {return data.preId !== parseInt(preId)});
+		goStep(6);
 	}
 }
 
 function getBeneficiaries() {
-	$.ajax({
-		url: relativePath + "backend/querys.php",
-		type: 'POST',
-		dataType: "JSON",
-		beforeSend: function () {
-			$("#loading").show();
-		},
-		data: {
-			action: 'getBeneficiaries',
-			idCliente: session.id_cliente,
-			path: relativePath
-		},
-		complete: function () {
-			$("#loading").hide();
-		},
-		success: function (response) {
-			if (response.code == 200)
-				$("#listBenef").html(DOMPurify.sanitize(response.data));
-			else
-				toastr.error(response.msg);
-		},
-		error: function (request, status, error) {
-			console.error(error);
-			toastr.error("Error inesperado al obtener beneficiarios");
-		}
-	});
+	let beneficiarios= '';
+
+	for (let i = 0; i < session.beneficiarios.length; i++) {
+		const ben = session.beneficiarios[i];
+		session.beneficiarios[i].preId = (i + 1);
+
+		beneficiarios += '<div class="box__row b1">' +
+			             '  <div class="box__info"><div class="box__name">' + ben.name + ' ' + ben.middle_name+ ' ' + ben.pater_surname + ' ' + ben.mater_surname + '</div>' +
+						 '		<div class="box__action">' +
+						 '			<a class="cursor-pointer btn-e-ben" data-id="' + (i + 1) + '"><img src="'+ relativePath +'img/icons/edit.svg"></a>' +
+		                 '			<a class="cursor-pointer btn-del-ben" data-id="' +  (i + 1) + '"><img src="'+ relativePath +'img/icons/delete.svg"></a>' +
+						 '		</div></div>' +
+						 '<div class="box__percentage">Porcentaje' +
+						 '<div class="box__percentage__input"><input type="text" data-idb="' +  (i + 1) + '" value="' + ben.percentage + '" class="onlyNumbers" maxlength="3" name="porcentaje[]"> %' +
+						 '</div></div></div><br>';
+	}
+
+    $("#listBenef").html(beneficiarios);
 }
 
 function deleteSeguro() {
 	const resp = confirm('¿Realmente desea eliminar el seguro?');
 
 	if (resp) {
-		$.ajax({
-			url: relativePath + "backend/querys.php",
-			type: 'POST',
-			dataType: "JSON",
-			beforeSend: function () {
-				$("#loading").show();
-			},
-			data: {
-				action: 'deleteSeguro',
-				idCliente: session.id_cliente
-			},
-			complete: function () {
-				$("#loading").hide();
-			},
-			success: function (response) {
-				if (response.code === 200) {
-					session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
-					session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
-					session.cliente.sexo = '';
-					session.beneficiarios = [];
-					const step = session.asistencias.length === 0 ? 2 : 7;
-					goStep(step);
-				} else
-					toastr.error(response.msg);
-			},
-			error: function (request, status, error) {
-				console.error(error);
-				toastr.error("Error inesperado al intener borrar seguro, intente nuevamente por favor");
-			}
-		});
+		session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
+		session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
+		session.cliente.sexo = '';
+		session.beneficiarios = [];
+		const step = session.asistencias.length === 0 ? 2 : 7;
+		goStep(step);
 	}
 }
 
 function getResumSol() {
-	$.ajax({
-		url: relativePath + "backend/querys.php",
-		type: 'POST',
-		dataType: "JSON",
-		beforeSend: function () {
-			$("#loading").show();
-		},
-		data: {
-			action: 'resumSoli',
-			idCliente: session.id_cliente,
-			app: app
-		},
-		complete: function () {
-			$("#loading").hide();
-		},
-		success: function (response) {
-			if (response.code == 200){
-				const data = response.data.split("___")
-				$("#resumSoli").html(DOMPurify.sanitize(data[0]));
-				$("#resumAsitencias").html(DOMPurify.sanitize(data[1]));
-				$("#resumBenef").html(DOMPurify.sanitize(data[2]));
-			}
-			else
-				toastr.error(response.msg);
-		},
-		error: function (request, status, error) {
-			console.error(error);
-			toastr.error("Error inesperado al resumen de datos");
-		}
-	});
+
+	let seguro = '', asistencias = '', beneficiarios = '', count = 0;
+
+		seguro = '<div class="tbl">' +
+				 '	<div class="tbl__body">' +
+				 '		<div class="tbl__row">' +
+				 '			<div class="tbl__col left">' +
+				 '				Suma asegurada:<br>' + formatCurrency(session.seguro.sumaAsegurada, 2) + ' MXN' +
+				 '			</div>';
+
+		if (app === "ap")
+			seguro += '		<div class="tbl__col right">Prima anual:<br>' + formatCurrency(session.seguro.pagoAnual, 2) + ' MXN';
+
+		seguro += '</div></div><div class="tbl__row">' +
+					'<div class="tbl__col left font-family-univers">Subtotal mensual a pagar</div>' +
+					'<div class="tbl__col right font-family-univers">' + formatCurrency(session.seguro.pagoMensual, 2) + ' MXN</div>' +
+					'</div></div></div>';
+
+
+
+	let price = 0;
+	asistencias = '<div class="tbl"><div class="tbl__body">';
+	for (let i in session.asistencias) {
+		price += session.asistencias[i].price;
+		asistencias += '<div class="tbl__row">' +
+						'<div class="tbl__col left">' + session.asistencias[i].name + '</div>' +
+						'<div class="tbl__col right">+$' + session.asistencias[i].price + ' MXN</div></div>';
+
+	}
+
+	asistencias += '<div class="tbl__row"><div class="tbl__col left font-family-univers">Subtotal mensual a pagar</div>' +
+					'<div class="tbl__col right font-family-univers">' + formatCurrency(price, 2)+ ' MXN</div></div>' +
+					'<div class="tbl__note"><img src="' + relativePath+ 'img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>' +
+					'</div></div>';
+
+
+
+	for (let i = 0; i < session.beneficiarios.length; i++) {
+		const ben = session.beneficiarios[i];
+
+		beneficiarios += '<div class="tbl"><div class="tbl__body">' +
+						'<div class="tbl__row"><div class="tbl__col left full">' +
+						'<img src="' + relativePath + 'img/icons/person2.svg">' +
+						'<p> ' + ben.name + ' ' + ben.middle_name+ ' ' + ben.pater_surname + ' ' + ben.mater_surname +
+						'<br><span class="percentage">' + ben.percentage + '%</span></p>';
+						'</div></div></div></div>';
+	}
+
+	$("#resumSoli").html(seguro);
+	$("#resumAsitencias").html(asistencias);
+	$("#resumBenef").html(beneficiarios);
+
 }
 function emailIsValid(email) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-function validateString(string) {
-	var letters = /^[a-zA-Za-zñáéíóúÑÁÉÍÓÚüÜ, ]+$/;
-	return string.match(letters);
 }
 
 function formatCurrency(monto, decimales = 0) {
@@ -1434,7 +1037,6 @@ function setTimer() {
 
 }
 
-
 /* funcion para ingresar solo números en input text */
 
 function onlyNumbers(e){
@@ -1449,7 +1051,140 @@ function delTildesEspeciales(text) {
 	return text.normalize('NFD').replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9 ]/g,"");
 }
 
+function addUpdateBeneficiary(preId = undefined) {
 
+	const beneficiarios = {
+		relationship: $('select[name=parentesco]').val(),
+		name: $('input[name=nombre]').val().trim(),
+		middle_name: $('input[name=segundoNombre]').val().trim(),
+		pater_surname: $('input[name=apellidoPaterno]').val().trim(),
+		mater_surname: $('input[name=apellidoMaterno]').val().trim(),
+		marital_status: $('select[name=estadoCivil]').val(),
+		sex: $('select[name=sexo]').val(),
+		date_birth: $('input[name=fechaNac]').val().trim(),
+		rfc: $('input[name=rfc]').val().trim(),
+		nationality: $('select[name=nacionalidad]').val(),
+		economic_activity: $('select[name=actividad]').val(),
+		residence: $('select[name=residencia]').val()
+	};
+
+	$('#frmErrMsgBenef').hide();
+
+	if (beneficiarios.relationship == '') {
+		toastr.error("Seleccione el parentesco");
+		$('input[name=parentesco]').focus().select();
+		return false;
+	}
+
+	if (beneficiarios.name == '') {
+		toastr.error("Escribe el nombre");
+		$('input[name=nombre]').focus();
+		return false;
+	}
+
+	if (beneficiarios.pater_surname == '') {
+		toastr.error("Escribe el apellido paterno");
+		$('input[name=apellidoPaterno]').focus();
+		return false;
+	}
+
+	if (beneficiarios.mater_surname == '') {
+		toastr.error("Escribe el apellido materno");
+		$('input[name=apellidoMaterno]').focus();
+		return false;
+	}
+
+	if (beneficiarios.marital_status == '') {
+		toastr.error("Seleccione el estado civil");
+		$('input[name=estadoCivil]').focus();
+		return false;
+	}
+
+	if (beneficiarios.date_birth == '') {
+		toastr.error("Selecciona la fecha de el nacimiento");
+		$('input[name=fechaNac]').focus();
+		return false;
+	}
+
+	if (beneficiarios.date_birth > minDate || beneficiarios.date_birth < maxDate) {
+		toastr.error("El beneficiario debe ser mayor de 18 años y menor de 65 años");
+		$('input[name=fechaNac]').focus();
+		return false;
+	}
+
+
+	if (beneficiarios.rfc == '') {
+		toastr.error("Escribe el RFC");
+		$('input[name=rfc]').focus();
+		return false;
+	}
+
+	if (beneficiarios.rfc.length <= 11) {
+		toastr.error("El RFC debe tener entre 12 y 13 caracteres");
+		$('input[name=rfc]').focus();
+		return false;
+	}
+
+	if (!validRFC(beneficiarios.rfc)) {
+		toastr.error("Verifica que el RFC con homoclave esté escrito correctamente");
+		$('input[name=rfc]').focus();
+		return false;
+	}
+
+	if (beneficiarios.rfc === session.cliente.rfc) {
+		toastr.error("El asegurado no puede agregarse como beneficiario");
+		$('input[name=rfc]').focus();
+		return false;
+	}
+
+	if (beneficiarios.nationality == '') {
+		toastr.error("Selecciona la nacionalidad");
+		$('input[name=nacionalidad]').focus();
+		return false;
+	}
+
+	if (beneficiarios.economic_activity == '') {
+		toastr.error("Seleccione la actividad económica");
+		$('input[name=actividad]').focus();
+		return false;
+	}
+
+	if (beneficiarios.residence == '') {
+		toastr.error("Seleccione el lugar de residencia");
+		$('input[name=residencia]').focus();
+		return false;
+	}
+
+	if (session.beneficiarios.length > 0) {
+		let existBen = false;
+
+		for(let i= 0; i < session.beneficiarios.length; i++) {
+			if (
+				(session.beneficiarios[i].rfc === beneficiarios.rfc && preId !== session.beneficiarios[i].preId) ||
+				(session.beneficiarios[i].rfc === beneficiarios.rfc && preId === undefined)
+			){
+				toastr.error("Anteriormente ya has registrado este beneficiario");
+				existBen = true;
+				return false;
+			}
+		}
+
+		if (existBen)
+			return false;
+	}
+
+	if (preId === undefined) {
+		beneficiarios.percentage = '';
+		beneficiarios.preId = session.beneficiarios.length + 1;
+		session.beneficiarios.push(beneficiarios);
+	} else {
+		beneficiarios.preId = preId;
+		beneficiarios.percentage = session.beneficiarios[preId - 1].percentage;
+		session.beneficiarios[preId - 1] = beneficiarios;
+	}
+
+	goStep(6);
+}
 
 function validRFC(rfc, aceptarGenerico = true) {
 	const re       = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/,

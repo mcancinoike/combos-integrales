@@ -42,7 +42,7 @@
 				foreach ($conexion->getData($query) as $val) {
 					$primas .= '<div class="tbl__row">';
 					$primas .= '<div class="tbl__col">';
-					$primas .= '<input type="radio" name="seguro" value="' . $val['id'] . '" data-id-prima="' . $val['id'] . '" data-suma-asegurada="' . $val['suma_asegurada'] . '" data-pago-mensual="' . $val['prima_mensual'] . '"> $' . number_format($val['suma_asegurada']) . '</div>';
+					$primas .= '<input type="radio" name="seguro" value="' . $val['id'] . '" data-prima-anual="' . $val['prima_anual'] . '" data-id-prima="' . $val['id'] . '" data-suma-asegurada="' . $val['suma_asegurada'] . '" data-pago-mensual="' . $val['prima_mensual'] . '"> $' . number_format($val['suma_asegurada']) . '</div>';
 					$primas .= '<div class="tbl__col price">$' . $val['prima_mensual'] . '</div>';
 					$primas .= '</div>';
 				}

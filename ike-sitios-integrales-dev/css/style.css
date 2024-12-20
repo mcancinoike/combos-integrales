@@ -1396,3 +1396,7 @@ footer a {
 .text-security-off {
 	-webkit-text-security: none;
 }
+
+.font-family-univers {
+	font-family: UniversNext-Medium, serif !important;
+}
