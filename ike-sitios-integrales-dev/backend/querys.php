@@ -252,7 +252,7 @@ function apiAfiliados($conexion, $cardType, $data){
                 $data_ben["Parentesco_B$k"] = $parentescoB;
                 $data_ben["Nacionalidad_B$k"] = $nacionalidadB;
                 $data_ben["Residencia_B$k"] = $residenciaB;
-                $data_ben["Actividad_B$k"] = str_replace(',', '',$actividadB);
+                $data_ben["Actividad_B$k"] = $actividadB;
 
                 $i++;
             }
@@ -347,7 +347,7 @@ function sendMail($conexion, $data){
 
 function formatoMoneda($numero)
 {
-   return (float)number_format(floor(($numero*100))/100, 2);
+   return number_format(floor(($numero*100))/100, 2);
 }
 
 function updatePercentage($pBeneficiarios, $conexion)
@@ -388,7 +388,7 @@ function getSumaAsegurada($conexion, $fechaNac, $sexo)
        return json_encode(["code" => 400, "msg" => "Tu edad debe estar en un rango de 18 y 69 años"]);
 
     $campos = "";
-    if($sexo == 'hombre'){
+    if($sexo == 'h'){
         $campos .= "id, edad, hombre as pago_mensual, suma_asegurada";
     }else{
         $campos .= "id, edad, mujer as pago_mensual, suma_asegurada";

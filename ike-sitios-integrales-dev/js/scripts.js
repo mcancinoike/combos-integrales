@@ -116,6 +116,9 @@ $(document).ready(function () {
 			beforeSend: function () {
 				$("#loading").show();
 				$("#btnStep1").hide();
+				$("#sumaAseguradaS1").val('');
+				$("#resumenStep1").hide();
+
 			},
 			data: {
 				action: 'getSumaAsegurada',
@@ -151,8 +154,12 @@ $(document).ready(function () {
 		if ($(this).val() !== '') {
 			$("#btnStep1").show();
 			addSeguro($("option:selected", this));
-		} else
+		} else {
 			$("#btnStep1").hide();
+			$('#resumenStep1').hide();
+			$('#tblStep1').hide();
+			$('.separator__line.s1').hide();
+		}
 	});
 
 	// evneto exclusivo ap
@@ -454,6 +461,12 @@ $(document).ready(function () {
 
 	$(document).on("click", ".gostep-6", function () {
 		goStep(6);
+	});
+
+	$(document).on("click", ".gostep-0", function () {
+		session.step = 0;
+		saveDataSession();
+		location.reload();
 	});
 
 	$(document).on("keyup", "input[name='porcentaje[]']", function () {
@@ -764,7 +777,11 @@ function goStepSave() {
 		const sessionSave = JSON.parse(localStorage.getItem("saveData"));
 		if (session.cliente.client_type === sessionSave.cliente.client_type){
 			session = sessionSave;
-			goStep(session.step);
+			if (sessionSave.step !== 0)
+				goStep(session.step);
+			else
+				$("#loading").hide();
+
 		} else {
 			$("#loading").hide();
 		}
@@ -775,7 +792,7 @@ function addSeguro(nodo) {
 
 	let sumaAsegurada = nodo.attr('data-suma-asegurada');
 	let idPrima = nodo.attr('data-id-prima');
-	let sumaAseguradaFormat = formatCurrency(sumaAsegurada);
+	let sumaAseguradaFormat = formatCurrency(sumaAsegurada, 2);
 
 	$('#sumaAsegurada').html(sumaAseguradaFormat + ' MXN');
 

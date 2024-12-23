@@ -1,7 +1,7 @@
 <header>
 	<div class="header__content">
 		<div class="header__left">
-			<a href="./">
+			<a class="gostep-0 cursor-pointer">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/hsbc-logo.svg" class="header__logo"></a>
 		</div>
 		<div class="header__right">

@@ -23,9 +23,6 @@
 		<section class="step show" id="home">
 			<div class="header__step home line">
 				<div class="header__step__content">
-					<a href="javascript:;" class="header__step__arrow">
-						<img src="../img/icons/arrow-left.svg">
-					</a>
 					<div class="header__step__title">HSBC Seguros</div>
 				</div>
 			</div>
