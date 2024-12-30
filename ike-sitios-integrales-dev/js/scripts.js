@@ -645,7 +645,9 @@ function goStep(step, stepActual = null) {
 			$("#loading").show();
 		},
 		success: function (data) {
-			window.history.pushState(null, "", "?step=" + step);
+			if (stepActual !== -1)
+				window.history.pushState(null, '', "?step=" + step);
+
 			$("#loading").hide();
 			session.step = step;
 			$("#main-content").html(DOMPurify.sanitize(data, { ADD_ATTR: ['target'] }));
@@ -1261,8 +1263,6 @@ function validRFC(rfc, aceptarGenerico = true) {
 	return rfcSinDigito + digitoVerificador;
 }
 
-goStepSave();
-
 function getQueryVariable(variable) {
 	var query = window.location.search.substring(1);
 	var vars = query.split("&");
@@ -1276,5 +1276,7 @@ function getQueryVariable(variable) {
 }
 
 window.addEventListener('popstate', function (e) {
-	goStep(getQueryVariable("step"));
+	goStep(getQueryVariable("step"), -1);
 });
+
+goStepSave();
