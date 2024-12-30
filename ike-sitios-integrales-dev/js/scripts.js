@@ -96,16 +96,20 @@ $(document).ready(function () {
 		if ($("input[name=nombre]").val() !== '' && !isNaN(day) && !isNaN(month) && !isNaN(year) && year > 1900 && paterSur !== '' && materSur !== '') {
 
 			// generar RFC
-			const RFC = RfcFacil.forNaturalPerson({
-				name: nombre,
-				firstLastName: paterSur,
-				secondLastName: materSur,
-				day: day,
-				month: month,
-				year: year
-			});
 
-			$("input[name=rfc]").val(RFC);
+			setTimeout(function () {
+				const RFC = RfcFacil.forNaturalPerson({
+					name: nombre,
+					firstLastName: paterSur,
+					secondLastName: materSur,
+					day: day,
+					month: month,
+					year: year
+				});
+
+				$("input[name=rfc]").val(RFC);
+
+			}, 500);
 
 		}
 
@@ -188,6 +192,7 @@ $(document).ready(function () {
 	// evneto exclusivo ap
 
 	$(document).on('click', "input[name=seguro]", function () {
+		$("#delSeguro").prop("checked", false);
 		addSeguro($(this));
 	});
 
@@ -491,7 +496,20 @@ $(document).ready(function () {
 	});
 
 	$(document).on("click", ".del-seguro", function () {
+		const resp = confirm('¿Realmente desea eliminar el seguro?');
+		if (resp) {
+			deleteSeguro();
+			const step = session.asistencias.length === 0 ? 2 : 7;
+			goStep(step);
+		}
+	});
+
+	$(document).on("click", "#delSeguro", function () {
 		deleteSeguro();
+		$("input[name=seguro]").prop("checked", false);
+		$('#resumenStep1').hide();
+		$('#tblStep1').hide();
+		$('.separator__line.s1').hide();
 	});
 
 	$(document).on("click", "#btnStep8", function () {
@@ -627,6 +645,7 @@ function goStep(step, stepActual = null) {
 			$("#loading").show();
 		},
 		success: function (data) {
+			window.history.pushState(null, "", "?step=" + step);
 			$("#loading").hide();
 			session.step = step;
 			$("#main-content").html(DOMPurify.sanitize(data, { ADD_ATTR: ['target'] }));
@@ -934,16 +953,10 @@ function getBeneficiaries() {
 }
 
 function deleteSeguro() {
-	const resp = confirm('¿Realmente desea eliminar el seguro?');
-
-	if (resp) {
-		session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
-		session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
-		session.cliente.sexo = '';
-		session.beneficiarios = [];
-		const step = session.asistencias.length === 0 ? 2 : 7;
-		goStep(step);
-	}
+	session.pagoTotalMensual = parseFloat(session.pagoTotalMensual) - parseFloat(session.seguro.pagoMensual);
+	session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
+	session.cliente.sexo = '';
+	session.beneficiarios = [];
 }
 
 function getResumSol() {
@@ -951,7 +964,7 @@ function getResumSol() {
 	let seguro = '', asistencias = '', beneficiarios = '', count = 0;
 
 		seguro = '<div class="tbl">' +
-				 '	<div class="tbl__body">' +
+				 '	<div class="tbl__body fs-13px">' +
 				 '		<div class="tbl__row">' +
 				 '			<div class="tbl__col left">' +
 				 '				Suma asegurada:<br>' + formatCurrency(session.seguro.sumaAsegurada, 2) + ' MXN' +
@@ -968,7 +981,7 @@ function getResumSol() {
 
 
 	let price = 0;
-	asistencias = '<div class="tbl"><div class="tbl__body">';
+	asistencias = '<div class="tbl"><div class="tbl__body fs-13px">';
 	for (let i in session.asistencias) {
 		price += session.asistencias[i].price;
 		asistencias += '<div class="tbl__row">' +
@@ -1249,3 +1262,19 @@ function validRFC(rfc, aceptarGenerico = true) {
 }
 
 goStepSave();
+
+function getQueryVariable(variable) {
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i=0; i < vars.length; i++) {
+		var pair = vars[i].split("=");
+		if(pair[0] == variable) {
+			return pair[1];
+		}
+	}
+	return false;
+}
+
+window.addEventListener('popstate', function (e) {
+	goStep(getQueryVariable("step"));
+});

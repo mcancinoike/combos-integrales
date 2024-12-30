@@ -48,6 +48,7 @@
 				}
 				echo $primas;
 				?>
+                <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el seguro</h6></div>
 			</div>
 		</div>
         <?php else: ?>

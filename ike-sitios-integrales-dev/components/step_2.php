@@ -68,11 +68,11 @@
             <div class="tbl__body">
                 <div class="tbl__row">
                     <div class="tbl__col d-block left">
-                        <h4>Suma asegurada:</h4>
+                        <div>Suma asegurada:</div>
                         <div id="step2SumaAsegurada"></div>
                     </div>
                     <div class="tbl__col d-block right">
-                        <h4>Suma total anual:</h4>
+                        <div>Suma total anual:</div>
                         <div id="step2PagoAnual"></div>
                     </div>
                 </div>

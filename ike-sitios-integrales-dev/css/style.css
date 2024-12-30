@@ -751,6 +751,10 @@ footer a {
 	width: 240px;
 }
 
+.fs-13px {
+	font-size: 13px !important;
+}
+
 @media screen and (min-width: 360px) {
 
 	.atf__txt,
@@ -816,6 +820,9 @@ footer a {
 
 @media screen and (min-width: 768px) {
 
+	.resume__title {
+		font-size: 21px;
+	}
 	header {
 		display: block;
 	}
@@ -1399,4 +1406,9 @@ footer a {
 
 .font-family-univers {
 	font-family: UniversNext-Medium, serif !important;
+}
+
+#delSeguro {
+	width: 20px;
+	height: 20px;
 }
