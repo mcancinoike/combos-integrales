@@ -4,7 +4,7 @@
 <section class="step show" id="step8">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a class="header__step__arrow">
+			<a class="header__step__arrow gostep cursor-pointer" data-step="7">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">HSBC Seguros | Iké&#174; Asistencias</div>

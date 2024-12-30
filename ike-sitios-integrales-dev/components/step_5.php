@@ -4,7 +4,7 @@
 <section class="step show" id="step5">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a class="header__step__arrow">
+			<a class="header__step__arrow gostep cursor-pointer" data-step="3">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">

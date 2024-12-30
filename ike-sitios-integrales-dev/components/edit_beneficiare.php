@@ -81,8 +81,9 @@
 					</div>
 					<div class="frm__group">
 						<label>RFC</label>
+                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente</span>
 						<input type="text" name="rfc" class="frm__control" maxlength="13">
-						<span class="desktop">El RFC no debe llevar guiones</span>
+						<span class="desktop">Verifica que tu RFC se haya calculado correctamente</span>
 					</div>
 					<div class="frm__group">
 						<label>Nacionalidad*</label>

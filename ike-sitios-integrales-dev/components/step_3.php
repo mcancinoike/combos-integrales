@@ -4,7 +4,7 @@
 <section class="step show" id="step3">
 	<div class="header__step">
 		<div class="header__step__content">
-			<a class="header__step__arrow">
+			<a class="header__step__arrow gostep cursor-pointer" data-step="2">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
@@ -52,8 +52,9 @@
 					</div>
 					<div class="frm__group">
 						<label>RFC</label>
+                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente</span>
 						<input type="text" name="rfc" class="frm__control" maxlength="13">
-						<span class="desktop">El RFC no debe llevar guiones</span>
+						<span class="desktop">Verifica que tu RFC se haya calculado correctamente</span>
 					</div>
 					<div class="frm__group">
 						<label>Correo electrónico*</label>

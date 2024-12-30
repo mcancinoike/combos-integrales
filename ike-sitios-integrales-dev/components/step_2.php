@@ -5,7 +5,7 @@
 <section class="step show" id="step2">
     <div class="header__step">
 		<div class="header__step__content">
-			<a class="header__step__arrow">
+			<a class="header__step__arrow gostep cursor-pointer" data-step="1">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-left.svg">
 			</a>
 			<div class="header__step__title">
@@ -162,10 +162,9 @@
             </div>
         </div>
 
-        <div class="note s2">
+        <div class="note s2 pt-4">
             <img src="<?php echo $_SESSION["relativePath"]?>img/icons/info.svg">
-            <p><span class="bold">Solicitud de ubicación</span> <br>
-            Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
+            <p>Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
         </div>
         <div class="frm__ctas" style="margin-left: 12.5%;">
             <div id="captcha_msg" class="frm__col captcha">Favor de seleccionar la casilla: </div>
@@ -360,7 +359,7 @@
                             - 2 eventos al año hasta $1,200 por evento
                         </li>
                         <li>
-                            Técnico online Sin limite
+                            Técnico online
                             <br>
                             - Sin límite
                         </li>

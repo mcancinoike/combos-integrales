@@ -1,3 +1,4 @@
+import RfcFacil from "./RFC/rfc-facil";
 
 let session = {
 	cliente: {
@@ -80,11 +81,33 @@ $(document).ready(function () {
 		goStep(1);
 	});
 
-	// evento exclusivo ah
+	$(document).on('change', "input[name=fechaNac], .onlyLetters", function () {
+		const dateBirth = new Date($("input[name=fechaNac]").val());
+		dateBirth.setMinutes(dateBirth.getMinutes() + dateBirth.getTimezoneOffset());
 
-	$(document).on('change', "input[name=fechaNac]", function () {
-		const year = new Date($(this).val()).getFullYear(),
-		      yearNow = new Date().getFullYear();
+		const day = dateBirth.getDate(),
+			  month = dateBirth.getMonth() + 1,
+			  year = dateBirth.getFullYear(),
+		      yearNow = new Date().getFullYear(),
+			  nombre = $("input[name=nombre]").val() + ' ' + $("input[name=segundoNombre]").val(),
+			  paterSur = $("input[name=apellidoPaterno]").val(),
+			  materSur = $("input[name=apellidoMaterno]").val();
+
+		if ($("input[name=nombre]").val() !== '' && !isNaN(day) && !isNaN(month) && !isNaN(year) && year > 1900 && paterSur !== '' && materSur !== '') {
+
+			// generar RFC
+			const RFC = RfcFacil.forNaturalPerson({
+				name: nombre,
+				firstLastName: paterSur,
+				secondLastName: materSur,
+				day: day,
+				month: month,
+				year: year
+			});
+
+			$("input[name=rfc]").val(RFC);
+
+		}
 
 		if ( year > 1900 && year < yearNow && $('select[name=sexo]').val() !== '' && session.step === 1)
 			$("#sexo").change();
@@ -327,19 +350,19 @@ $(document).ready(function () {
 		}
 
 		if (session.cliente.rfc == '') {
-			toastr.error("Escribe el RFC con homoclave");
+			toastr.error("Escribe el RFC");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
-		if (session.cliente.rfc.length <= 11) {
-			toastr.error("El RFC con homoclave debe tener entre 12 y 13 caracteres");
+		if (session.cliente.rfc.length < 10) {
+			toastr.error("El RFC debe tener entre 10 y 13 caracteres");
 			$('input[name=rfc]').focus();
 			return false;
 		}
 
 		if (!validRFC(session.cliente.rfc)) {
-			toastr.error("Verifica que tu RFC con homoclave esté escrito correctamente");
+			toastr.error("Verifica que tu RFC esté escrito correctamente");
 			$('input[name=rfc]').focus();
 			return false;
 		}
@@ -451,22 +474,15 @@ $(document).ready(function () {
 		goStep(8);
 	});
 
-	$(document).on("click", ".gostep-1", function () {
-		goStep(1);
-	});
-
-	$(document).on("click", ".gostep-2", function () {
-		goStep(2);
-	});
-
-	$(document).on("click", ".gostep-6", function () {
-		goStep(6);
-	});
-
 	$(document).on("click", ".gostep-0", function () {
 		session.step = 0;
 		saveDataSession();
 		location.reload();
+	});
+
+	$(document).on("click", ".gostep", function () {
+		const step = parseInt($(this).attr("data-step"));
+		goStep(step, $(this).hasClass("back") !== undefined ? 7 : null);
 	});
 
 	$(document).on("keyup", "input[name='porcentaje[]']", function () {
@@ -613,7 +629,7 @@ function goStep(step, stepActual = null) {
 		success: function (data) {
 			$("#loading").hide();
 			session.step = step;
-			$("#main-content").html(DOMPurify.sanitize(data));
+			$("#main-content").html(DOMPurify.sanitize(data, { ADD_ATTR: ['target'] }));
 			saveDataSession();
 			loadValues(step);
 		},
@@ -648,8 +664,6 @@ function loadValues(step) {
 			break;
 		case 2:
 			$("#main-content").append('<script src="https://www.google.com/recaptcha/api.js" async defer></script>');
-			$(".header__step__content a").attr("href", "javascript:goStep(1)");
-
 			$("#step2SumaAsegurada").text(formatCurrency(session.seguro.sumaAsegurada, 2) + " MXN");
 			$("#step2PagoAnual").text(formatCurrency(session.seguro.pagoAnual, 2) + " MXN");
 			$(".subtotal2").text(formatCurrency(session.seguro.pagoMensual, 2) + " MXN");
@@ -683,7 +697,6 @@ function loadValues(step) {
 
 			break;
 		case 3:
-			$(".header__step__content a").attr("href", "javascript:goStep(2)");
 
 			if (session.cliente.rfc !== ''){
 			  $('#frmRegister3 input[name=nombre]').val(session.cliente.name);
@@ -700,18 +713,14 @@ function loadValues(step) {
 			}
 			break;
 		case 4:
-			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			sendCode();
 			break;
 		case 5:
-			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			break;
 		case "5-2":
-			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			$('select[name=nacionalidad], select[name=actividad], select[name=residencia]').select2();
 			break;
 		case 6:
-			$(".header__step__content a").attr("href", "javascript:goStep(3)");
 			if (session.beneficiarios.length === 5)
 				$("#btnNewBenef").hide();
 			else
@@ -720,7 +729,6 @@ function loadValues(step) {
 				getBeneficiaries();
 			break;
 		case 7:
-			$(".header__step__content a").attr("href", "javascript:goStep(6, 7)");
 			getResumSol();
 			$(".subtotal2").text(formatCurrency(session.pagoTotalMensual, 2) + " MXN");
 			if (session.cliente.id_prima === 0){
@@ -742,7 +750,6 @@ function loadValues(step) {
 			}
 			break;
 		case 8:
-			$(".header__step__content a").attr("href", "javascript:goStep(7)");
 			break;
 		case "final":
 			let msgHead = '',
@@ -1136,14 +1143,14 @@ function addUpdateBeneficiary(preId = undefined) {
 		return false;
 	}
 
-	if (beneficiarios.rfc.length <= 11) {
-		toastr.error("El RFC debe tener entre 12 y 13 caracteres");
+	if (beneficiarios.rfc.length < 10) {
+		toastr.error("El RFC debe tener entre 10 y 13 caracteres");
 		$('input[name=rfc]').focus();
 		return false;
 	}
 
 	if (!validRFC(beneficiarios.rfc)) {
-		toastr.error("Verifica que el RFC con homoclave esté escrito correctamente");
+		toastr.error("Verifica que el RFC esté escrito correctamente");
 		$('input[name=rfc]').focus();
 		return false;
 	}
@@ -1204,11 +1211,12 @@ function addUpdateBeneficiary(preId = undefined) {
 }
 
 function validRFC(rfc, aceptarGenerico = true) {
-	const re       = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/,
+	const re= rfc.length === 10 ? /^([A-ZÑa-zñ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))$/ :
+			                               /^([A-ZÑa-zñ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Za-z\d]{2})([A\d])$/,
 	      validado = rfc.match(re);
 
-	if (!validado)  //Coincide con el formato general del regex?
-		return false;
+	//if (!validado)  //Coincide con el formato general del regex?
+		return validado;
 
 	//Separar el dígito verificador del resto del RFC
 	const digitoVerificador = validado.pop(),
