@@ -581,14 +581,14 @@ $(document).ready(function () {
 			$(this).attr("src", relativePath + "img/icons/eye-off.svg");
 			$("#card").removeClass("text-security-off").addClass("text-security-on");
 		}
-	});
+	})
 
-	$(document).on("keydown", ".onlyNumbers", function(e) {
-		return onlyNumbers(e);
+	$(document).on("keyup", ".onlyNumbers", function(e) {
+		$(this).val(filterNumbers($(this).val()));
 	} );
 
-	$(document).on("keydown", ".onlyLetters", function(e) {
-		return onlyLetters(e);
+	$(document).on("keyup", ".onlyLetters", function(e) {
+			$(this).val(filterLetters($(this).val()));
 	} );
 
 	$(document).on("change", ".onlyLetters", function() {
@@ -1083,11 +1083,19 @@ function onlyNumbers(e){
 }
 
 function onlyLetters(e) {
-	return /[ A-Zñ]+$/i.test(e.key);//\u00C0-\u017F
+	return /[ A-Zñ]+$/i.test(e);//\u00C0-\u017F
 	//return /^[a-zA-Z]*((?!Dead)[a-zA-Z])*[a-zA-Z]*$/i.test(e.key);
 }
 function delTildesEspeciales(text) {
 	return text.normalize('NFD').replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9 ]/g,"");
+}
+
+function filterNumbers(text) {
+	return text.replace(/[^0-9]/g,"");
+}
+
+function filterLetters(text) {
+	return text.replace(/[^a-zA-Z Ññ]/g,"");
 }
 
 function addUpdateBeneficiary(preId = undefined) {

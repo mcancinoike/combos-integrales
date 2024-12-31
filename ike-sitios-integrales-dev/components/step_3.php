@@ -32,7 +32,7 @@
 				<div class="frm">
 					<div class="frm__group">
 						<label>Nombre*</label>
-						<input type="text" name="nombre" class="frm__control onlyLetters" maxlength="60">
+						<input type="text" name="nombre" class="frm__control onlyLetters" maxlength="30">
 					</div>
 					<div class="frm__group">
 						<label>Segundo nombre</label>
