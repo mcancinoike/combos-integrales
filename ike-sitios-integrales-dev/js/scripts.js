@@ -583,11 +583,11 @@ $(document).ready(function () {
 		}
 	});
 
-	$(document).on("keypress", ".onlyNumbers", function(e) {
+	$(document).on("keydown", ".onlyNumbers", function(e) {
 		return onlyNumbers(e);
 	} );
 
-	$(document).on("keypress", ".onlyLetters", function(e) {
+	$(document).on("keydown", ".onlyLetters", function(e) {
 		return onlyLetters(e);
 	} );
 
@@ -1079,12 +1079,12 @@ function setTimer() {
 /* funcion para ingresar solo números en input text */
 
 function onlyNumbers(e){
-	const key = e.charCode;
-	return key >= 48 && key <= 57;
+	return /[0-9]+|Backspace+$/i.test(e.key);
 }
 
 function onlyLetters(e) {
-	return /[ A-Z]+$/i.test(String.fromCharCode(e.charCode));//\u00C0-\u017F
+	return /[ A-Zñ]+$/i.test(e.key);//\u00C0-\u017F
+	//return /^[a-zA-Z]*((?!Dead)[a-zA-Z])*[a-zA-Z]*$/i.test(e.key);
 }
 function delTildesEspeciales(text) {
 	return text.normalize('NFD').replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9 ]/g,"");
