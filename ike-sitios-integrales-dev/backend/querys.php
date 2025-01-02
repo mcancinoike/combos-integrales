@@ -108,7 +108,7 @@ function insertAllData($conexion, $allData)
             if (is_numeric($idCliente)) {
 
                 $gate = true;
-                if (count($allData["asistencias"])) {
+                if (isset($allData["asistencias"])) {
 
                     $numInsertsAsistance = saveAssistance($conexion, $allData["asistencias"], $idCliente);
 
@@ -119,7 +119,7 @@ function insertAllData($conexion, $allData)
 
                 }
 
-                if (count($allData["beneficiarios"])) {
+                if (isset($allData["beneficiarios"])) {
 
                     $numInsertBeneficiaries = saveBeneficiares($conexion, $allData["beneficiarios"], $idCliente);
 
@@ -133,10 +133,11 @@ function insertAllData($conexion, $allData)
 
                     $cardType = str_contains($rows[0]["description"], "DÉBITO") ? "TDD" : "TDC";
 
-                    if (count($allData["asistencias"])) {
-                        if (apiAfiliados($conexion, $cardType, $allData)) {
+                    if (isset($allData["asistencias"])) {
+                        $respAfiliados = apiAfiliados($conexion, $cardType, $allData);
+                        if ($respAfiliados["code"] == 400) {
                             $gate = false;
-                            $result = array("code" => 400, "msg" => "Error al intentar enviar información API afiliados");
+                            $result = $respAfiliados;
                         }
                     }
 
@@ -227,7 +228,9 @@ function apiAfiliados($conexion, $cardType, $data){
             ];
 
             $i = 1;
-            foreach($data["beneficiarios"] as $beneficiario){
+            $arrayBen = isset($data["beneficiarios"]) ? $data["beneficiarios"] : [];
+
+            foreach($arrayBen  as $beneficiario){
                 $nombreB = $beneficiario["name"] . ' ' . $beneficiario["middle_name"];
                 $paternoB = $beneficiario["pater_surname"];
                 $maternoB = $beneficiario["mater_surname"];
@@ -267,14 +270,15 @@ function apiAfiliados($conexion, $cardType, $data){
                 $log_alta .= "VALUES('2','NO','". $valAs['cuenta_ike'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
                 $conexion->insertData($log_alta);
                 if ($errorApi !== 'OK')
-                    return false;
+                    return ["code" => 400, "msg" => "Error API afiliados (E3)"];
+                else
+                    return ["code" => 200, "msg" => "OK"];
             } else
-                return false;
+                return ["code" => 400, "msg" => "Error API afiliados (E2)"];
         }
-        return true;
 
     } else
-        return false;
+        return ["code" => 400, "msg" => "Error API afiliados (E1)"];
 }
 
 function sendMail($conexion, $data){
