@@ -8,4 +8,4 @@
     const relativePath = '<?php echo $_SESSION["relativePath"]?>';
     const app = '<?php echo $_SESSION["app"]?>';
 </script>
-<script type="module" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=4.0.8"></script>
+<script type="module" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=4.0.9"></script>

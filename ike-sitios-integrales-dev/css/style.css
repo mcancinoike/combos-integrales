@@ -755,6 +755,10 @@ footer a {
 	font-size: 13px !important;
 }
 
+.frm__ctas {
+	margin-bottom: 2rem;
+}
+
 @media screen and (min-width: 360px) {
 
 	.atf__txt,
@@ -819,6 +823,10 @@ footer a {
 }
 
 @media screen and (min-width: 768px) {
+
+	.frm__ctas {
+		margin-left: 14.5%;
+	}
 
 	.resume__title {
 		font-size: 21px;

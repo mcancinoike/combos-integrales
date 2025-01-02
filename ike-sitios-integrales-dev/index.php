@@ -46,13 +46,13 @@
 						Realiza tu solicitud y obtén:
 					</div>
 					<ul class="box__list">
-						<li>Seguro de Accidentes Personales</li>
+						<li>Seguro por Accidentes Personales HSBC</li>
 					</ul>
-					<p class="box__txt">Te protegemos en caso de muerte accidental, pérdidas orgánicas y fractura de huesos, entre otros, con un costo mensual accesible.</p>
+					<p class="box__txt">Te protegemos en caso de muerte accidental, Pérdidas Orgánicas y Fractura de Huesos, entre otros, con un costo mensual accesible.</p>
 					<ul class="box__list">
 						<li>Programa de Asistencias Iké</li>
 					</ul>
-					<p class="box__txt">Amplía la protección de tu seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span> Después paga solo $99.00 MXN al mes por cada asistencia que elijas.</p>
+					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span> Después paga solo $99.00 MXN al mes por cada Asistencia que elijas.</p>
 					<p class="box__txt">Comienza tu solicitud para conocer más.</p>
 				</div>
 				<div class="box">

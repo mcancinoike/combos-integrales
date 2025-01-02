@@ -51,16 +51,16 @@
 						<input type="date" name="fechaNac" class="frm__control">
 					</div>
 					<div class="frm__group">
-						<label>RFC</label>
-                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente</span>
+						<label>RFC*</label>
+                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente.</span>
 						<input type="text" name="rfc" class="frm__control" maxlength="13">
-						<span class="desktop">Verifica que tu RFC se haya calculado correctamente</span>
+						<span class="desktop">Verifica que tu RFC se haya calculado correctamente.</span>
 					</div>
 					<div class="frm__group">
 						<label>Correo electrónico*</label>
-						<span class="mobile">Enviaremos la póliza de tus productos a este correo electrónico</span>
+						<span class="mobile">Enviaremos la póliza de tus productos a este correo electrónico.</span>
 						<input type="text" name="email" class="frm__control" maxlength="160">
-						<span class="desktop">Enviaremos la poliza de tus productos a este correo electrónico</span>
+						<span class="desktop">Enviaremos la poliza de tus productos a este correo electrónico.</span>
 					</div>
 					<div class="frm__group">
 						<label>Número celular*</label>

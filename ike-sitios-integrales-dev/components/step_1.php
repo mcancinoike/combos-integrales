@@ -24,15 +24,15 @@
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-				Primero, solicita tu Seguro por <?php $_SESSION["app"] === "ap" ? "Accidentes Personales" : "Hospitalización"?>
+				Primero, solicita tu Seguro por <?php if ($_SESSION["app"] === "ap") echo "Accidentes Personales"; else echo "Hospitalización";?>
 			</div>
-			<p class="box__txt2">Si no quieres este seguro puedes dar clic en "Continuar". Al hacerlo, pasarás directo a las asistencias.</p>
+			<p class="box__txt2">Si no quieres este Seguro puedes dar clic en "Continuar". Al hacerlo, pasarás directo a las Asistencias.</p>
 		</div>
 
         <?php if ($_SESSION["app"] === "ap"): ?>
 		<div class="tbl" id="tblSuma1">
 			<div class="tbl__header">
-				<div class="tbl__header__col">Suma asegurada</div>
+				<div class="tbl__header__col">Suma Asegurada</div>
 				<div class="tbl__header__col">Pago mensual con IVA incluido</div>
 			</div>
 			<div class="tbl__body">
@@ -48,10 +48,11 @@
 				}
 				echo $primas;
 				?>
-                <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el seguro</h6></div>
+                <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el Seguro</h6></div>
 			</div>
 		</div>
         <?php else: ?>
+            <p class="box__txt2">Los datos marcados con * son obligatorios</p>
             <form id="frmRegister1">
                 <div class="frm">
                     <div class="frm__group">
@@ -59,7 +60,7 @@
                         <input type="date" name="fechaNac" class="frm__control">
                     </div>
                     <div class="frm__group">
-                        <label>Sexo</label>
+                        <label>Sexo*</label>
                         <select id="sexo" name="sexo" class="frm__control">
                             <option value="">Seleccione</option>
                             <option value="m">Mujer</option>
@@ -69,6 +70,7 @@
                     <div class="frm__group">
                         <div id="ajaxSumaAsegurada"></div>
                     </div>
+                    <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el Seguro</h6></div>
                 </div>
             </form>
         <?php endif; ?>
@@ -79,14 +81,14 @@
 	<div class="info">
 
 		<div class="resume" id="resumenStep1">
-			<div class="resume__title">Resumen de solicitud del seguro</div>
+			<div class="resume__title">Resumen de solicitud del Seguro</div>
 		</div>
 
 		<div class="tbl" id="tblStep1">
 			<div class="tbl__body">
 				<div class="tbl__row border-0">
 					<div class="tbl__col left suma">
-						<div>Suma asegurada:</div>
+						<div>Suma Asegurada:</div>
 						<div id="sumaAsegurada">$750,000 MXN</div>
 					</div>
 					<div class="tbl__col right suma">

@@ -114,7 +114,7 @@ function insertAllData($conexion, $allData)
 
                     if ($numInsertsAsistance == 0) {
                         $gate = false;
-                        $result = array("code" => 400, "msg" => "Error al intentar guardar sus asistencias");
+                        $result = array("code" => 400, "msg" => "Error al intentar guardar sus Asistencias");
                     }
 
                 }

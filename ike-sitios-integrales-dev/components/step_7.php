@@ -69,7 +69,7 @@
 			<div class="tbl__body">
 				<div class="tbl__row">
 					<div class="tbl__col left green subtotal">
-						<strong>Total mensual a pagar del seguro + asistencias</strong>
+						<strong>Total mensual a pagar del Seguro + Asistencias</strong>
 					</div>
 					<div class="tbl__col right green subtotal2"></div>
 				</div>
@@ -81,7 +81,7 @@
 
     <div class="info section-ben"">
         <div class="resume action">
-            <h3 class="resume__title">Beneficiarios para mi seguro</h3>
+            <h3 class="resume__title">Beneficiarios para mi Seguro</h3>
             <div class="resume__action">
                 <a class="cursor-pointer gostep" data-step="6"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
                 <a class="cursor-pointer gostep" data-step="6"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
@@ -90,7 +90,7 @@
         <span id="resumBenef"></span>
     </div>
 
-    <div class="box__button stp">
+    <div class="box__button info stp">
         <button class="box__btn" id="btnStep7">Continuar</button>
         <div class="box__button__line"></div>
     </div>

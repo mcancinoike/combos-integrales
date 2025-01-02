@@ -24,7 +24,7 @@
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-				¡Perfecto! Ya puedes definir quienes serán los beneficiarios de tu seguro, puedes agregar hasta 5.
+				¡Perfecto! Ya puedes definir quienes serán los beneficiarios de tu Seguro, puedes agregar hasta 5.
 			</div>
 		</div>
 

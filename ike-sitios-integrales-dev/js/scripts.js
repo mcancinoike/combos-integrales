@@ -92,7 +92,7 @@ $(document).ready(function () {
 			  nombre = $("input[name=nombre]").val() + ' ' + $("input[name=segundoNombre]").val(),
 			  paterSur = $("input[name=apellidoPaterno]").val(),
 			  materSur = $("input[name=apellidoMaterno]").val();
-
+		$("input[name=rfc]").prop("disabled", true);
 		if ($("input[name=nombre]").val() !== '' && !isNaN(day) && !isNaN(month) && !isNaN(year) && year > 1900 && paterSur !== '' && materSur !== '') {
 
 			// generar RFC
@@ -107,14 +107,17 @@ $(document).ready(function () {
 					year: year
 				});
 
-				$("input[name=rfc]").val(RFC);
+				$("input[name=rfc]").val(RFC).prop("disabled", false);
 
 			}, 500);
 
 		}
 
-		if ( year > 1900 && year < yearNow && $('select[name=sexo]').val() !== '' && session.step === 1)
+		if ($('select[name=sexo]').val() !== '' && session.step === 1){
+			deleteSeguro();
 			$("#sexo").change();
+		}
+
 	});
 
 	$(document).on('change', "#sexo", function () {
@@ -251,7 +254,7 @@ $(document).ready(function () {
 		session.check.residenteHsbc = $('input[name=residenteHsbc]').is(':checked');
 
 		if (session.pagoTotalMensual == 0) {
-			toastr.error("Debe seleccionar un seguro o una asistencia para poder continuar.");
+			toastr.error("Debe seleccionar un Seguro o una Asistencia para poder continuar.");
 			return false;
 		}
 
@@ -496,7 +499,7 @@ $(document).ready(function () {
 	});
 
 	$(document).on("click", ".del-seguro", function () {
-		const resp = confirm('¿Realmente desea eliminar el seguro?');
+		const resp = confirm('¿Realmente desea eliminar el Seguro?');
 		if (resp) {
 			deleteSeguro();
 			const step = session.asistencias.length === 0 ? 2 : 7;
@@ -507,6 +510,9 @@ $(document).ready(function () {
 	$(document).on("click", "#delSeguro", function () {
 		deleteSeguro();
 		$("input[name=seguro]").prop("checked", false);
+		$("input[name=fechaNac]").val('');
+		$("#sexo").val('');
+		$("#sumaAseguradaS1").val('');
 		$('#resumenStep1').hide();
 		$('#tblStep1').hide();
 		$('.separator__line.s1').hide();
@@ -624,10 +630,10 @@ function checkAsistencias(nodo) {
 	$('input[name=subtotal_mensual_asistencia]').val(totalFormat.toFixed(2));
 	if (totalChecked) {
 		$('#tblStep2 .tbl__note').show();
-		$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro + asistencias:');
+		$('#tblStep2Total .subtotal').text('Total mensual a pagar del Seguro + Asistencias:');
 	} else {
 		$('#tblStep2 .tbl__note').hide();
-		$('#tblStep2Total .subtotal').text('Total mensual a pagar del seguro:');
+		$('#tblStep2Total .subtotal').text('Total mensual a pagar del Seguro:');
 	}
 
 }
@@ -729,8 +735,14 @@ function loadValues(step) {
 			  $('#frmRegister3 input[name=email]').val(session.cliente.email);
 			  $('#frmRegister3 input[name=telefono]').val(session.cliente.cell_phone);
 
-			  if (session.cliente.confirm_cell === 1)
-			  	$('#frmRegister3 input[name=telefono]').prop("disabled", true);
+		    if (session.cliente.confirm_cell === 1)
+			  $('#frmRegister3 input[name=telefono]').prop("disabled", true);
+
+		    if (app === "ah" && session.seguro.pagoMensual !== 0)
+			  $('#frmRegister3 input[name=fechaNac]').prop("disabled", true);
+
+			} else if (session.cliente.date_birth !== '' && session.seguro.pagoMensual !== 0) { // Seguro AH
+				$('#frmRegister3 input[name=fechaNac]').val(session.cliente.date_birth).prop("disabled", true);
 			}
 			break;
 		case 4:
@@ -777,19 +789,19 @@ function loadValues(step) {
 				msgSeguro = '';
 
 			if (session.cliente.id_prima === 0) {
-				msgHead = "<h3>¡Felicidades! Ahora cuentas con tu(s) programa(s) de asistencia y podrás hacer uso de tus beneficios en un lapso de 48 horas.</h3>";
+				msgHead = "<h3>¡Felicidades! Ahora cuentas con tu(s) programa(s) de Asistencia y podrás hacer uso de tus beneficios en un lapso de 48 horas.</h3>";
 
 			} else {
 				msgHead = "<h2>¡Solicitud enviada con éxito!</h2>";
 
 				msgSeguro = "                <ul>\n" +
-							"                    <li>Tu solicitud de contratación de seguro se encuentra en evaluación.</li>\n" +
+							"                    <li>Tu solicitud de contratación de Seguro se encuentra en evaluación.</li>\n" +
 							"                    <li>De ser aceptada, haremos el cargo a la cuenta que capturaste y enviaremos tu póliza al correo registrado en un lapso de 48 horas.</li>\n" +
 							"                    <li>Deberás recibir la póliza de confirmación en tu correo electrónico. Si no la recibes, llama al <a href='tel:5557213322'>55 5721 3322</a> para confirmar la contratación.</li>\n";
 
 
 				if (session.asistencias.length !== 0)
-					msgSeguro += "                    <li>Podrás hacer uso de tu(s) programa(s) de asistencia en un lapso de 48 hrs.</li>\n";
+					msgSeguro += "                    <li>Podrás hacer uso de tu(s) programa(s) de Asistencia en un lapso de 48 hrs.</li>\n";
 
 					msgSeguro += "                </ul>";
 			}
@@ -994,7 +1006,7 @@ function getResumSol() {
 
 	asistencias += '<div class="tbl__row"><div class="tbl__col left font-family-univers">Subtotal mensual a pagar</div>' +
 					'<div class="tbl__col right font-family-univers">' + formatCurrency(price, 2)+ ' MXN</div></div>' +
-					'<div class="tbl__note"><img src="' + relativePath+ 'img/icons/info.svg" class="info__icon">Tu primer mes de asistencias no tiene costo.</div>' +
+					'<div class="tbl__note"><img src="' + relativePath+ 'img/icons/info.svg" class="info__icon">Tu primer mes de Asistencias no tiene costo.</div>' +
 					'</div></div>';
 
 

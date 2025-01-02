@@ -21,7 +21,7 @@
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-                Para finalizar, ingresa el número de Tarjeta de Crédito HSBC donde se realizarán los cargos recurrentes o Tarjeta de Débito HSBC donde se domiciliará el pago. Todos los datos se encuentran protegidos
+                Para finalizar, ingresa el número de Tarjeta de Crédito o Tarjeta de Débito HSBC donde se realizarán los cargos recurrentes donde se domiciliará el pago. Todos los datos se encuentran protegidos.
 			</div>
 		</div>
 
@@ -45,7 +45,7 @@
 						</div>
 						<div class="frm__group check">
 							<input type="checkbox" name="condiciones" value="1" class="frm__control check">
-							<a href="<?php echo $_SESSION["relativePath"]?>docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del producto</a>
+							<a href="<?php echo $_SESSION["relativePath"]?>docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del producto.</a>
 						</div>
 						<div class="frm__group check">
 							<input type="checkbox" name="envio" class="frm__control check">

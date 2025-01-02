@@ -16,7 +16,7 @@
 	</div>
 
     <div class="progress">
-        <div>Paso 2 de 8 | Selecciona tus asistencias</div>
+        <div>Paso 2 de 8 | Selecciona tus Asistencias</div>
         <div class="progress__line">
             <div class="progress__done s2"></div>
         </div>
@@ -27,7 +27,7 @@
             <div class="box__title">
                 Ahora, elige las Asistencias Iké que más te convengan
             </div>
-            <p class="box__txt2">Este paso es opcional y no es obligatorio que elijas alguna de las asistencias.</p>
+            <p class="box__txt2">Este paso es opcional y no es obligatorio que elijas alguna de las Asistencias.</p>
         </div>
 
         <div class="tbl" id="tblAsistencias">
@@ -61,14 +61,14 @@
 
     <div id="resumen_seguro" class="info">
         <div class="resume">
-            <h3 class="resume__title">Resumen de solicitud del seguro</h3>
+            <h3 class="resume__title">Resumen de solicitud del Seguro</h3>
         </div>
 
         <div class="tbl">
             <div class="tbl__body">
                 <div class="tbl__row">
                     <div class="tbl__col d-block left">
-                        <div>Suma asegurada:</div>
+                        <div>Suma Segurada:</div>
                         <div id="step2SumaAsegurada"></div>
                     </div>
                     <div class="tbl__col d-block right">
@@ -92,7 +92,7 @@
     <div class="info">
 
         <div class="resume">
-            <h3 class="resume__title asistencias">Resumen de solicitud de asistencias</h3>
+            <h3 class="resume__title asistencias">Resumen de solicitud de Asistencias</h3>
         </div>
 
         <div class="tbl" id="tblStep2">
@@ -119,7 +119,7 @@
             <div class="tbl__body">
                 <div class="tbl__row">
                     <div class="tbl__col left green subtotal">
-                        Total mensual a pagar del seguro:
+                        Total mensual a pagar del Seguro:
                     </div>
                     <div class="tbl__col right green subtotal2"></div>
                 </div>
@@ -133,15 +133,15 @@
     <div class="info">
 
         <div class="continue">
-            <p>Para continuar con la solicitud, confirma que eres Cliente HSBC (es decir, que tienes una cuenta de débito o crédito HSBC).</p>
+            <p>Para continuar con la solicitud, confirma que eres Cliente HSBC (es decir, que tienes una cuenta de Débito o Crédito HSBC).</p>
             <div class="continue__check">
                 <input type="checkbox" name="clienteHsbc" value="1"> ¡Sí, ya soy cliente HSBC!
             </div>
             <div class="continue__check">
-                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/terminos-y-condiciones/" target="_blank">HSBC</a>
+                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/terminos-y-condiciones/" target="_blank">HSBC.</a>
             </div>
             <div class="continue__check">
-                <input type="checkbox" name="residenteHsbc" value="1"> Confirmo que me encuentro en territorio nacional
+                <input type="checkbox" name="residenteHsbc" value="1"> Confirmo que me encuentro en territorio nacional.
             </div>
         </div>
 
@@ -155,7 +155,7 @@
             <p class="unirse__txt">Aún no soy cliente, pero me gustaría saber cómo puedo unirme.</p>
             <div class="unirse__box">
                 <div class="unirse__box__title">Abre tu cuenta digital hoy mismo.</div>
-                <p>Igual de seguro, pero desde tu celular.</p>
+                <p>Igual de Seguro, pero desde tu celular.</p>
                 <a href="https://dco-ao.hsbc.com.mx/advance?cid=AFF_HBMX_N4_IK0_00001" target="_blank">Saber más
                     <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg">
                 </a>
@@ -166,7 +166,7 @@
             <img src="<?php echo $_SESSION["relativePath"]?>img/icons/info.svg">
             <p>Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
         </div>
-        <div class="frm__ctas" style="margin-left: 12.5%;">
+        <div class="frm__ctas">
             <div id="captcha_msg" class="frm__col captcha">Favor de seleccionar la casilla: </div>
             <div class="g-recaptcha" data-sitekey="<?php echo $captchaPublic; ?>"></div>
         </div>

@@ -24,7 +24,7 @@
 	<div class="info">
 		<div class="box">
 			<div class="box__title">
-				¡Perfecto! Ya puedes definir quienes serán los beneficiarios de tu seguro
+				¡Perfecto! Ya puedes definir quienes serán los beneficiarios de tu Seguro.
 			</div>
 			<div class="box__beneficiarios">
 				<img src="<?php echo $_SESSION["relativePath"]?>img/icons/person.svg">

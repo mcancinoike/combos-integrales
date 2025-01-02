@@ -33,8 +33,6 @@
 							<option value="Padre">Padre</option>
 							<option value="Madre">Madre</option>
 							<option value="Empleador">Empleador</option>
-							<option value="Otros">Otros</option>
-							<option value="Irrevocable">Irrevocable</option>
 							<option value="Hermano(a)">Hermano(a)</option>
 						</select>
 					</div>
@@ -68,7 +66,7 @@
 						</select>
 					</div>
 					<div class="frm__group">
-						<label>Sexo</label>
+						<label>Sexo*</label>
 						<select name="sexo" class="frm__control">
 							<option value="">Seleccione</option>
 							<option value="masculino">Masculino</option>
@@ -80,10 +78,10 @@
 						<input type="date" name="fechaNac" class="frm__control">
 					</div>
 					<div class="frm__group">
-						<label>RFC</label>
-                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente</span>
+						<label>RFC*</label>
+                        <span class="mobile">Verifica que tu RFC se haya calculado correctamente.</span>
 						<input type="text" name="rfc" class="frm__control" maxlength="13">
-						<span class="desktop">Verifica que tu RFC se haya calculado correctamente</span>
+						<span class="desktop">Verifica que tu RFC se haya calculado correctamente.</span>
 					</div>
 					<div class="frm__group">
 						<label>Nacionalidad*</label>

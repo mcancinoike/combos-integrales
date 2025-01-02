@@ -47,19 +47,20 @@
 						Realiza tu solicitud y obtén:
 					</div>
 					<ul class="box__list">
-						<li>Seguro para apoyo por Hospitalización</li>
+						<li>Seguro para Apoyo por Hospitalización</li>
 					</ul>
 					<p class="box__txt">Te apoyamos por cada día que tú te encuentres hospitalizado.</p>
 					<ul class="box__list">
 						<li>Programa de Asistencias Iké</li>
 					</ul>
-					<p class="box__txt">Amplía la protección de tu seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span></p>
+					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span></p>
 				</div>
 				<div class="box last">
 					<div class="box__title">
 						<img src="../img/icons/haz.svg">
 						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
 					</div>
+                    <p class="box__txt">También podrás contratar tu Seguro Apoyo por Hospitalización o el Programa de Asistencias Iké por separado.</p>
 				</div><br>
 				<button class="box__btn" name="btnContinuar" id="step0">Continuar</button>
 			</div>
