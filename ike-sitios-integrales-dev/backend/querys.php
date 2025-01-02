@@ -298,21 +298,10 @@ function sendMail($conexion, $data){
     </tr>';
     $body = str_replace('<tableProductos></tableProductos>', $productos, $body);
     $mail->isSMTP();
-    $mail->Host = 'email-smtp.us-east-1.amazonaws.com';
-    $mail->SMTPAuth = true; 
+    $mail->Host = 'smtp1.us.scanscope.net';
     $mail->AddEmbeddedImage('../img/headerMail.png', 'headerMail', 'headerMail.png');
     $mail->AddEmbeddedImage('../img/footerMail.png', 'footerMail', 'footerMail.png');
-    $mail->Username = $conexion->mailUser;
-    $mail->Password = $conexion->mailPassword;
     $mail->Port = 587;
-    $mail->SMTPSecure='TLS';
-    $mail->SMTPOptions = array(
-        'ssl' => array(
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-        )
-    );
     $mail->ClearAllRecipients();
 
     $mail->CharSet = 'UTF-8';
