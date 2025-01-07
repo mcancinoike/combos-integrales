@@ -28,10 +28,12 @@ let session = {
 	check: {
 		clienteHsbc: false,
 		avisoHsbc: false,
-		residenteHsbc: false
+		residenteHsbc: false,
+		seguro: false
 	},
 	card: '',
-	captcha: false
+	captcha: false,
+	version: version
 }, minDate, maxDate;
 
 $(document).ready(function () {
@@ -182,6 +184,8 @@ $(document).ready(function () {
 
 	$(document).on("change", "#sumaAseguradaS1", function () {
 		if ($(this).val() !== '') {
+			$("#delSeguro").prop("checked", false);
+			session.check.seguro = false;
 			$("#btnStep1").show();
 			addSeguro($("option:selected", this));
 		} else {
@@ -196,6 +200,7 @@ $(document).ready(function () {
 
 	$(document).on('click', "input[name=seguro]", function () {
 		$("#delSeguro").prop("checked", false);
+		session.check.seguro = false;
 		addSeguro($(this));
 	});
 
@@ -394,7 +399,7 @@ $(document).ready(function () {
 
 		if (msg.length !== 0) {
 			for (let i = (msg.length -1); i >= 0; i--)
-				nodo[i].focus().addClass("border-red").parent().append('<small class="text-danger">' + msg[i] + '</small>');
+				nodo[i].focus().addClass("border-red").after('<small class="text-danger">' + msg[i] + '</small>');
 			return false;
 		}
 
@@ -514,6 +519,7 @@ $(document).ready(function () {
 		$('#resumenStep1').hide();
 		$('#tblStep1').hide();
 		$('.separator__line.s1').hide();
+		session.check.seguro = true;
 	});
 
 	$(document).on("click", "#btnStep8", function () {
@@ -685,7 +691,9 @@ function loadValues(step) {
 						$("#sexo").change();
 					}
 
-				}
+				} else
+					$("#delSeguro").prop("checked", session.check.seguro);
+
 			break;
 		case 2:
 			$("#main-content").append('<script src="https://www.google.com/recaptcha/api.js" async defer></script>');
@@ -813,16 +821,16 @@ function loadValues(step) {
 function goStepSave() {
 	if (localStorage.getItem("saveData")){
 		const sessionSave = JSON.parse(localStorage.getItem("saveData"));
-		if (session.cliente.client_type === sessionSave.cliente.client_type){
+
+		if (session.cliente.client_type === sessionSave.cliente.client_type && sessionSave.version === session.version){
 			session = sessionSave;
 			if (sessionSave.step !== 0)
 				goStep(session.step);
 			else
 				$("#loading").hide();
 
-		} else {
+		} else
 			$("#loading").hide();
-		}
 	} else
 		$("#loading").hide();
 }
@@ -1209,7 +1217,7 @@ function addUpdateBeneficiary(preId = undefined) {
 
 	if (msg.length !== 0) {
 		for (let i = (msg.length -1); i >= 0; i--)
-			nodo[i].focus().addClass("border-red").parent().append('<small class="text-danger">' + msg[i] + '</small>');
+			nodo[i].focus().addClass("border-red").after('<small class="text-danger">' + msg[i] + '</small>');
 		return false;
 	}
 

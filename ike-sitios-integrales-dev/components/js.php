@@ -7,5 +7,6 @@
 <script type="text/javascript">
     const relativePath = '<?php echo $_SESSION["relativePath"]?>';
     const app = '<?php echo $_SESSION["app"]?>';
+    const version = '<?php echo VERSION?>';
 </script>
-<script type="module" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=4.1.0"></script>
+<script type="module" src="<?php echo $_SESSION["relativePath"]?>js/scripts.js?v=<?php echo VERSION?>"></script>
