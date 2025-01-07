@@ -91,7 +91,8 @@ include_once "../backend/post.php";
 							<?php
 								$query = "SELECT * FROM hsbc_cat_nacionalidades WHERE active = 1 ORDER BY description ASC;";
 								foreach ($conexion->getData($query) as $val) {
-									echo '<option value="' . $val['description'] . '">' . $val['description'] . '</option>';
+                                    $selected = $val['description'] === 'MEXICANA' ? 'selected' : '';
+									echo '<option value="' . $val['description'] . '" ' . $selected . '>' . $val['description'] . '</option>';
 								}
 							?>
 						</select>
@@ -115,7 +116,8 @@ include_once "../backend/post.php";
 							<?php
 								$query = "SELECT * FROM hsbc_cat_residencias WHERE active = 1 ORDER BY description ASC;";
 								foreach ($conexion->getData($query) as $val) {
-									echo '<option value="' . $val['description'] . '">' . $val['description'] . '</option>';
+                                    $selected = $val['description'] === 'MEXICANA' ? 'selected' : '';
+                                    echo '<option value="' . $val['description'] . '" ' . $selected . '>' . $val['description'] . '</option>';
 								}
 							?>
 						</select>

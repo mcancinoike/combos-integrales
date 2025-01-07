@@ -316,6 +316,11 @@ header {
 
 }
 
+.border-red, .border-red:focus-visible {
+	border: solid 2px red !important;
+	outline: none !important;
+}
+
 .bold {
 	font-family: UniversNext-Medium;
 }

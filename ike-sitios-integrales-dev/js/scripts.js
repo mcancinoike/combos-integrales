@@ -316,6 +316,9 @@ $(document).ready(function () {
 
 	$(document).on("click", "#btnStep3", function () {
 
+		$('.frm__group').find("small").remove();
+		$('input, select').removeClass("border-red");
+
 		session.cliente.name = $('#frmRegister3 input[name=nombre]').val().trim();
 		session.cliente.middle_name = $('#frmRegister3 input[name=segundoNombre]').val().trim();
 		session.cliente.pater_surname = $('#frmRegister3 input[name=apellidoPaterno]').val().trim();
@@ -327,78 +330,73 @@ $(document).ready(function () {
 
 		$('#frmErrMsg3').hide();
 
-		if (session.cliente.name == '') {
-			toastr.error("Escribe tu nombre");
-			$('input[name=nombre]').focus();
-			return false;
+		let msg = [], nodo = [];
+
+		if (session.cliente.name === '') {
+			msg.push("Escribe tu nombre.");
+			nodo.push($('input[name=nombre]'));
 		}
 
-		if (session.cliente.pater_surname == '') {
-			toastr.error("Escribe tu apellido paterno");
-			$('input[name=apellidoPaterno]').focus();
-			return false;
+		if (session.cliente.pater_surname === '') {
+			msg.push("Escribe tu apellido paterno.");
+			nodo.push($('input[name=apellidoPaterno]'));
 		}
 
-		if (session.cliente.mater_surname == '') {
-			toastr.error("Escribe tu apellido materno");
-			$('input[name=apellidoMaterno]').focus();
-			return false;
-		}
-
-		if (session.cliente.date_birth == '') {
-			toastr.error("Selecciona la fecha de tu nacimiento");
-			$('input[name=fechaNac]').focus();
-			return false;
+		if (session.cliente.mater_surname === '') {
+			msg.push("Escribe tu apellido materno.");
+			nodo.push($('input[name=apellidoMaterno]'));
 		}
 
 		if (session.cliente.date_birth > minDate || session.cliente.date_birth < maxDate) {
-			toastr.error("Debe ser mayor de 18 años y menor de 65 años");
-			$('input[name=fechaNac]').focus();
-			return false;
+			msg.push("Debe ser mayor de 18 años y menor de 65 años.");
+			nodo.push($('input[name=fechaNac]'));
 		}
 
-		if (session.cliente.rfc == '') {
-			toastr.error("Escribe el RFC");
-			$('input[name=rfc]').focus();
-			return false;
+		if (session.cliente.date_birth === '') {
+			msg.push("Selecciona la fecha de tu nacimiento.");
+			nodo.push($('input[name=fechaNac]'));
 		}
 
 		if (session.cliente.rfc.length < 10) {
-			toastr.error("El RFC debe tener entre 10 y 13 caracteres");
-			$('input[name=rfc]').focus();
-			return false;
+			msg.push("El RFC debe tener entre 10 y 13 caracteres.");
+			nodo.push($('input[name=rfc]'));
 		}
 
 		if (!validRFC(session.cliente.rfc)) {
-			toastr.error("Verifica que tu RFC esté escrito correctamente");
-			$('input[name=rfc]').focus();
-			return false;
+			msg.push("Verifica que tu RFC esté escrito correctamente.");
+			nodo.push($('input[name=rfc]'));
 		}
 
-		if (session.cliente.email == '') {
-			toastr.error("Escribe tu correo electrónico");
-			$('input[name=email]').focus();
-			return false;
+		if (session.cliente.rfc === '') {
+			msg.push("Escribe el RFC.");
+			nodo.push($('input[name=rfc]'));
 		}
 
 		if (!emailIsValid(session.cliente.email)) {
-			toastr.error("Escribe un correo válido");
-			$('input[name=email]').focus();
-			return false;
+			msg.push("Escribe un correo válido.");
+			nodo.push($('input[name=email]'));
 		}
 
-		if (session.cliente.cell_phone == '') {
-			toastr.error("Escribe tu teléfono");
-			$('input[name=telefono]').focus();
-			return false;
+		if (session.cliente.email === '') {
+			msg.push("Escribe tu correo electrónico.");
+			nodo.push($('input[name=email]'));
+		}
+
+		if (session.cliente.cell_phone === '') {
+			msg.push("Escribe tu teléfono.");
+			nodo.push($('input[name=telefono]'));
 		}
 
 		if (session.cliente.cell_phone.length < 10) {
-			toastr.error("El teléfono tiene que tener 10 dígitos");
-			$('input[name=telefono]').focus();
-			return false;
+			msg.push("El teléfono tiene que tener 10 dígitos.");
+			nodo.push($('input[name=telefono]'));
 		}
 
+		if (msg.length !== 0) {
+			for (let i = (msg.length -1); i >= 0; i--)
+				nodo[i].focus().addClass("border-red").parent().append('<small class="text-danger">' + msg[i] + '</small>');
+			return false;
+		}
 
 		const step = session.cliente.confirm_cell === 0 ? 4 :
 							  session.beneficiarios.length === 0 && session.cliente.id_prima !== 0 ? 5 :
@@ -911,7 +909,6 @@ function editBenef(preId) {
 		},
 		success: function (data) {
 			$("#main-content").html(DOMPurify.sanitize(data));
-			$(".header__step__content a").attr("href", "javascript:goStep(6)");
 
 			const ben = session.beneficiarios.filter(benef => benef.preId === preId)[0];
 
@@ -1107,10 +1104,13 @@ function filterNumbers(text) {
 }
 
 function filterLetters(text) {
-	return text.replace(/[^a-zA-Z Ññ]/g,"");
+	return text.replace(/[^a-zA-Z Ññ]/g,"").trimStart();
 }
 
 function addUpdateBeneficiary(preId = undefined) {
+
+	$('.frm__group').find("small").remove();
+	$('input, select').removeClass("border-red");
 
 	const beneficiarios = {
 		relationship: $('select[name=parentesco]').val(),
@@ -1127,90 +1127,89 @@ function addUpdateBeneficiary(preId = undefined) {
 		residence: $('select[name=residencia]').val()
 	};
 
+	let msg = [], nodo = [];
+
 	$('#frmErrMsgBenef').hide();
 
-	if (beneficiarios.relationship == '') {
-		toastr.error("Seleccione el parentesco");
-		$('input[name=parentesco]').focus().select();
-		return false;
+	if (beneficiarios.relationship === '') {
+		msg.push("Seleccione el parentesco.");
+		nodo.push($('select[name=parentesco]'));
 	}
 
-	if (beneficiarios.name == '') {
-		toastr.error("Escribe el nombre");
-		$('input[name=nombre]').focus();
-		return false;
+	if (beneficiarios.name === '') {
+		msg.push("Escribe el nombre.");
+		nodo.push($('input[name=nombre]'));
 	}
 
-	if (beneficiarios.pater_surname == '') {
-		toastr.error("Escribe el apellido paterno");
-		$('input[name=apellidoPaterno]').focus();
-		return false;
+	if (beneficiarios.pater_surname === '') {
+		msg.push("Escribe el apellido paterno.");
+		nodo.push($('input[name=apellidoPaterno]'));
 	}
 
-	if (beneficiarios.mater_surname == '') {
-		toastr.error("Escribe el apellido materno");
-		$('input[name=apellidoMaterno]').focus();
-		return false;
+	if (beneficiarios.mater_surname === '') {
+		msg.push("Escribe el apellido materno.");
+		nodo.push($('input[name=apellidoMaterno]'));
 	}
 
-	if (beneficiarios.marital_status == '') {
-		toastr.error("Seleccione el estado civil");
-		$('input[name=estadoCivil]').focus();
-		return false;
+	if (beneficiarios.marital_status === '') {
+		msg.push("Seleccione el estado civil.");
+		nodo.push($('select[name=estadoCivil]'));
 	}
 
-	if (beneficiarios.date_birth == '') {
-		toastr.error("Selecciona la fecha de el nacimiento");
-		$('input[name=fechaNac]').focus();
-		return false;
+	if (beneficiarios.sex === '') {
+		msg.push("Seleccione sexo.");
+		nodo.push($('select[name=sexo]'));
 	}
 
 	if (beneficiarios.date_birth > minDate || beneficiarios.date_birth < maxDate) {
-		toastr.error("El beneficiario debe ser mayor de 18 años y menor de 65 años");
-		$('input[name=fechaNac]').focus();
-		return false;
+		msg.push("El beneficiario debe ser mayor de 18 años y menor de 65 años.");
+		nodo.push($('input[name=fechaNac]'));
 	}
 
-
-	if (beneficiarios.rfc == '') {
-		toastr.error("Escribe el RFC");
-		$('input[name=rfc]').focus();
-		return false;
+	if (beneficiarios.date_birth === '') {
+		msg.push("Selecciona la fecha de el nacimiento.");
+		nodo.push($('input[name=fechaNac]'));
 	}
 
 	if (beneficiarios.rfc.length < 10) {
-		toastr.error("El RFC debe tener entre 10 y 13 caracteres");
-		$('input[name=rfc]').focus();
-		return false;
+		msg.push("El RFC debe tener entre 10 y 13 caracteres.");
+		nodo.push($('input[name=rfc]'));
 	}
 
 	if (!validRFC(beneficiarios.rfc)) {
-		toastr.error("Verifica que el RFC esté escrito correctamente");
-		$('input[name=rfc]').focus();
-		return false;
+		msg.push("Verifica que el RFC esté escrito correctamente.");
+		nodo.push($('input[name=rfc]'));
 	}
+
+	if (beneficiarios.rfc === '') {
+		msg.push("Escribe el RFC.");
+		nodo.push($('input[name=rfc]'));
+	}
+
 
 	if (beneficiarios.rfc === session.cliente.rfc) {
-		toastr.error("El asegurado no puede agregarse como beneficiario");
-		$('input[name=rfc]').focus();
-		return false;
+		msg.push("El asegurado no puede agregarse como beneficiario.");
+		nodo.push($('input[name=rfc]'));
 	}
 
-	if (beneficiarios.nationality == '') {
-		toastr.error("Selecciona la nacionalidad");
-		$('input[name=nacionalidad]').focus();
-		return false;
+	if (beneficiarios.nationality === '') {
+		msg.push("Selecciona la nacionalidad.");
+		nodo.push($('select[name=nacionalidad]'));
 	}
 
-	if (beneficiarios.economic_activity == '') {
-		toastr.error("Seleccione la actividad económica");
-		$('input[name=actividad]').focus();
-		return false;
+	if (beneficiarios.economic_activity === '') {
+		msg.push("Seleccione la actividad económica.");
+		nodo.push($('select[name=actividad]'));
 	}
 
-	if (beneficiarios.residence == '') {
-		toastr.error("Seleccione el lugar de residencia");
-		$('input[name=residencia]').focus();
+	if (beneficiarios.residence === '') {
+		msg.push("Seleccione el lugar de residencia.");
+		nodo.push($('select[name=residencia]'));
+	}
+
+	if (msg.length !== 0) {
+		for (let i = (msg.length -1); i >= 0; i--)
+			nodo[i].focus().addClass("border-red").parent().append('<small class="text-danger">' + msg[i] + '</small>');
 		return false;
 	}
 
