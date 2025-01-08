@@ -22,6 +22,7 @@ class Conexion
     public $authorizationOauth;
     public $mailUser;
     public $mailPassword;
+    public $VERSION;
 
     function __construct()
     {
@@ -43,6 +44,7 @@ class Conexion
         $this->urlApiAfiliados = $data["urlApiAfiliados"];
         $this->mailUser = $data["mailUs"];
         $this->mailPassword = $data["mailPa"];
+        $this->VERSION = $data["VERSION"];
 
         try {
             $this->conexion = new PDO("mysql:host=" . $this->serverDBEscritura . ";dbname=" . $this->database, $this->user, $this->passDB, array(PDO::MYSQL_ATTR_FOUND_ROWS => true));

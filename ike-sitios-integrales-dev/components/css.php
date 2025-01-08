@@ -1,5 +1,7 @@
 <?php
-    const VERSION = "4.1.2";
+    require_once $_SESSION["relativePath"] . "backend/conexion/conexion.php";
+    $conexion = new conexion;
+    define("VERSION", $conexion->VERSION);
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $_SESSION["relativePath"]?>css/bootstrap/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<?php echo $_SESSION["relativePath"]?>css/style.css?v=<?php echo VERSION?>">
