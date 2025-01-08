@@ -15,9 +15,9 @@ include_once "../backend/post.php";
 	</div>
 
 	<div class="progress">
-		<div>Paso 4 de 8 | Confirma tu solicitud</div>
+		<div>Paso 2 de 6 | Confirma tu solicitud</div>
 		<div class="progress__line">
-			<div class="progress__done s4"></div>
+			<div class="progress__done s2"></div>
 		</div>
 	</div>
 

@@ -119,24 +119,18 @@ header {
 	background-color: red;
 }
 .progress__done.s2 {
-	width: 25%;
+	width: 16.7%;
 }
 .progress__done.s3 {
-	width: 37.5%;
+	width: 33.3%;
 }
 .progress__done.s4 {
 	width: 50%;
 }
 .progress__done.s5 {
-	width: 62.5%;
+	width: 66.7%;
 }
 .progress__done.s6 {
-	width: 75%;
-}
-.progress__done.s7 {
-	width: 87.5%;
-}
-.progress__done.s8 {
 	width: 100%;
 }
 
@@ -1424,4 +1418,22 @@ footer a {
 #delSeguro {
 	width: 20px;
 	height: 20px;
+}
+
+.text-cg {
+	color: black !important;
+	text-decoration: none;
+}
+
+.text-cg img{
+	width: 8px;
+	position: relative;
+	left: 3px;
+	bottom: 2px;
+}
+
+@media screen and (max-width: 500px) {
+	.text-cg {
+		font-size: small;
+	}
 }

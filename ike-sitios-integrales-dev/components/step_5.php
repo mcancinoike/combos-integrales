@@ -15,9 +15,9 @@
 	</div>
 
 	<div class="progress">
-		<div>Paso 5 de 8 | Elige a tus beneficiarios</div>
+		<div>Paso 3 de 6 | Elige a tus beneficiarios</div>
 		<div class="progress__line">
-			<div class="progress__done s5"></div>
+			<div class="progress__done s3"></div>
 		</div>
 	</div>
 

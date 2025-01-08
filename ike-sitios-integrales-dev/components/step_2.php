@@ -15,13 +15,6 @@
 		</div>
 	</div>
 
-    <div class="progress">
-        <div>Paso 2 de 8 | Selecciona tus Asistencias</div>
-        <div class="progress__line">
-            <div class="progress__done s2"></div>
-        </div>
-    </div>
-
     <div class="info">
         <div class="box">
             <div class="box__title">
@@ -160,11 +153,6 @@
                     <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg">
                 </a>
             </div>
-        </div>
-
-        <div class="note s2 pt-4">
-            <img src="<?php echo $_SESSION["relativePath"]?>img/icons/info.svg">
-            <p>Por disposición oficial, debes permitir el acceso a tu ubicación para utilizar los servicios de HSBC México.</p>
         </div>
         <div class="frm__ctas">
             <div id="captcha_msg" class="frm__col captcha">Favor de seleccionar la casilla: </div>

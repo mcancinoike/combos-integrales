@@ -15,9 +15,9 @@
 	</div>
 
 	<div class="progress">
-		<div>Paso 7 de 8 | Verifica tu solicitud</div>
+		<div>Paso 5 de 6 | Verifica tu solicitud</div>
 		<div class="progress__line">
-			<div class="progress__done s7"></div>
+			<div class="progress__done s5"></div>
 		</div>
 	</div>
 

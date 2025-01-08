@@ -15,9 +15,9 @@
 	</div>
 
 	<div class="progress">
-		<div>Paso 3 de 8 | Ingresa tus datos de contacto</div>
+		<div>Paso 1 de 6 | Ingresa tus datos de contacto</div>
 		<div class="progress__line">
-			<div class="progress__done s3"></div>
+			<div class="progress__done"></div>
 		</div>
 	</div>
 

@@ -61,6 +61,7 @@
 						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
 					</div>
 					<p class="box__txt">También podrás contratar tu Seguro por Accidentes Personales o el Programa de Asistencias Iké por separado.</p>
+                    <p class="box__txt"><a href="https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/seguros/condiciones/cg_accidentes_personales_individual_cnsf_0924.pdf" target="_blank" class="text-cg">Consulta las Condiciones Generales del Seguro <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg"></a></p>
 				</div><br>
 				<button class="box__btn" name="btnContinuar" id="step0">Continuar</button>
 			</div>

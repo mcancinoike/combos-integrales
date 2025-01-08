@@ -14,13 +14,6 @@
 		</div>
 	</div>
 
-	<div class="progress">
-		<div>Paso 1 de 8 | Elige la suma asegurada</div>
-		<div class="progress__line">
-			<div class="progress__done"></div>
-		</div>
-	</div>
-
 	<div class="info">
 		<div class="box">
 			<div class="box__title">

@@ -12,9 +12,9 @@
 	</div>
 
 	<div class="progress">
-		<div>Paso 8 de 8 | Ingresa tu método de pago</div>
+		<div>Paso 6 de 6 | Ingresa tu método de pago</div>
 		<div class="progress__line">
-			<div class="progress__done s8"></div>
+			<div class="progress__done s6"></div>
 		</div>
 	</div>
 
