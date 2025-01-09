@@ -183,6 +183,8 @@ $(document).ready(function () {
 	});
 
 	$(document).on("change", "#sumaAseguradaS1", function () {
+		$("#delSeguro").parent().show();
+
 		if ($(this).val() !== '') {
 			$("#delSeguro").prop("checked", false);
 			session.check.seguro = false;
@@ -199,9 +201,12 @@ $(document).ready(function () {
 	// evneto exclusivo ap
 
 	$(document).on('click', "input[name=seguro]", function () {
-		$("#delSeguro").prop("checked", false);
-		session.check.seguro = false;
-		addSeguro($(this));
+
+		if ($(this).attr("data-id-prima") != session.cliente.id_prima)
+			addSeguro($(this));
+		else {
+			deleteSeguro();
+		}
 	});
 
 	//Step 1
@@ -511,15 +516,8 @@ $(document).ready(function () {
 	});
 
 	$(document).on("click", "#delSeguro", function () {
+		$(this).parent().attr("style", "display: none !important");
 		deleteSeguro();
-		$("input[name=seguro]").prop("checked", false);
-		$("input[name=fechaNac]").val('');
-		$("#sexo").val('');
-		$("#sumaAseguradaS1").val('');
-		$('#resumenStep1').hide();
-		$('#tblStep1').hide();
-		$('.separator__line.s1').hide();
-		session.check.seguro = true;
 	});
 
 	$(document).on("click", "#btnStep8", function () {
@@ -976,6 +974,15 @@ function deleteSeguro() {
 	session.cliente.id_prima = session.seguro.pagoMensual = session.seguro.pagoAnual = session.seguro.sumaAsegurada = 0;
 	session.cliente.sexo = '';
 	session.beneficiarios = [];
+	$("input[name=seguro]").prop("checked", false);
+	$("input[name=fechaNac]").val('');
+	$("#sexo").val('');
+	$("#sumaAseguradaS1").val('');
+	$('#resumenStep1').hide();
+	$('#tblStep1').hide();
+	$('.separator__line.s1').hide();
+	session.check.seguro = true;
+	$("#ajaxSumaAsegurada").empty();
 }
 
 function getResumSol() {
@@ -1169,8 +1176,8 @@ function addUpdateBeneficiary(preId = undefined) {
 		nodo.push($('select[name=sexo]'));
 	}
 
-	if (beneficiarios.date_birth > minDate || beneficiarios.date_birth < maxDate) {
-		msg.push("El beneficiario debe ser mayor de 18 años y menor de 65 años.");
+	if (beneficiarios.date_birth < maxDate) {
+		msg.push("El beneficiario debe ser menor de 65 años.");
 		nodo.push($('input[name=fechaNac]'));
 	}
 
@@ -1237,6 +1244,30 @@ function addUpdateBeneficiary(preId = undefined) {
 
 		if (existBen)
 			return false;
+	}
+
+	if (beneficiarios.date_birth > minDate) {
+		if (!$("#modalMenorEdad").length){
+			$("body").append('<div class="modal" id="modalMenorEdad" tabindex="-1">\n' +
+				'  <div class="modal-dialog">\n' +
+				'    <div class="modal-content alert alert-warning" role="alert">\n' +
+				'      <div class="modal-header">\n' +
+				'        <h5 class="modal-title">Advertencia</h5>\n' +
+				'        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+				'      </div>\n' +
+				'      <div class="modal-body text-justify">\n' +
+				'        <p>En el caso de que se desee nombrar beneficiarios a menores de edad, no se debe señalar a un mayor de edad como representante de los menores para efecto de que, en su representación, cobre la indemnización. Lo anterior porque las legislaciones civiles previenen la forma en que deben designarse tutores, albaceas, representantes de herederos u otros cargos similares y no consideran al Contrato de Seguro como el instrumento adecuado para tales designaciones. La designación que se hiciera de un mayor de edad como representante de menores beneficiarios, durante la minoría de edad de ellos, legalmente puede implicar que se nombra beneficiario al mayor de edad, quien en todo caso solo tendría una obligación moral, pues la designación que se hace de beneficiarios en un Contrato de Seguro le concede el derecho incondicionado de disponer de la Suma Asegurada.</p>\n' +
+				'      </div>\n' +
+				'      <div class="modal-footer">\n' +
+				'        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>\n' +
+				'        <button type="button" class="btn btn-danger gostep bg-red" data-step="6" data-bs-dismiss="modal">Aceptar</button>\n' +
+				'      </div>\n' +
+				'    </div>\n' +
+				'  </div>\n' +
+				'</div>');
+		}
+		$("#modalMenorEdad").modal("show");
+		return false;
 	}
 
 	if (preId === undefined) {

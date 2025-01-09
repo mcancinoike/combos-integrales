@@ -48,7 +48,7 @@
 					<ul class="box__list">
 						<li>Seguro por Accidentes Personales HSBC</li>
 					</ul>
-					<p class="box__txt">Te protegemos en caso de muerte accidental, Pérdidas Orgánicas y Fractura de Huesos, entre otros, con un costo mensual accesible.</p>
+					<p class="box__txt">Te protegemos en caso de Muerte Accidental, Pérdidas Orgánicas y Fractura de Huesos, entre otros, con un costo mensual accesible.</p>
 					<ul class="box__list">
 						<li>Programa de Asistencias Iké</li>
 					</ul>

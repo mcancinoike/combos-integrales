@@ -1437,3 +1437,11 @@ footer a {
 		font-size: small;
 	}
 }
+
+.bg-red {
+	background-color: red !important;
+}
+
+.text-justify {
+	text-align: justify !important;
+}

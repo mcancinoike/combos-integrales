@@ -33,7 +33,6 @@ include_once "../backend/post.php";
 							<option value="Hijo(a)">Hijo(a)</option>
 							<option value="Padre">Padre</option>
 							<option value="Madre">Madre</option>
-							<option value="Empleador">Empleador</option>
 							<option value="Hermano(a)">Hermano(a)</option>
 						</select>
 					</div>
@@ -76,7 +75,7 @@ include_once "../backend/post.php";
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control">
+						<input type="date" name="fechaNac" class="frm__control" min="<?php echo (new DateTime(date('Y-m-d')))->modify('-65 year')->format('Y-m-d')?>" max="<?php echo date('Y-m-d')?>">
 					</div>
 					<div class="frm__group">
 						<label>RFC*</label>

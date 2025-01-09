@@ -41,7 +41,6 @@
 				}
 				echo $primas;
 				?>
-                <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el Seguro</h6></div>
 			</div>
 		</div>
         <?php else: ?>
@@ -63,7 +62,7 @@
                     <div class="frm__group">
                         <div id="ajaxSumaAsegurada"></div>
                     </div>
-                    <div class="my-3 d-flex justify-content-center"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el Seguro</h6></div>
+                    <div class="my-3 d-flex justify-content-center" style="display: none !important;"><input type="radio" id="delSeguro" class="mx-2"/><h6>No quiero el Seguro</h6></div>
                 </div>
             </form>
         <?php endif; ?>

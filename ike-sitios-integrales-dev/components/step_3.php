@@ -48,7 +48,7 @@
 					</div>
 					<div class="frm__group">
 						<label>Fecha de nacimiento*</label>
-						<input type="date" name="fechaNac" class="frm__control">
+						<input type="date" name="fechaNac" class="frm__control" min="<?php echo (new DateTime(date('Y-m-d')))->modify('-65 year')->format('Y-m-d')?>" max="<?php echo (new DateTime(date('Y-m-d')))->modify('-18 year')->format('Y-m-d')?>">
 					</div>
 					<div class="frm__group">
 						<label>RFC*</label>
