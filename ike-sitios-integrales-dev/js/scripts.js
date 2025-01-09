@@ -113,8 +113,32 @@ $(document).ready(function () {
 
 			}, 500);
 
+			// validacion para mandar modal cuando el beneficiario es menor de edad
+			if ($("select[name=parentesco]").length && $(this).val() > minDate) {
+				if (!$("#modalMenorEdad").length){
+					$("body").append('<div class="modal" id="modalMenorEdad" tabindex="-1">\n' +
+						'  <div class="modal-dialog">\n' +
+						'    <div class="modal-content alert alert-warning" role="alert">\n' +
+						'      <div class="modal-header">\n' +
+						'        <h5 class="modal-title">Advertencia</h5>\n' +
+						'        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+						'      </div>\n' +
+						'      <div class="modal-body text-justify">\n' +
+						'        <p>En el caso de que se desee nombrar beneficiarios a menores de edad, no se debe señalar a un mayor de edad como representante de los menores para efecto de que, en su representación, cobre la indemnización. Lo anterior porque las legislaciones civiles previenen la forma en que deben designarse tutores, albaceas, representantes de herederos u otros cargos similares y no consideran al Contrato de Seguro como el instrumento adecuado para tales designaciones. La designación que se hiciera de un mayor de edad como representante de menores beneficiarios, durante la minoría de edad de ellos, legalmente puede implicar que se nombra beneficiario al mayor de edad, quien en todo caso solo tendría una obligación moral, pues la designación que se hace de beneficiarios en un Contrato de Seguro le concede el derecho incondicionado de disponer de la Suma Asegurada.</p>\n' +
+						'      </div>\n' +
+						'      <div class="modal-footer">\n' +
+						'        <button type="button" class="btn btn-danger bg-red"  data-bs-dismiss="modal">Aceptar</button>\n' +
+						'      </div>\n' +
+						'    </div>\n' +
+						'  </div>\n' +
+						'</div>');
+				}
+				$("#modalMenorEdad").modal("show");
+			}
+
 		}
 
+		// validacion paso uno AH
 		if ($('select[name=sexo]').val() !== '' && session.step === 1){
 			deleteSeguro();
 			$("#sexo").change();
@@ -1244,30 +1268,6 @@ function addUpdateBeneficiary(preId = undefined) {
 
 		if (existBen)
 			return false;
-	}
-
-	if (beneficiarios.date_birth > minDate) {
-		if (!$("#modalMenorEdad").length){
-			$("body").append('<div class="modal" id="modalMenorEdad" tabindex="-1">\n' +
-				'  <div class="modal-dialog">\n' +
-				'    <div class="modal-content alert alert-warning" role="alert">\n' +
-				'      <div class="modal-header">\n' +
-				'        <h5 class="modal-title">Advertencia</h5>\n' +
-				'        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
-				'      </div>\n' +
-				'      <div class="modal-body text-justify">\n' +
-				'        <p>En el caso de que se desee nombrar beneficiarios a menores de edad, no se debe señalar a un mayor de edad como representante de los menores para efecto de que, en su representación, cobre la indemnización. Lo anterior porque las legislaciones civiles previenen la forma en que deben designarse tutores, albaceas, representantes de herederos u otros cargos similares y no consideran al Contrato de Seguro como el instrumento adecuado para tales designaciones. La designación que se hiciera de un mayor de edad como representante de menores beneficiarios, durante la minoría de edad de ellos, legalmente puede implicar que se nombra beneficiario al mayor de edad, quien en todo caso solo tendría una obligación moral, pues la designación que se hace de beneficiarios en un Contrato de Seguro le concede el derecho incondicionado de disponer de la Suma Asegurada.</p>\n' +
-				'      </div>\n' +
-				'      <div class="modal-footer">\n' +
-				'        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>\n' +
-				'        <button type="button" class="btn btn-danger gostep bg-red" data-step="6" data-bs-dismiss="modal">Aceptar</button>\n' +
-				'      </div>\n' +
-				'    </div>\n' +
-				'  </div>\n' +
-				'</div>');
-		}
-		$("#modalMenorEdad").modal("show");
-		return false;
 	}
 
 	if (preId === undefined) {
