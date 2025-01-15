@@ -290,7 +290,7 @@ function sendMail($data){
 
     $asistencias = '';
     foreach ($data["asistencias"] as $asis)
-        $asistencias .= $asis . '<br/>';
+        $asistencias .= $asis["name"] . '<br/>';
 
     $asistencias = substr($asistencias, 0, -5);
 
