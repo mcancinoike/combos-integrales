@@ -41,15 +41,6 @@
                                 <input type="text" autocomplete="off" id="card" oncopy="return false" onpaste="return false" name="numeroTarjeta" class="onlyNumbers text-security-on" minlength="16"  maxlength="16">
                                 <img id="eye" data-type="off" title="Mostrar/Ocultar número de tarjeta" src="<?php echo $_SESSION["relativePath"]?>img/icons/eye-off.svg">
                             </div>
-
-						</div>
-						<div class="frm__group check">
-							<input type="checkbox" name="condiciones" value="1" class="frm__control check">
-							<a href="<?php echo $_SESSION["relativePath"]?>docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del producto.</a>
-						</div>
-						<div class="frm__group check">
-							<input type="checkbox" name="envio" class="frm__control check">
-							<div>Acepto el envío de la Póliza y Condiciones Generales al correo que registré previamente.</div>
 						</div>
 					</div>
 				</form>

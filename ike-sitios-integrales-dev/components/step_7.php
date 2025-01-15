@@ -38,7 +38,7 @@
 		<div class="resume action">
 			<h3 class="resume__title">Seguro por <?php if ($_SESSION["app"] === "ap") echo "Accidentes Personales"; else echo "Hospitalización"?> </h3>
 			<div class="resume__action">
-				<a class="icon-seguro-edi gostep cursor-pointer" data-step="1"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
+				<a class="icon-seguro-edit gostep cursor-pointer" data-step="1"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/edit.svg"></a>
 				<a class="icon-seguro-del del-seguro cursor-pointer"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/delete.svg"></a>
 				<a class="icon-seguro-add gostep cursor-pointer" data-step="1"><img src="<?php echo $_SESSION["relativePath"]?>img/icons/add.svg"></a>
 			</div>

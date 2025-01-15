@@ -23,9 +23,7 @@ include_once "../backend/post.php";
 
 	<div class="info">
 		<div class="box">
-			<div class="box__title">
-				Te estaremos enviando un código por SMS al número de celular registrado. Al ingresar el código, estarás aceptando la solicitud de contratación del Seguro y el método de pago.
-			</div>
+			<div class="box__title" id="boxTitle"></div>
 			<p class="box__txt2" id="timer">Vence en <i>1:55</i> minutos</p
 
 				<form id="frmRegister">

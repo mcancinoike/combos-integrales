@@ -61,7 +61,7 @@
             <div class="tbl__body">
                 <div class="tbl__row">
                     <div class="tbl__col d-block left">
-                        <div>Suma Segurada:</div>
+                        <div>Suma Asegurada:</div>
                         <div id="step2SumaAsegurada"></div>
                     </div>
                     <div class="tbl__col d-block right">
@@ -131,7 +131,7 @@
                 <input type="checkbox" name="clienteHsbc" value="1"> ¡Sí, ya soy cliente HSBC!
             </div>
             <div class="continue__check">
-                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/terminos-y-condiciones/" target="_blank">HSBC.</a>
+                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/aviso_privacidad.pdf" target="_blank">HSBC.</a>
             </div>
             <div class="continue__check">
                 <input type="checkbox" name="residenteHsbc" value="1"> Confirmo que me encuentro en territorio nacional.

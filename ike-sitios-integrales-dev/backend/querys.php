@@ -98,6 +98,7 @@ function insertAllData($conexion, $allData)
     $query = "SELECT description FROM bin_account WHERE bin = :bin AND account_id = 999999";
     $data = ["bin" => $bin];
     $rows = $conexion->getData($query, $data);
+
     if(count($rows)){
 
         try {
@@ -108,18 +109,40 @@ function insertAllData($conexion, $allData)
             if (is_numeric($idCliente)) {
 
                 $gate = true;
+
+                // Programa de asistencias
                 if (isset($allData["asistencias"])) {
 
                     $numInsertsAsistance = saveAssistance($conexion, $allData["asistencias"], $idCliente);
 
-                    if ($numInsertsAsistance == 0) {
+                    if ($numInsertsAsistance === 0) {
                         $gate = false;
                         $result = array("code" => 400, "msg" => "Error al intentar guardar sus Asistencias");
+
+                    } else {
+                        $cardType = str_contains($rows[0]["description"], "DÉBITO") ? "TDD" : "TDC";
+                        $respAfiliados = apiAfiliados($conexion, $cardType, $allData);
+                        if ($respAfiliados["code"] == 400) {
+                            $gate = false;
+                            $result = $respAfiliados;
+
+                        } else {
+                            if (sendMail($allData)) {
+                                if (confirm("email", $conexion, $idCliente) !== 0) {
+                                    $gate = false;
+                                    $result = array("code" => 400, "msg" => "Error al confirmar correo");
+                                }
+                            } else {
+                                $gate = false;
+                                $result = array("code" => 400, "msg" => "Error al enviar correo");
+                            }
+                        }
                     }
 
                 }
 
-                if (isset($allData["beneficiarios"])) {
+                // contrato de Seguro
+                if (isset($allData["beneficiarios"]) && $gate) {
 
                     $numInsertBeneficiaries = saveBeneficiares($conexion, $allData["beneficiarios"], $idCliente);
 
@@ -129,29 +152,9 @@ function insertAllData($conexion, $allData)
                     }
                 }
 
-                if ($gate) {
-
-                    $cardType = str_contains($rows[0]["description"], "DÉBITO") ? "TDD" : "TDC";
-
-                    if (isset($allData["asistencias"])) {
-                        $respAfiliados = apiAfiliados($conexion, $cardType, $allData);
-                        if ($respAfiliados["code"] == 400) {
-                            $gate = false;
-                            $result = $respAfiliados;
-                        }
-                    }
-
-                    if ($gate) {
-                        if (sendMail($conexion, $allData)) {
-                            if (confirm("email", $conexion, $idCliente) === 0)
-                                $result = array("code" => 200, "msg" => "Información guardada con éxito!");
-                            else
-                                $result = array("code" => 400, "msg" => "Error al confirmar correo");
-                        } else
-                            $result = array("code" => 400, "msg" => "Error al enviar correo");
-                    }
-
-                }
+                //Todo salio bien en guardar Asistencias y/o Seguro
+                if ($gate)
+                    $result = array("code" => 200, "msg" => "Información guardada con éxito!");
 
             } else
                 $result = array("code" => 400, "msg" => "Error al intentar guardar su información");
@@ -271,24 +274,26 @@ function apiAfiliados($conexion, $cardType, $data){
                 $conexion->insertData($log_alta);
                 if ($errorApi !== 'OK')
                     return ["code" => 400, "msg" => "Error API afiliados (E3)"];
-                else
-                    return ["code" => 200, "msg" => "OK"];
             } else
                 return ["code" => 400, "msg" => "Error API afiliados (E2)"];
         }
+        return ["code" => 200, "msg" => "OK"];
 
     } else
         return ["code" => 400, "msg" => "Error API afiliados (E1)"];
 }
 
-function sendMail($conexion, $data){
+function sendMail($data){
 
     $nameClient = $data["cliente"]["name"] . " " . $data["cliente"]['middle_name'] . " " . $data["cliente"]['pater_surname'] . " " . $data["cliente"]['mater_surname'];
     $mailClient = $data["cliente"]['email'];
-    $clientType = $data["cliente"]['client_type'];
 
-    $textAsis = $clientType === "ap" ? "Accidentes Personales" : "Apoyo Por Hospitalización";
-    $plan = "HSBC $textAsis";
+    $asistencias = '';
+    foreach ($data["asistencias"] as $asis)
+        $asistencias .= $asis . '<br/>';
+
+    $asistencias = substr($asistencias, 0, -5);
+
     $total = $data["pagoTotalMensual"];
 
     $mail = new PHPMailer(true);
@@ -297,7 +302,7 @@ function sendMail($conexion, $data){
     $body = str_replace('fechaVar', date('d-m-Y H:i:s'), $body);
     $productos = '<tr>
     <th width="25%" align="center" style="border: 2px solid #929292;color: #014c82;">'.$nameClient.'</th>
-    <th width="25%" align="center" style="border: 2px solid #929292;color: #014c82;">'.$plan.'</th>              
+    <th width="25%" align="center" style="border: 2px solid #929292;color: #014c82;">'.$asistencias.'</th>              
     <th width="25%" align="center" style="border: 2px solid #929292;color: #014c82;">$'. formatoMoneda($total).'</th>
     </tr>';
     $body = str_replace('<tableProductos></tableProductos>', $productos, $body);
@@ -312,8 +317,8 @@ function sendMail($conexion, $data){
     $mail->MsgHTML($body);
     $mail->IsHTML(true);
 
-    $mail->SetFrom('notificaciones@ikeasistencia.com', 'HSBC ' . $textAsis);
-    $mail->Subject = 'Kit de Bienvenida y Términos & Condiciones HSBC ' . $textAsis;
+    $mail->SetFrom('notificaciones@ikeasistencia.com', 'Programa de Asistencias - HSBC');
+    $mail->Subject = 'Kit de Bienvenida - HSBC';
     $mail->addAddress($mailClient, $nameClient);
 
     foreach($data["asistencias"] as $val){

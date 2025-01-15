@@ -52,7 +52,7 @@
 					<ul class="box__list">
 						<li>Programa de Asistencias Iké</li>
 					</ul>
-					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span> Después paga solo $99.00 MXN al mes por cada Asistencia que elijas.</p>
+					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span> Después paga solo $114.84 MXN al mes por cada Asistencia que elijas.</p>
 					<p class="box__txt">Comienza tu solicitud para conocer más.</p>
 				</div>
 				<div class="box">

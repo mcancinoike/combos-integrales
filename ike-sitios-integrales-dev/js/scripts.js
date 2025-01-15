@@ -83,7 +83,50 @@ $(document).ready(function () {
 		goStep(1);
 	});
 
-	$(document).on('change', "input[name=fechaNac], .onlyLetters", function () {
+	$(document).on("change keydown", "input, select", function () {
+		$(this).removeClass("border-red").parent().find("small").remove();
+	});
+
+	$(document).on('change keydown', "input[name=fechaNac]", function () {
+
+		// validar si es una fecha valida
+		if (isNaN(Date.parse($(this).val())))
+			$(this).addClass("border-red").after('<small class="text-danger">Agrega una fecha válida</small>');
+
+		// validacion para mandar modal cuando el beneficiario es menor de edad
+		if ($("select[name=parentesco]").length && $(this).val() > minDate) {
+			if (!$("#modalMenorEdad").length){
+				$("body").append('<div class="modal" id="modalMenorEdad" tabindex="-1">\n' +
+					'  <div class="modal-dialog">\n' +
+					'    <div class="modal-content alert alert-warning" role="alert">\n' +
+					'      <div class="modal-header">\n' +
+					'        <h5 class="modal-title">Advertencia</h5>\n' +
+					'        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+					'      </div>\n' +
+					'      <div class="modal-body text-justify">\n' +
+					'        <p>En el caso de que se desee nombrar beneficiarios a menores de edad, no se debe señalar a un mayor de edad como representante de los menores para efecto de que, en su representación, cobre la indemnización. Lo anterior porque las legislaciones civiles previenen la forma en que deben designarse tutores, albaceas, representantes de herederos u otros cargos similares y no consideran al Contrato de Seguro como el instrumento adecuado para tales designaciones. La designación que se hiciera de un mayor de edad como representante de menores beneficiarios, durante la minoría de edad de ellos, legalmente puede implicar que se nombra beneficiario al mayor de edad, quien en todo caso solo tendría una obligación moral, pues la designación que se hace de beneficiarios en un Contrato de Seguro le concede el derecho incondicionado de disponer de la Suma Asegurada.</p>\n' +
+					'      </div>\n' +
+					'      <div class="modal-footer">\n' +
+					'        <button type="button" class="btn btn-danger bg-red"  data-bs-dismiss="modal">Aceptar</button>\n' +
+					'      </div>\n' +
+					'    </div>\n' +
+					'  </div>\n' +
+					'</div>');
+			}
+			$("#modalMenorEdad").modal("show");
+		}
+
+		// validacion paso uno AH
+		if ($('select[name=sexo]').val() !== '' && session.step === 1){
+			deleteSeguro();
+			$("#sexo").change();
+		}
+
+		$(".onlyLetters").change();
+	});
+
+	$(document).on('change', ".onlyLetters", function () {
+
 		const dateBirth = new Date($("input[name=fechaNac]").val());
 		dateBirth.setMinutes(dateBirth.getMinutes() + dateBirth.getTimezoneOffset());
 
@@ -94,11 +137,11 @@ $(document).ready(function () {
 			  nombre = $("input[name=nombre]").val() + ' ' + $("input[name=segundoNombre]").val(),
 			  paterSur = $("input[name=apellidoPaterno]").val(),
 			  materSur = $("input[name=apellidoMaterno]").val();
+
 		$("input[name=rfc]").prop("disabled", true);
-		if ($("input[name=nombre]").val() !== '' && !isNaN(day) && !isNaN(month) && !isNaN(year) && year > 1900 && paterSur !== '' && materSur !== '') {
+		if ($("input[name=nombre]").val() !== '' && paterSur !== '' && materSur !== '' && !isNaN(day) && !isNaN(month) && !isNaN(year) && year > 1900) {
 
 			// generar RFC
-
 			setTimeout(function () {
 				const RFC = RfcFacil.forNaturalPerson({
 					name: nombre,
@@ -109,39 +152,10 @@ $(document).ready(function () {
 					year: year
 				});
 
-				$("input[name=rfc]").val(RFC).prop("disabled", false);
+				$("input[name=rfc]").val(RFC).prop("disabled", false).removeClass("border-red").parent().find("small").remove();
 
 			}, 500);
 
-			// validacion para mandar modal cuando el beneficiario es menor de edad
-			if ($("select[name=parentesco]").length && $(this).val() > minDate) {
-				if (!$("#modalMenorEdad").length){
-					$("body").append('<div class="modal" id="modalMenorEdad" tabindex="-1">\n' +
-						'  <div class="modal-dialog">\n' +
-						'    <div class="modal-content alert alert-warning" role="alert">\n' +
-						'      <div class="modal-header">\n' +
-						'        <h5 class="modal-title">Advertencia</h5>\n' +
-						'        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
-						'      </div>\n' +
-						'      <div class="modal-body text-justify">\n' +
-						'        <p>En el caso de que se desee nombrar beneficiarios a menores de edad, no se debe señalar a un mayor de edad como representante de los menores para efecto de que, en su representación, cobre la indemnización. Lo anterior porque las legislaciones civiles previenen la forma en que deben designarse tutores, albaceas, representantes de herederos u otros cargos similares y no consideran al Contrato de Seguro como el instrumento adecuado para tales designaciones. La designación que se hiciera de un mayor de edad como representante de menores beneficiarios, durante la minoría de edad de ellos, legalmente puede implicar que se nombra beneficiario al mayor de edad, quien en todo caso solo tendría una obligación moral, pues la designación que se hace de beneficiarios en un Contrato de Seguro le concede el derecho incondicionado de disponer de la Suma Asegurada.</p>\n' +
-						'      </div>\n' +
-						'      <div class="modal-footer">\n' +
-						'        <button type="button" class="btn btn-danger bg-red"  data-bs-dismiss="modal">Aceptar</button>\n' +
-						'      </div>\n' +
-						'    </div>\n' +
-						'  </div>\n' +
-						'</div>');
-				}
-				$("#modalMenorEdad").modal("show");
-			}
-
-		}
-
-		// validacion paso uno AH
-		if ($('select[name=sexo]').val() !== '' && session.step === 1){
-			deleteSeguro();
-			$("#sexo").change();
 		}
 
 	});
@@ -357,7 +371,7 @@ $(document).ready(function () {
 		session.cliente.middle_name = $('#frmRegister3 input[name=segundoNombre]').val().trim();
 		session.cliente.pater_surname = $('#frmRegister3 input[name=apellidoPaterno]').val().trim();
 		session.cliente.mater_surname = $('#frmRegister3 input[name=apellidoMaterno]').val().trim();
-		session.cliente.date_birth = $('#frmRegister3 input[name=fechaNac]').val().trim();
+		session.cliente.date_birth = $('#frmRegister3 input[name=fechaNac]').val();
 		session.cliente.rfc = $('#frmRegister3 input[name=rfc]').val().trim();
 		session.cliente.email = $('#frmRegister3 input[name=email]').val().trim();
 		session.cliente.cell_phone = $('#frmRegister3 input[name=telefono]').val().trim();
@@ -381,14 +395,19 @@ $(document).ready(function () {
 			nodo.push($('input[name=apellidoMaterno]'));
 		}
 
-		if (session.cliente.date_birth > minDate || session.cliente.date_birth < maxDate) {
+		if (session.cliente.date_birth === '') {
+			msg.push("Ingresa una fecha válida.");
+			nodo.push($('input[name=fechaNac]'));
+		}
+
+		if (session.cliente.date_birth !== '' && (session.cliente.date_birth > minDate || session.cliente.date_birth < maxDate)) {
 			msg.push("Debe ser mayor de 18 años y menor de 65 años.");
 			nodo.push($('input[name=fechaNac]'));
 		}
 
-		if (session.cliente.date_birth === '') {
-			msg.push("Selecciona la fecha de tu nacimiento.");
-			nodo.push($('input[name=fechaNac]'));
+		if (session.cliente.rfc === '') {
+			msg.push("Escribe el RFC.");
+			nodo.push($('input[name=rfc]'));
 		}
 
 		if (session.cliente.rfc.length < 10) {
@@ -401,18 +420,13 @@ $(document).ready(function () {
 			nodo.push($('input[name=rfc]'));
 		}
 
-		if (session.cliente.rfc === '') {
-			msg.push("Escribe el RFC.");
-			nodo.push($('input[name=rfc]'));
-		}
-
-		if (!emailIsValid(session.cliente.email)) {
-			msg.push("Escribe un correo válido.");
+		if (session.cliente.email === '') {
+			msg.push("Escribe tu correo electrónico.");
 			nodo.push($('input[name=email]'));
 		}
 
-		if (session.cliente.email === '') {
-			msg.push("Escribe tu correo electrónico.");
+		if (session.cliente.email !== '' && !emailIsValid(session.cliente.email)) {
+			msg.push("Escribe un correo válido.");
 			nodo.push($('input[name=email]'));
 		}
 
@@ -423,6 +437,11 @@ $(document).ready(function () {
 
 		if (session.cliente.cell_phone.length < 10) {
 			msg.push("El teléfono tiene que tener 10 dígitos.");
+			nodo.push($('input[name=telefono]'));
+		}
+
+		if (!isValidPhone(session.cliente.cell_phone)) {
+			msg.push("Escribe un teléfono válido.");
 			nodo.push($('input[name=telefono]'));
 		}
 
@@ -546,8 +565,6 @@ $(document).ready(function () {
 
 	$(document).on("click", "#btnStep8", function () {
 		let numeroTarjeta = $('#frmCard input[name=numeroTarjeta]').val().trim();
-		let condiciones = $('#frmCard input[name=condiciones]').is(':checked');
-		let envio = $('#frmCard input[name=envio]').is(':checked');
 
 		$('#frmErrMsg8').hide();
 
@@ -563,14 +580,22 @@ $(document).ready(function () {
 			return false;
 		}
 
-		if (condiciones == '') {
-			toastr.error("Debe aceptar las condiciones generales.");
-			return false;
+		if($("input[name=condiciones-seguro]").length){
+			if (!$("input[name=condiciones-seguro]").is(":checked")) {
+				toastr.error("Debe aceptar las condiciones generales del Seguro.");
+				return false;
+			}
 		}
 
-		if (envio == '') {
-			toastr.error("Debe aceptar el envió de pólizas y condiciones generales.");
-			return false;
+		if($("input[name=condiciones-asistencias]").length){
+			if (!$("input[name=condiciones-asistencias]").is(":checked")) {
+				toastr.error("Debe aceptar las condiciones generales del programa de Asistencias.");
+				return false;
+			}
+			if (!$("input[name=condiciones-envio]").is(":checked")) {
+				toastr.error("Debe aceptar el envío del Kit de Bienvenida a tu correo.");
+				return false;
+			}
 		}
 
 		session.card = numeroTarjeta;
@@ -774,6 +799,11 @@ function loadValues(step) {
 			}
 			break;
 		case 4:
+			const services = session.cliente.id_prima !== 0 && session.asistencias.length !== 0 ?
+				                    "contratación del Seguro, Asistencias" : session.cliente.id_prima !== 0 ?
+					                "contratación del seguro" : "Asistencias";
+
+			$("#boxTitle").text("Te estaremos enviando un código por SMS al número de celular registrado. Al ingresar el código, estarás aceptando la solicitud de " + services + " y el método de pago.");
 			sendCode();
 			break;
 		case 5:
@@ -811,13 +841,39 @@ function loadValues(step) {
 			}
 			break;
 		case 8:
+			let checkboxs = '';
+			if (session.cliente.id_prima !== 0) {
+				const pathCondiciones = app === "ap" ? "https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/seguros/condiciones/cg_accidentes_personales_individual_cnsf_0924.pdf" :
+															  "https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/seguros/hospitalizacion/cg_apoyo_hospitalizacion_nov.pdf";
+
+				checkboxs += '<div class="frm__group check">\n' +
+							 '  <input type="checkbox" name="condiciones-seguro" value="1" class="frm__control check">\n' +
+							 '  <a href="' + pathCondiciones + '" target="_blank">Aceptar Condiciones Generales del Seguro.</a>\n' +
+							 '</div>';
+			}
+
+			if (session.asistencias.length > 0) {
+				checkboxs += '<div class="frm__group check">\n' +
+							 '  <input type="checkbox" name="condiciones-asistencias" value="1" class="frm__control check">\n' +
+							 '  <a href="' + relativePath + 'docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del programa de Asistencias.</a>\n' +
+							 '</div>' +
+							 '<div class="frm__group check">\n' +
+							 '  <input type="checkbox" name="condiciones-envio" class="frm__control check">\n' +
+							 '  <div>Acepto el envío del Kit de Bienvenida del programa de Asistencias al correo que registré previamente.</div>\n' +
+							 '</div>';
+			}
+
+			$(".frm.pay").append(checkboxs);
+
 			break;
 		case "final":
 			let msgHead = '',
 				msgSeguro = '';
 
 			if (session.cliente.id_prima === 0) {
-				msgHead = "<h3>¡Felicidades! Ahora cuentas con tu(s) programa(s) de Asistencia y podrás hacer uso de tus beneficios en un lapso de 48 horas.</h3>";
+				msgHead = "<h2>Felicidades, ¡ya eres parte de nuestro programa de asistencia!</h2><br/>" +
+					      "<h4>En un plazo de 48 horas, podrás acceder a tus beneficios exclusivos. Para comenzar te recomendamos revisar tu Kit de Bienvenida que llegará a tu bandeja de correo electrónico en el mismo plazo</h4><br/>" +
+					      "<h4>¡Disfruta de tus nuevos beneficios!</h4>";
 
 			} else {
 				msgHead = "<h2>¡Solicitud enviada con éxito!</h2>";
@@ -1200,14 +1256,19 @@ function addUpdateBeneficiary(preId = undefined) {
 		nodo.push($('select[name=sexo]'));
 	}
 
-	if (beneficiarios.date_birth < maxDate) {
+	if (beneficiarios.date_birth === '') {
+		msg.push("Ingresa una fecha válida.");
+		nodo.push($('input[name=fechaNac]'));
+	}
+
+	if (beneficiarios.date_birth !== '' && beneficiarios.date_birth < maxDate) {
 		msg.push("El beneficiario debe ser menor de 65 años.");
 		nodo.push($('input[name=fechaNac]'));
 	}
 
-	if (beneficiarios.date_birth === '') {
-		msg.push("Selecciona la fecha de el nacimiento.");
-		nodo.push($('input[name=fechaNac]'));
+	if (beneficiarios.rfc === '') {
+		msg.push("Escribe el RFC.");
+		nodo.push($('input[name=rfc]'));
 	}
 
 	if (beneficiarios.rfc.length < 10) {
@@ -1219,12 +1280,6 @@ function addUpdateBeneficiary(preId = undefined) {
 		msg.push("Verifica que el RFC esté escrito correctamente.");
 		nodo.push($('input[name=rfc]'));
 	}
-
-	if (beneficiarios.rfc === '') {
-		msg.push("Escribe el RFC.");
-		nodo.push($('input[name=rfc]'));
-	}
-
 
 	if (beneficiarios.rfc === session.cliente.rfc) {
 		msg.push("El asegurado no puede agregarse como beneficiario.");
@@ -1331,6 +1386,42 @@ function getQueryVariable(variable) {
 		}
 	}
 	return false;
+}
+
+function isValidPhone(phone) {
+	let gate = false, numIni = phone[0];
+
+	if (phone.includes("123456789") || phone.includes("987654321"))
+		return gate;
+
+	for (let i in phone)
+		if (numIni != phone[i])
+			gate = true;
+
+	return gate;
+}
+
+function isValidDate(dateString) {
+	const parts = dateString.split("-");
+	const year = parseInt(parts[0], 10);
+	const month = parseInt(parts[1], 10);
+	const day = parseInt(parts[2], 10);
+
+	if (month < 1 || month > 12 || day < 1 || day > 31) {
+		return false;
+	}
+
+	if ((month === 4 || month === 6 || month === 9 || month === 11) && day === 31) {
+		return false;
+	}
+
+	if (month === 2) { // Check for leap year
+		const isLeap = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+		if (day > 29 || (day === 29 && !isLeap)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 window.addEventListener('popstate', function (e) {
