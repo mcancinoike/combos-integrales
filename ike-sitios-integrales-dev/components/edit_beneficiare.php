@@ -126,7 +126,7 @@
 		</div>
 
 		<div class="box__button stp">
-			<button class="box__btn" id="btnUpdateBenef">Actualizar</button>
+			<button class="box__btn mt-5" id="btnUpdateBenef">Actualizar</button>
 			<div class="box__button__line"></div>
 		</div>
 	</div>

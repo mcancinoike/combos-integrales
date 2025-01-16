@@ -1375,6 +1375,15 @@ footer a {
 	margin-top: 6px;
 }
 
+.select2-container--default .select2-selection--single {
+	border-radius: 2px !important;
+	border: 1px solid #767676 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	color: black !important;
+}
+
 .input-card {
 	display: flex;
 	border: 1px solid;

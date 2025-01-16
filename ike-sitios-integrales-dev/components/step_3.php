@@ -78,7 +78,7 @@
 		</div>
 
 		<div class="box__button stp b3">
-			<button class="box__btn" id="btnStep3">Continuar</button>
+			<button class="box__btn mt-5" id="btnStep3">Continuar</button>
 			<div class="box__button__line"></div>
 		</div>
 	</div>

@@ -209,6 +209,8 @@ $(document).ready(function () {
 						$("#sumaAseguradaS1").val(session.cliente.id_prima).change();
 					}
 
+					$('select').select2();
+
 				} else {
 					toastr.error(response.msg);
 				}
@@ -724,7 +726,7 @@ function loadValues(step) {
 	switch (step) {
 		case 1:
 				if (session.cliente.id_prima !== 0) {
-					if (app == "ap") {
+					if (app === "ap") {
 						$("input[name=seguro]").each(function() {
 							if ($(this).val() == session.cliente.id_prima){
 								$(this).attr("checked", true);
@@ -740,6 +742,9 @@ function loadValues(step) {
 
 				} else
 					$("#delSeguro").prop("checked", session.check.seguro);
+
+				if (app === "ah")
+					$('select').select2();
 
 			break;
 		case 2:
@@ -809,7 +814,7 @@ function loadValues(step) {
 		case 5:
 			break;
 		case "5-2":
-			$('select[name=nacionalidad], select[name=actividad], select[name=residencia]').select2();
+			$('select').select2();
 			break;
 		case 6:
 			if (session.beneficiarios.length === 5)
@@ -1011,6 +1016,8 @@ function editBenef(preId) {
 			$("select[name=actividad]").val(ben.economic_activity);
 			$("select[name=residencia]").val(ben.residence);
 			$("#btnUpdateBenef").attr("data-preId", preId);
+
+			$("select").select2();
 
 		},
 		error: function (request, status, error) {
