@@ -585,15 +585,15 @@ $(document).ready(function () {
 				toastr.error("Debe aceptar las condiciones generales del Seguro.");
 				return false;
 			}
+			if (!$("input[name=condiciones-envio]").is(":checked")) {
+				toastr.error("Debe aceptar el envío del Kit de Bienvenida a tu correo.");
+				return false;
+			}
 		}
 
 		if($("input[name=condiciones-asistencias]").length){
 			if (!$("input[name=condiciones-asistencias]").is(":checked")) {
 				toastr.error("Debe aceptar las condiciones generales del programa de Asistencias.");
-				return false;
-			}
-			if (!$("input[name=condiciones-envio]").is(":checked")) {
-				toastr.error("Debe aceptar el envío del Kit de Bienvenida a tu correo.");
 				return false;
 			}
 		}
@@ -849,6 +849,10 @@ function loadValues(step) {
 				checkboxs += '<div class="frm__group check">\n' +
 							 '  <input type="checkbox" name="condiciones-seguro" value="1" class="frm__control check">\n' +
 							 '  <a href="' + pathCondiciones + '" target="_blank">Aceptar Condiciones Generales del Seguro.</a>\n' +
+							 '</div>' +
+							 '<div class="frm__group check">\n' +
+							 '  <input type="checkbox" name="condiciones-envio" class="frm__control check">\n' +
+							 '  <div>Acepto el envío de la Póliza y Condiciones Generales al correo que registré previamente.</div>\n' +
 							 '</div>';
 			}
 
@@ -856,10 +860,6 @@ function loadValues(step) {
 				checkboxs += '<div class="frm__group check">\n' +
 							 '  <input type="checkbox" name="condiciones-asistencias" value="1" class="frm__control check">\n' +
 							 '  <a href="' + relativePath + 'docs/tyc.pdf" target="_blank">Aceptar Condiciones Generales del programa de Asistencias.</a>\n' +
-							 '</div>' +
-							 '<div class="frm__group check">\n' +
-							 '  <input type="checkbox" name="condiciones-envio" class="frm__control check">\n' +
-							 '  <div>Acepto el envío del Kit de Bienvenida del programa de Asistencias al correo que registré previamente.</div>\n' +
 							 '</div>';
 			}
 

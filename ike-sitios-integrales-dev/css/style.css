@@ -525,7 +525,12 @@ header {
 }
 .frm__group span {
 	font-size: 14px;
+	width: 100% !important;
 }
+.frm__group select {
+	height: 47px;
+}
+
 .frm__group.check {
 	display: flex;
 	flex-direction: row;
@@ -1082,7 +1087,7 @@ footer a {
 		margin-top: 40px;
 	}
 	.frm__group select {
-		height: 42px;
+		height: 47px;
 	}
 	.asistencia__list li {
 		font-size: 18px;
