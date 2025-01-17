@@ -206,7 +206,7 @@ header {
 	width: 16px;
 }
 .box__list {
-	margin-left: 40px;
+	margin-left: 12px;
 	margin-bottom: 12px;
 }
 .box__list li {
@@ -768,7 +768,7 @@ footer a {
 	.info,
 	.header__step__content,
 	.progress {
-		width: 330px;
+		width: 90%;
 	}
 	.lightbox {
 		width: 320px;
@@ -1369,6 +1369,7 @@ footer a {
 	}
 }
 
+/* Modificaciones Select2 */
 .select2-selection.select2-selection--single{
 	height: 48px !important;
 	padding: 9px 4px 10px;

@@ -272,8 +272,10 @@ function apiAfiliados($conexion, $cardType, $data){
                 $log_alta = "INSERT INTO logs_api (Movimiento_IKE, id_key, cl_Account, titular, api_response, id_event, type_procces, date_created, order_id, error) ";
                 $log_alta .= "VALUES('2','NO','". $valAs['cuenta_ike'] ."','". $nombre_titular ."','". $curlAfiliados['code'] ."','NO','NO','". date("Y-m-d H:i:s") ."','NO','".$errorApi."')";
                 $conexion->insertData($log_alta);
-                if ($errorApi !== 'OK')
+                if ($errorApi !== 'OK') {
+                    error_log("Error envio API afiliados. ($errorApi)");
                     return ["code" => 400, "msg" => "Error API afiliados (E3)"];
+                }
             } else
                 return ["code" => 400, "msg" => "Error API afiliados (E2)"];
         }

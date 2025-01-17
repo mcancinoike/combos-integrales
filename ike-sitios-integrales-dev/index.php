@@ -48,19 +48,17 @@
 					<ul class="box__list">
 						<li>Seguro por Accidentes Personales HSBC</li>
 					</ul>
-					<p class="box__txt">Te protegemos en caso de Muerte Accidental, Pérdidas Orgánicas y Fractura de Huesos, entre otros, con un costo mensual accesible.</p>
+					<p class="box__txt">Te protegemos en caso de Muerte Accidental, Pérdidas Orgánicas y Fractura de Huesos, entre otros.</p>
 					<ul class="box__list">
 						<li>Programa de Asistencias Iké</li>
 					</ul>
-					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span> Después paga solo $114.84 MXN al mes por cada Asistencia que elijas.</p>
-					<p class="box__txt">Comienza tu solicitud para conocer más.</p>
+					<p class="box__txt">Amplía la protección de tu Seguro al contratar las Asistencias Iké que más te convengan <span class="bold">¡y llévate el primer mes sin costo!</span></p>
 				</div>
 				<div class="box">
 					<div class="box__title">
 						<img src="<?php echo $_SESSION["relativePath"]?>img/icons/haz.svg">
 						Haz tu solicitud hoy mismo y obtén la mayor protección al menor precio.
 					</div>
-					<p class="box__txt">También podrás contratar tu Seguro por Accidentes Personales o el Programa de Asistencias Iké por separado.</p>
                     <p class="box__txt"><a href="https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/seguros/condiciones/cg_accidentes_personales_individual_cnsf_0924.pdf" target="_blank" class="text-cg">Consulta las Condiciones Generales del Seguro <img src="<?php echo $_SESSION["relativePath"]?>img/icons/arrow-red.svg"></a></p>
 				</div><br>
 				<button class="box__btn" name="btnContinuar" id="step0">Continuar</button>

@@ -28,8 +28,7 @@ let session = {
 	check: {
 		clienteHsbc: false,
 		avisoHsbc: false,
-		residenteHsbc: false,
-		seguro: false
+		residenteHsbc: false
 	},
 	card: '',
 	captcha: false,
@@ -164,6 +163,9 @@ $(document).ready(function () {
 		let fechaNac = $('input[name=fechaNac]').val().trim();
 		let sexo = $('select[name=sexo]').val();
 
+		if (fechaNac === '' && sexo === '')
+			return false;
+
 		if (fechaNac == "") {
 			toastr.error("Selecciona la fecha de nacimiento.");
 			$('input[name=fechaNac]').focus();
@@ -223,18 +225,15 @@ $(document).ready(function () {
 	});
 
 	$(document).on("change", "#sumaAseguradaS1", function () {
-		$("#delSeguro").parent().show();
 
 		if ($(this).val() !== '') {
-			$("#delSeguro").prop("checked", false);
-			session.check.seguro = false;
 			$("#btnStep1").show();
 			addSeguro($("option:selected", this));
 		} else {
-			$("#btnStep1").hide();
-			$('#resumenStep1').hide();
-			$('#tblStep1').hide();
-			$('.separator__line.s1').hide();
+			deleteSeguro();
+			$("body>span.select2-container.select2-container--default").remove();
+			$("#resumenStep1, #tblStep1, .separator__line.s1").hide();
+			$("##btnStep1").show();
 		}
 	});
 
@@ -560,11 +559,6 @@ $(document).ready(function () {
 		}
 	});
 
-	$(document).on("click", "#delSeguro", function () {
-		$(this).parent().attr("style", "display: none !important");
-		deleteSeguro();
-	});
-
 	$(document).on("click", "#btnStep8", function () {
 		let numeroTarjeta = $('#frmCard input[name=numeroTarjeta]').val().trim();
 
@@ -588,7 +582,7 @@ $(document).ready(function () {
 				return false;
 			}
 			if (!$("input[name=condiciones-envio]").is(":checked")) {
-				toastr.error("Debe aceptar el envío del Kit de Bienvenida a tu correo.");
+				toastr.error("Debe aceptar el envío de la Póliza de Seguro a tu correo.");
 				return false;
 			}
 		}
@@ -740,8 +734,7 @@ function loadValues(step) {
 						$("#sexo").change();
 					}
 
-				} else
-					$("#delSeguro").prop("checked", session.check.seguro);
+				}
 
 				if (app === "ah")
 					$('select').select2();
@@ -881,18 +874,19 @@ function loadValues(step) {
 					      "<h4>¡Disfruta de tus nuevos beneficios!</h4>";
 
 			} else {
-				msgHead = "<h2>¡Solicitud enviada con éxito!</h2>";
+				msgHead = "<h2>¡Tu solicitud fue enviada con éxito!</h2>";
 
 				msgSeguro = "                <ul>\n" +
-							"                    <li>Tu solicitud de contratación de Seguro se encuentra en evaluación.</li>\n" +
-							"                    <li>De ser aceptada, haremos el cargo a la cuenta que capturaste y enviaremos tu póliza al correo registrado en un lapso de 48 horas.</li>\n" +
-							"                    <li>Deberás recibir la póliza de confirmación en tu correo electrónico. Si no la recibes, llama al <a href='tel:5557213322'>55 5721 3322</a> para confirmar la contratación.</li>\n";
+							"                    <li>Tu solicitud de contratación de Seguro se encuentra en evaluación. Te avisaremos por correo electrónico cuando tengamos el resultado.</li>\n" +
+							"                    <li>Una vez aceptada, se realizará el cargo a la Tarjeta de Crédito o Débito HSBC que capturaste en un lapso de 48 horas.</li>\n" +
+							"                    <li>Recibirás tu Póliza y Condiciones generales de los productos al correo que ingresaste. Recuerda que puedes consultar el Contrato del Seguro a través de RECAS.</li>\n";
 
 
 				if (session.asistencias.length !== 0)
 					msgSeguro += "                    <li>Podrás hacer uso de tu(s) programa(s) de Asistencia en un lapso de 48 hrs.</li>\n";
 
-					msgSeguro += "                </ul>";
+				msgSeguro += "                </ul>";
+				msgSeguro += "<p>Para dudas o aclaraciones puedes llamar al: <a href='tel:5557213322'>55 5721 3322</a></p>";
 			}
 			$("#msg-head").html(msgHead);
 			$("#msg-seguro").html(msgSeguro);
@@ -1063,12 +1057,11 @@ function deleteSeguro() {
 	session.beneficiarios = [];
 	$("input[name=seguro]").prop("checked", false);
 	$("input[name=fechaNac]").val('');
-	$("#sexo").val('');
+	$("#sexo").val('').trigger('change');
 	$("#sumaAseguradaS1").val('');
 	$('#resumenStep1').hide();
 	$('#tblStep1').hide();
 	$('.separator__line.s1').hide();
-	session.check.seguro = true;
 	$("#ajaxSumaAsegurada").empty();
 }
 
