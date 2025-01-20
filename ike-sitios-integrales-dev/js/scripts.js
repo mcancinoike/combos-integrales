@@ -1047,7 +1047,7 @@ function getBeneficiaries() {
 						 '</div></div></div><br>';
 	}
 
-    $("#listBenef").html(beneficiarios);
+    $("#listBenef").html(DOMPurify.sanitize(beneficiarios));
 }
 
 function deleteSeguro() {
@@ -1115,8 +1115,8 @@ function getResumSol() {
 	}
 
 	$("#resumSoli").html(seguro);
-	$("#resumAsitencias").html(asistencias);
-	$("#resumBenef").html(beneficiarios);
+	$("#resumAsitencias").html(DOMPurify.sanitize(asistencias));
+	$("#resumBenef").html(DOMPurify.sanitize(beneficiarios));
 
 }
 function emailIsValid(email) {
