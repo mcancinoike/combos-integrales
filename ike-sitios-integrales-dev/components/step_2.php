@@ -124,17 +124,31 @@
     <div class="separator__line"></div>
 
     <div class="info">
+        <div class="continue">
+            <div class="continue__check">
+                <input type="checkbox" name="residenteHsbc" value="1"> Confirmo que me encuentro en territorio nacional.
+            </div>
+        </div>
+    </div>
+
+    <div class="separator__line_slim"></div>
+
+    <div class="info">
+        <div class="continue">
+            <div class="continue__check">
+                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/aviso_privacidad.pdf" target="_blank">HSBC.</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="separator__line"></div>
+
+    <div class="info">
 
         <div class="continue">
             <p>Para continuar con la solicitud, confirma que eres Cliente HSBC (es decir, que tienes una cuenta de Débito o Crédito HSBC).</p>
             <div class="continue__check">
                 <input type="checkbox" name="clienteHsbc" value="1"> ¡Sí, ya soy cliente HSBC!
-            </div>
-            <div class="continue__check">
-                <input type="checkbox" name="avisoHsbc" value="1"> Acepto el aviso de privacidad de <a href="https://ikeasistencia.com/aviso-legal-y-de-privacidad" target="_blank">IKÉ</a> y <a href="https://www.hsbc.com.mx/content/dam/hsbc/mx/documents/aviso_privacidad.pdf" target="_blank">HSBC.</a>
-            </div>
-            <div class="continue__check">
-                <input type="checkbox" name="residenteHsbc" value="1"> Confirmo que me encuentro en territorio nacional.
             </div>
         </div>
 

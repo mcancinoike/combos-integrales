@@ -608,6 +608,10 @@ header {
 	line-height: 26px;
 	margin-bottom: 30px;
 }
+.separator__line_slim {
+	height: 2px;
+	background-color: #EDEDED;
+}
 .separator__line {
 	height: 8px;
 	background-color: #EDEDED;
@@ -793,7 +797,7 @@ footer a {
 	.info {
 		width: 400px;
 	}
-	.separator__line {
+	.separator__line, .separator__line_slim {
 		width: 400px;
 		margin: auto;
 	}
@@ -887,7 +891,7 @@ footer a {
 		margin: auto;
 	}
 	.separator__line,
-	.frm__errmsg {
+	.frm__errmsg, .separator__line_slim {
 		width: 500px;
 		margin: auto;
 	}
@@ -1189,7 +1193,7 @@ footer a {
 	.info {
 		width: 800px;
 	}
-	.separator__line {
+	.separator__line, .separator__line_slim {
 		width: 600px;
 	}
 	.box__list li,
